@@ -1,0 +1,328 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    --color-accent: var(--color-neutral-800);
+    --color-accent-content: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-white);
+}
+
+@layer theme {
+    .dark {
+        --color-accent: var(--color-white);
+        --color-accent-content: var(--color-white);
+        --color-accent-foreground: var(--color-neutral-800);
+    }
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* \[:where(&)\]:size-4 {
+    @apply size-4;
+} */
+
+/*
+|--------------------------------------------------------------------------
+| Public site (spectator pages)
+|--------------------------------------------------------------------------
+| Tokens and component classes are scoped to .public-site, so the admin area
+| and the tatami console keep their own look. AKA is red and AO is blue, as
+| in karate scoring. Status is never conveyed by colour alone.
+*/
+.public-site {
+    --ps-bg: #f4f6f8;
+    --ps-surface: #ffffff;
+    --ps-ink: #16202b;
+    --ps-muted: #5b6877;
+    --ps-line: #d9dfe6;
+    --ps-mat: #2b6b55;
+    --ps-mat-ink: #ffffff;
+    --ps-aka: #c8202b;
+    --ps-aka-bg: #fdecee;
+    --ps-ao: #1c5bc8;
+    --ps-ao-bg: #e9f0fd;
+    --ps-gold: #c99a06;
+    --ps-silver: #66727f;
+    --ps-bronze: #9a5a24;
+    --ps-live: #a84a00;
+    --ps-font-display: 'Barlow Condensed', 'Arial Narrow', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+
+    background: var(--ps-bg);
+    color: var(--ps-ink);
+}
+
+.dark .public-site {
+    --ps-bg: #0e1620;
+    --ps-surface: #16212e;
+    --ps-ink: #e7ecf1;
+    --ps-muted: #9aa7b5;
+    --ps-line: #2a3745;
+    --ps-mat: #5fb89a;
+    --ps-mat-ink: #0e1620;
+    --ps-aka: #ff7b83;
+    --ps-aka-bg: #3a1a1f;
+    --ps-ao: #7aa9ff;
+    --ps-ao-bg: #15264a;
+    --ps-gold: #e5b93c;
+    --ps-silver: #b4bec9;
+    --ps-bronze: #d1894b;
+    --ps-live: #ff9a3d;
+}
+
+.public-site :focus-visible {
+    outline: 3px solid var(--ps-mat);
+    outline-offset: 2px;
+}
+
+@layer components {
+    .ps-muted { color: var(--ps-muted); }
+    .ps-num { font-variant-numeric: tabular-nums; }
+
+    .ps-title {
+        font-family: var(--ps-font-display);
+        font-weight: 700;
+        line-height: 1.02;
+        letter-spacing: 0.005em;
+    }
+
+    .ps-subtitle {
+        font-family: var(--ps-font-display);
+        font-weight: 600;
+        font-size: 1.5rem;
+        line-height: 1.1;
+    }
+
+    .ps-topbar {
+        background: var(--ps-surface);
+        border-bottom: 1px solid var(--ps-line);
+    }
+
+    .ps-nav-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+    }
+
+    .ps-link {
+        color: var(--ps-mat);
+        font-weight: 500;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .ps-panel {
+        background: var(--ps-surface);
+        border: 1px solid var(--ps-line);
+        border-radius: 0.875rem;
+    }
+
+    .ps-tabs {
+        display: flex;
+        gap: 0.25rem;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--ps-line);
+        scrollbar-width: none;
+    }
+
+    .ps-tab {
+        display: inline-flex;
+        align-items: center;
+        flex: none;
+        min-height: 2.75rem;
+        padding: 0 0.875rem;
+        border-bottom: 3px solid transparent;
+        color: var(--ps-muted);
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .ps-tab[aria-current='page'] {
+        color: var(--ps-ink);
+        border-bottom-color: var(--ps-mat);
+        font-weight: 600;
+    }
+
+    .ps-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-height: 2.75rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--ps-line);
+    }
+
+    .ps-row:last-child { border-bottom: 0; }
+
+    .ps-row-live {
+        background: color-mix(in srgb, var(--ps-live) 12%, var(--ps-surface));
+        box-shadow: inset 4px 0 0 var(--ps-live);
+    }
+
+    .ps-fixture {
+        position: relative;
+        display: grid;
+        grid-template-columns: 4rem 1fr;
+        gap: 0.5rem 1rem;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--ps-line);
+        color: inherit;
+    }
+
+    .ps-fixture:last-child { border-bottom: 0; }
+    .ps-fixture:hover .ps-fixture-name { text-decoration: underline; text-underline-offset: 4px; }
+
+    .ps-date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1;
+        font-family: var(--ps-font-display);
+        font-weight: 700;
+    }
+
+    .ps-date-day { font-size: 2.25rem; }
+    .ps-date-month { font-size: 1.125rem; color: var(--ps-muted); font-weight: 600; }
+
+    .ps-fixture-name {
+        font-family: var(--ps-font-display);
+        font-weight: 700;
+        font-size: 1.625rem;
+        line-height: 1.1;
+    }
+
+    .ps-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .ps-status-dot {
+        width: 0.625rem;
+        height: 0.625rem;
+        border-radius: 9999px;
+        border: 2px solid var(--ps-muted);
+    }
+
+    .ps-status[data-tone='live'] { color: var(--ps-live); font-weight: 600; }
+    .ps-status[data-tone='live'] .ps-status-dot { background: var(--ps-live); border-color: var(--ps-live); }
+    .ps-status[data-tone='soon'] .ps-status-dot { border-color: var(--ps-mat); }
+    .ps-status[data-tone='done'] .ps-status-dot { background: var(--ps-mat); border-color: var(--ps-mat); }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .ps-status[data-tone='live'] .ps-status-dot { animation: ps-pulse 1.6s ease-in-out infinite; }
+    }
+
+    @keyframes ps-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ps-live) 55%, transparent); }
+        50% { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    .ps-board {
+        display: grid;
+        grid-template-columns: 1fr;
+        overflow: hidden;
+        border: 1px solid var(--ps-line);
+        border-radius: 0.875rem;
+        background: var(--ps-surface);
+    }
+
+    @media (min-width: 40rem) {
+        .ps-board { grid-template-columns: 1fr 1fr; }
+    }
+
+    .ps-side { padding: 1rem 1.25rem; border-left: 8px solid transparent; }
+    .ps-side-aka { background: var(--ps-aka-bg); border-left-color: var(--ps-aka); }
+    .ps-side-ao { background: var(--ps-ao-bg); border-left-color: var(--ps-ao); }
+    .ps-side-label { font-size: 0.875rem; font-weight: 600; }
+    .ps-side-aka .ps-side-label { color: var(--ps-aka); }
+    .ps-side-ao .ps-side-label { color: var(--ps-ao); }
+
+    .ps-side-name {
+        font-family: var(--ps-font-display);
+        font-weight: 700;
+        font-size: 1.875rem;
+        line-height: 1.05;
+    }
+
+    .ps-medal {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 9999px;
+        font-family: var(--ps-font-display);
+        font-weight: 700;
+        font-size: 1.0625rem;
+        flex: none;
+    }
+
+    .ps-medal-1 { background: var(--ps-gold); color: #16202b; }
+    .ps-medal-2 { border: 3px solid var(--ps-silver); color: var(--ps-ink); }
+    .ps-medal-3 { border: 3px dotted var(--ps-bronze); color: var(--ps-ink); }
+}
+
+/* Unlayered on purpose: these beat the utility classes inside the shared bracket component. */
+.public-site [data-test='bout'] { font-size: 1rem; }
+.public-site [data-test='bout'] .text-xs { font-size: 0.875rem; }
+
+.public-site nav[role='navigation'] :is(a, button) {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    justify-content: center;
+}
+
+/* The shared bracket uses fixed zinc greys: map them to the public tokens so text keeps AA contrast. */
+.public-site [data-test='bracket'] :is([class*='text-zinc-400'], [class*='text-zinc-500'], [data-flux-text]) {
+    color: var(--ps-muted);
+}
+
+.public-site :is(input, select)[data-flux-control] { min-height: 2.75rem; }
