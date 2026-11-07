@@ -28,7 +28,7 @@
 @endphp
 
 <div @class([
-    'overflow-hidden bg-arena-surface text-[13px]',
+    'relative overflow-hidden bg-arena-surface text-[13px]',
     'border border-arena-line' => ! $live && ! $pending,
     'border border-dashed border-arena-line-strong' => $pending,
     'arena-sweep border-2 border-arena-ink dark:border-arena-volt' => $live,

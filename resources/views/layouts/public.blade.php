@@ -3,31 +3,35 @@
     <head>
         @include('partials.head', ['title' => isset($title) ? __($title) : null])
     </head>
-    <body class="public-site min-h-screen antialiased">
-        <header class="ps-topbar">
-            <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
-                <a href="{{ route('home') }}" wire:navigate class="ps-nav-link gap-2" data-test="brand">
-                    <x-app-logo-icon class="size-7 fill-current" />
-                    <span class="ps-title text-2xl">{{ config('app.name', 'Organizacija natjecanja') }}</span>
+    <body class="public-site min-h-screen bg-arena-bg font-sans text-arena-ink antialiased">
+        <header class="border-b border-arena-line">
+            <div class="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-4">
+                <a href="{{ route('home') }}" wire:navigate class="flex min-h-11 items-center" data-test="brand">
+                    <x-arena.logo size="sm" />
                 </a>
 
-                <nav class="flex items-center gap-5 text-sm">
-                    <a href="{{ route('home') }}" wire:navigate class="ps-nav-link font-medium">{{ __('Competitions') }}</a>
+                <nav class="flex items-center gap-1 text-sm font-semibold">
+                    <a href="{{ route('home') }}" wire:navigate class="hidden min-h-11 items-center px-3 sm:inline-flex">{{ __('Competitions') }}</a>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" wire:navigate class="ps-link ps-nav-link">{{ __('Manage') }}</a>
+                        <a href="{{ route('dashboard') }}" wire:navigate class="inline-flex min-h-11 items-center px-3">{{ __('Manage') }}</a>
                     @else
-                        <a href="{{ route('login') }}" wire:navigate class="ps-link ps-nav-link">{{ __('Log in') }}</a>
+                        <a href="{{ route('login') }}" wire:navigate class="inline-flex min-h-11 items-center px-3">{{ __('Log in') }}</a>
                     @endauth
+
+                    <button type="button" x-data x-on:click="$flux.dark = ! $flux.dark" x-bind:aria-pressed="$flux.dark.toString()" aria-label="{{ __('Toggle theme') }}" class="grid size-11 cursor-pointer place-items-center border border-arena-line bg-arena-surface">
+                        <flux:icon.moon class="size-5 dark:hidden" />
+                        <flux:icon.sun class="hidden size-5 dark:block" />
+                    </button>
                 </nav>
             </div>
         </header>
 
-        <main class="mx-auto w-full max-w-6xl px-4 py-6 md:py-10">
+        <main class="mx-auto w-full max-w-6xl px-4 pb-8 pt-0 md:pb-12">
             {{ $slot }}
         </main>
 
-        <footer class="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 text-sm ps-muted">
+        <footer class="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 text-sm text-arena-muted">
             {{ config('app.name', 'Organizacija natjecanja') }}
         </footer>
 

@@ -63,27 +63,32 @@ new #[Layout('layouts::public'), Title('Bracket')] class extends Component {
 <section class="w-full">
     <x-public.competition-header :competition="$competition" active="draw" />
 
-    <div wire:poll.10s.visible data-test="live-region">
-        <a href="{{ route('public.competitions.draw', $competition) }}" wire:navigate class="ps-link ps-nav-link text-sm">{{ __('All categories') }}</a>
+    <div wire:poll.10s.visible data-test="live-region" class="space-y-6">
+        <div class="space-y-3">
+            <a href="{{ route('public.competitions.draw', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+                <flux:icon.chevron-left class="size-4" />{{ __('All categories') }}
+            </a>
 
-        <h2 class="ps-title mt-2 text-4xl md:text-5xl">{{ $category->name }}</h2>
-        <div class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-base ps-muted">
-            <span>{{ __(Str::headline($category->discipline->value)) }}</span>
-            <span>{{ $category->gender ? __(Str::headline($category->gender->value)) : __('Mixed') }}</span>
-            <span class="ps-num">{{ __('Born :from to :to', ['from' => $category->birth_year_from, 'to' => $category->birth_year_to]) }}</span>
-            @if ($category->weightLabel())
-                <span class="ps-num">{{ $category->weightLabel() }}</span>
-            @endif
+            <h2 class="font-display text-[34px] font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ $category->name }}</h2>
+
+            <div class="flex flex-wrap gap-1.5 font-mono text-xs">
+                <span class="border border-arena-line-strong px-2.5 py-1">{{ __(Str::headline($category->discipline->value)) }}</span>
+                <span class="border border-arena-line-strong px-2.5 py-1">{{ $category->gender ? __(Str::headline($category->gender->value)) : __('Mixed') }}</span>
+                <span class="border border-arena-line-strong px-2.5 py-1 tabular-nums">{{ __('Born :from to :to', ['from' => $category->birth_year_from, 'to' => $category->birth_year_to]) }}</span>
+                @if ($category->weightLabel())
+                    <span class="border border-arena-line-strong px-2.5 py-1 tabular-nums">{{ $category->weightLabel() }}</span>
+                @endif
+            </div>
         </div>
 
-        <div class="mt-8">
+        <div>
             @if ($this->bouts->isEmpty())
-                <p class="ps-panel p-5 ps-muted">{{ __('The draw has not been published yet.') }}</p>
+                <x-arena.card variant="dashed" class="p-5">{{ __('The draw has not been published yet.') }}</x-arena.card>
             @else
                 <x-bracket :category="$category" :bouts="$this->bouts" :placements="$this->placements" :current-bout-id="$this->currentBoutId" />
             @endif
         </div>
 
-        <x-public.updates class="mt-8" />
+        <x-public.updates />
     </div>
 </section>

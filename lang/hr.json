@@ -310,5 +310,16 @@
     "Error": "Greška",
     "Competition steps": "Koraci natjecanja",
     "Competition day": "Dan natjecanja",
-    "Latest results": "Najnoviji rezultati"
+    "Latest results": "Najnoviji rezultati",
+    "Toggle theme": "Promijeni temu",
+    "Back to competition": "Natrag na natjecanje",
+    "Now on the tatamis": "Sada na tatamijima",
+    ":count of :total active": ":count od :total aktivno",
+    "Search categories": "Pretraži kategorije",
+    "Filter categories": "Filtriraj kategorije",
+    "All": "Sve",
+    "F": "Ž",
+    "M": "M",
+    "Girls and women": "Djevojčice i žene",
+    "Boys and men": "Dječaci i muškarci"
 }

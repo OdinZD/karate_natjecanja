@@ -3,12 +3,12 @@
 @php
     use App\Enums\DrawProgress;
 
-    [$label, $tone] = match ($progress) {
-        DrawProgress::NoDraw => [__('No draw'), 'neutral'],
-        DrawProgress::Pending => [__('Draw done'), 'soon'],
-        DrawProgress::Running => [__('In progress'), 'live'],
-        DrawProgress::Finished => [__('Finished'), 'done'],
+    [$state, $label] = match ($progress) {
+        DrawProgress::NoDraw => ['none', __('No draw')],
+        DrawProgress::Pending => ['drawn', __('Draw done')],
+        DrawProgress::Running => ['live', __('In progress')],
+        DrawProgress::Finished => ['done', __('Finished')],
     };
 @endphp
 
-<x-public.status :tone="$tone" {{ $attributes }}>{{ $label }}</x-public.status>
+<x-arena.status :state="$state" :label="$label" {{ $attributes }} />

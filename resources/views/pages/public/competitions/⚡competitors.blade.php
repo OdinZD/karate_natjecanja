@@ -95,18 +95,29 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
     </div>
 
     @if ($this->competitors->isEmpty())
-        <p class="ps-panel p-5 ps-muted">{{ __('No competitors found.') }}</p>
+        <x-arena.card variant="dashed" class="p-5">{{ __('No competitors found.') }}</x-arena.card>
     @else
-        <div class="ps-panel overflow-hidden">
-            @foreach ($this->competitors as $competitor)
-                <div class="ps-row flex-wrap" data-test="competitor-row" wire:key="competitor-{{ $competitor->id }}">
-                    <div class="min-w-0 grow basis-56">
-                        <div class="text-lg font-semibold">{{ $competitor->last_name }} {{ $competitor->first_name }}</div>
-                        <div class="text-sm ps-muted">{{ $competitor->club->name }}</div>
-                    </div>
-                    <div class="text-sm ps-muted sm:max-w-xs sm:text-end">
-                        {{ $competitor->entries->sortBy([['category.sort_order', 'asc'], ['category.name', 'asc']])->pluck('category.name')->join(', ') }}
-                    </div>
+        <div class="space-y-4">
+            @foreach ($this->competitors->getCollection()->groupBy(fn ($competitor) => mb_strtoupper(mb_substr($competitor->last_name, 0, 1))) as $letter => $items)
+                <div wire:key="letter-{{ $letter }}">
+                    <div class="bg-arena-bg-2 px-3 py-1.5 font-display text-xl font-black text-arena-ink">{{ $letter }}</div>
+
+                    <x-arena.card>
+                        @foreach ($items as $competitor)
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-arena-line px-3 py-2.5 last:border-b-0" data-test="competitor-row" wire:key="competitor-{{ $competitor->id }}">
+                                <span aria-hidden="true" class="grid size-10 shrink-0 place-items-center bg-arena-surface-2 font-mono text-sm font-bold">{{ mb_strtoupper(mb_substr($competitor->first_name, 0, 1).mb_substr($competitor->last_name, 0, 1)) }}</span>
+
+                                <div class="min-w-0 grow basis-44">
+                                    <div class="text-[15px] font-bold">{{ $competitor->last_name }} {{ $competitor->first_name }}</div>
+                                    <div class="text-xs text-arena-muted">{{ $competitor->club->name }}</div>
+                                </div>
+
+                                <div class="text-xs text-arena-muted sm:max-w-xs sm:text-end">
+                                    {{ $competitor->entries->sortBy([['category.sort_order', 'asc'], ['category.name', 'asc']])->pluck('category.name')->join(', ') }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </x-arena.card>
                 </div>
             @endforeach
         </div>

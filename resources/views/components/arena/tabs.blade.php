@@ -12,7 +12,7 @@
     ];
 @endphp
 
-<nav data-test="competition-tabs" aria-label="{{ __('Competition sections') }}" {{ $attributes->class('flex gap-1 overflow-x-auto border-b border-arena-line bg-arena-bg-2 px-2 [scrollbar-width:none]') }}>
+<nav data-test="competition-tabs" x-data x-init="$nextTick(() => $el.querySelector('[aria-current]')?.scrollIntoView({ inline: 'center', block: 'nearest' }))" aria-label="{{ __('Competition sections') }}" {{ $attributes->class('flex gap-1 overflow-x-auto border-b border-arena-line bg-arena-bg-2 px-2 [scrollbar-width:none]') }}>
     @foreach ($tabs as $key => $label)
         <a
             href="{{ route('public.competitions.'.$key, $competition) }}"

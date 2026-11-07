@@ -43,12 +43,12 @@ new #[Layout('layouts::public'), Title('Draw')] class extends Component {
 
         @if ($live->isNotEmpty())
             <div data-test="live-categories">
-                <h2 class="ps-subtitle mb-3">{{ __('Being played now') }}</h2>
+                <x-arena.section-title class="mb-3">{{ __('Being played now') }}</x-arena.section-title>
 
-                <div class="ps-panel overflow-hidden">
+                <div class="grid gap-2">
                     @foreach ($live as $item)
-                        <a href="{{ route('public.competitions.bracket', [$competition, $item['category']]) }}" wire:navigate class="ps-row ps-row-live justify-between" wire:key="live-{{ $item['category']->id }}">
-                            <span class="text-lg font-semibold">{{ $item['category']->name }}</span>
+                        <a href="{{ route('public.competitions.bracket', [$competition, $item['category']]) }}" wire:navigate class="arena-sweep flex min-h-14 items-center justify-between gap-3 border border-l-4 border-arena-line border-l-arena-ink bg-arena-surface px-3 py-2 dark:border-l-arena-volt" wire:key="live-{{ $item['category']->id }}">
+                            <span class="text-[15px] font-bold">{{ $item['category']->name }}</span>
                             <x-public.progress :progress="$item['progress']" />
                         </a>
                     @endforeach
@@ -57,32 +57,43 @@ new #[Layout('layouts::public'), Title('Draw')] class extends Component {
         @endif
 
         @if ($this->categories->isEmpty())
-            <p class="ps-panel p-5 ps-muted">{{ __('Categories have not been published yet.') }}</p>
+            <x-arena.card variant="dashed" class="p-5">{{ __('Categories have not been published yet.') }}</x-arena.card>
         @else
-            <div>
-                <h2 class="ps-subtitle mb-3">{{ __('All categories') }}</h2>
+            <div x-data="{ discipline: '' }">
+                <x-arena.section-title class="mb-3">{{ __('All categories') }}</x-arena.section-title>
 
-                <div class="ps-panel overflow-hidden">
+                <div wire:ignore role="radiogroup" aria-label="{{ __('Discipline') }}" class="mb-3 flex flex-wrap gap-2">
+                    @foreach (['' => __('All disciplines'), 'kata' => __('Kata'), 'kumite' => __('Kumite')] as $value => $label)
+                        <x-arena.chip name="draw-discipline" :value="$value" :label="$label" x-model="discipline" />
+                    @endforeach
+                </div>
+
+                <x-arena.card>
                     @foreach ($this->categories as $item)
                         @php($category = $item['category'])
 
-                        <div class="ps-row flex-wrap" data-test="category-row" wire:key="category-{{ $category->id }}">
-                            <div class="min-w-0 grow basis-56">
+                        <div
+                            class="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-arena-line px-3 py-2.5 last:border-b-0"
+                            data-test="category-row"
+                            wire:key="category-{{ $category->id }}"
+                            x-show="discipline === '' || discipline === '{{ $category->discipline->value }}'"
+                        >
+                            <div class="min-w-0 grow basis-52">
                                 @if ($item['progress'] !== DrawProgress::NoDraw)
-                                    <a href="{{ route('public.competitions.bracket', [$competition, $category]) }}" wire:navigate class="ps-link ps-nav-link text-lg">{{ $category->name }}</a>
+                                    <a href="{{ route('public.competitions.bracket', [$competition, $category]) }}" wire:navigate class="inline-flex min-h-11 items-center text-[15px] font-bold underline-offset-4 hover:underline">{{ $category->name }}</a>
                                 @else
-                                    <span class="text-lg font-semibold">{{ $category->name }}</span>
+                                    <span class="text-[15px] font-bold">{{ $category->name }}</span>
                                 @endif
-                                <div class="text-sm ps-muted">{{ __(Str::headline($category->discipline->value)) }}</div>
+                                <div class="text-xs text-arena-muted">{{ __(Str::headline($category->discipline->value)) }}</div>
                             </div>
 
-                            <div class="flex items-center gap-5 text-sm">
-                                <span class="ps-num">{{ __(':count entries', ['count' => $category->entries_count]) }}</span>
+                            <div class="flex items-center gap-4 text-sm">
+                                <span class="font-mono text-xs tabular-nums">{{ __(':count entries', ['count' => $category->entries_count]) }}</span>
                                 <x-public.progress :progress="$item['progress']" />
                             </div>
                         </div>
                     @endforeach
-                </div>
+                </x-arena.card>
             </div>
         @endif
 
