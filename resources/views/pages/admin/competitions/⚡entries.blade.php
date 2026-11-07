@@ -1,8 +1,10 @@
 <?php
 
 use App\Actions\Entries\EntryEligibility;
+use App\Actions\Entries\ImportClubEntries;
 use App\Actions\Entries\ImportEntries;
 use App\Models\Category;
+use App\Models\Club;
 use App\Models\Competition;
 use App\Models\Competitor;
 use App\Models\Entry;
@@ -36,6 +38,13 @@ new #[Title('Entries')] class extends Component {
     public array $importErrors = [];
     public int $importErrorCount = 0;
 
+    public string $clubId = '';
+    public ?TemporaryUploadedFile $clubFile = null;
+
+    /** @var array<int, string> */
+    public array $clubImportErrors = [];
+    public int $clubImportErrorCount = 0;
+
     public function mount(Competition $competition): void
     {
         $this->competition = $competition;
@@ -53,6 +62,15 @@ new #[Title('Entries')] class extends Component {
     public function categories(): Collection
     {
         return $this->competition->categories()->orderBy('sort_order')->orderBy('name')->get();
+    }
+
+    /**
+     * @return Collection<int, Club>
+     */
+    #[Computed]
+    public function clubs(): Collection
+    {
+        return Club::query()->orderBy('name')->orderBy('city')->get();
     }
 
     /**
@@ -205,6 +223,50 @@ new #[Title('Entries')] class extends Component {
             ]),
         );
     }
+
+    public function openClubImport(): void
+    {
+        $this->reset(['clubId', 'clubFile', 'clubImportErrors', 'clubImportErrorCount']);
+        $this->resetValidation();
+
+        Flux::modal('club-entries-import')->show();
+    }
+
+    public function importClub(ImportClubEntries $importer): void
+    {
+        $this->validate([
+            'clubId' => ['required', 'integer', Rule::exists('clubs', 'id')],
+            'clubFile' => ['required', 'file', 'extensions:xlsx,csv', 'max:5120'],
+        ]);
+
+        $club = Club::findOrFail($this->clubId);
+
+        try {
+            $result = $importer->handle($this->competition, $club, $this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
+        } finally {
+            $this->clubFile->delete();
+            $this->reset('clubFile');
+        }
+
+        if ($result->failed()) {
+            $this->clubImportErrorCount = count($result->errors);
+            $this->clubImportErrors = array_slice($result->errors, 0, 50);
+
+            return;
+        }
+
+        $this->reset(['clubImportErrors', 'clubImportErrorCount']);
+        unset($this->entries, $this->categories);
+        Flux::modal('club-entries-import')->close();
+        Flux::toast(
+            variant: 'success',
+            text: __(':entries entries imported (:competitors new competitors), :skipped already entered.', [
+                'entries' => $result->entriesCreated,
+                'competitors' => $result->competitorsCreated,
+                'skipped' => $result->entriesSkipped,
+            ]),
+        );
+    }
 }; ?>
 
 <section class="w-full">
@@ -221,6 +283,12 @@ new #[Title('Entries')] class extends Component {
                         <flux:select.option :value="$category->id">{{ $category->name }}</flux:select.option>
                     @endforeach
                 </flux:select>
+                <flux:button icon="arrow-down-tray" :href="route('admin.competitions.entries.template', $competition)" data-test="download-template-button">
+                    {{ __('Template for clubs') }}
+                </flux:button>
+                <flux:button icon="user-group" wire:click="openClubImport" data-test="import-club-entries-button">
+                    {{ __('Import club entries') }}
+                </flux:button>
                 <flux:button icon="arrow-up-tray" wire:click="openImport" data-test="import-entries-button">
                     {{ __('Import from Excel') }}
                 </flux:button>
@@ -314,6 +382,46 @@ new #[Title('Entries')] class extends Component {
             <div class="flex">
                 <flux:spacer />
                 <flux:button type="submit" variant="primary" data-test="run-import-button">{{ __('Import') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="club-entries-import" class="md:w-[32rem]">
+        <form wire:submit="importClub" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Import club entries') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Upload the template filled in by the club. Categories are assigned automatically from gender, birth year and weight. If any row is invalid, nothing is imported.') }}
+                </flux:text>
+            </div>
+
+            <flux:select wire:model="clubId" :label="__('Club')" :placeholder="__('Choose a club')">
+                @foreach ($this->clubs as $club)
+                    <flux:select.option :value="$club->id">{{ $club->name }}{{ $club->city ? ' ('.$club->city.')' : '' }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
+            <flux:input wire:model="clubFile" type="file" accept=".xlsx,.csv" :label="__('File')" />
+
+            @if ($clubImportErrors !== [])
+                <flux:callout variant="danger" icon="exclamation-triangle" data-test="club-import-errors">
+                    <flux:callout.heading>{{ __('Nothing was imported. Fix these rows and try again:') }}</flux:callout.heading>
+                    <flux:callout.text>
+                        <ul class="list-disc ps-5">
+                            @foreach ($clubImportErrors as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        @if ($clubImportErrorCount > count($clubImportErrors))
+                            <p class="mt-2">{{ __('and :count more', ['count' => $clubImportErrorCount - count($clubImportErrors)]) }}</p>
+                        @endif
+                    </flux:callout.text>
+                </flux:callout>
+            @endif
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:button type="submit" variant="primary" data-test="run-club-import-button">{{ __('Import') }}</flux:button>
             </div>
         </form>
     </flux:modal>

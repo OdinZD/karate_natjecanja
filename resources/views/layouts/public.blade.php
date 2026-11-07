@@ -8,7 +8,7 @@
             <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
                 <a href="{{ route('home') }}" wire:navigate class="ps-nav-link gap-2" data-test="brand">
                     <x-app-logo-icon class="size-7 fill-current" />
-                    <span class="ps-title text-2xl">{{ config('app.name', 'Laravel') }}</span>
+                    <span class="ps-title text-2xl">{{ config('app.name', 'Organizacija natjecanja') }}</span>
                 </a>
 
                 <nav class="flex items-center gap-5 text-sm">
@@ -28,7 +28,7 @@
         </main>
 
         <footer class="mx-auto w-full max-w-6xl px-4 pb-10 pt-4 text-sm ps-muted">
-            {{ config('app.name', 'Laravel') }}
+            {{ config('app.name', 'Organizacija natjecanja') }}
         </footer>
 
         @fluxScripts

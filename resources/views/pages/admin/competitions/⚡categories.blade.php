@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Categories\ImportOfficialCategories;
+use App\Enums\CategorySet;
 use App\Enums\Discipline;
 use App\Enums\Gender;
 use App\Models\Category;
@@ -28,6 +30,7 @@ new #[Title('Categories')] class extends Component {
     public string $bout_duration_seconds = '120';
 
     public string $sourceId = '';
+    public string $officialSet = '';
 
     public function mount(Competition $competition): void
     {
@@ -193,6 +196,30 @@ new #[Title('Categories')] class extends Component {
         );
     }
 
+    public function openImportOfficial(): void
+    {
+        $this->reset('officialSet');
+        $this->resetValidation();
+
+        Flux::modal('category-import-official')->show();
+    }
+
+    public function importOfficial(ImportOfficialCategories $import): void
+    {
+        $this->validate([
+            'officialSet' => ['required', Rule::enum(CategorySet::class)],
+        ]);
+
+        $result = $import->handle($this->competition, CategorySet::from($this->officialSet));
+
+        unset($this->categories);
+        Flux::modal('category-import-official')->close();
+        Flux::toast(
+            variant: 'success',
+            text: __('Imported: :created, skipped: :skipped.', $result),
+        );
+    }
+
     private function resetForm(): void
     {
         $this->reset(['editingId', 'name', 'gender', 'birth_year_from', 'birth_year_to', 'weight_min', 'weight_max']);
@@ -210,6 +237,9 @@ new #[Title('Categories')] class extends Component {
         <div class="flex flex-wrap items-center justify-between gap-4">
             <flux:heading size="xl" level="1">{{ __('Categories') }}</flux:heading>
             <div class="flex items-center gap-2">
+                <flux:button icon="arrow-down-tray" wire:click="openImportOfficial" data-test="import-official-button">
+                    {{ __('Import official categories') }}
+                </flux:button>
                 <flux:button icon="document-duplicate" wire:click="openCopy" data-test="copy-categories-button">
                     {{ __('Copy from competition') }}
                 </flux:button>
@@ -313,6 +343,26 @@ new #[Title('Categories')] class extends Component {
             <div class="flex">
                 <flux:spacer />
                 <flux:button type="submit" variant="primary" data-test="confirm-copy-button">{{ __('Copy') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="category-import-official" class="md:w-96">
+        <form wire:submit="importOfficial" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Import official categories') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('Individual kata and kumite categories from the official HKS list for 2026. Birth years are calculated from the competition date. Categories whose name already exists here are skipped.') }}</flux:text>
+            </div>
+
+            <flux:select wire:model="officialSet" :label="__('Category set')" :placeholder="__('Choose a category set')">
+                @foreach (CategorySet::cases() as $case)
+                    <flux:select.option :value="$case->value">{{ __(Str::headline($case->value)) }}</flux:select.option>
+                @endforeach
+            </flux:select>
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:button type="submit" variant="primary" data-test="confirm-import-official-button">{{ __('Import') }}</flux:button>
             </div>
         </form>
     </flux:modal>
