@@ -73,39 +73,58 @@ new #[Title('Competitions')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6 flex items-center justify-between">
-        <flux:heading size="xl" level="1">{{ __('Competitions') }}</flux:heading>
-        <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-competition-button">
+<section class="w-full min-w-0 space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h1 class="font-display text-[44px] font-black uppercase leading-[.95] text-arena-ink">{{ __('Competitions') }}</h1>
+
+        <x-arena.button icon="plus" wire:click="create" data-test="create-competition-button">
             {{ __('New competition') }}
-        </flux:button>
+        </x-arena.button>
     </div>
 
-    <flux:table :paginate="$this->competitions">
-        <flux:table.columns>
-            <flux:table.column>{{ __('Name') }}</flux:table.column>
-            <flux:table.column>{{ __('Date') }}</flux:table.column>
-            <flux:table.column>{{ __('Venue') }}</flux:table.column>
-            <flux:table.column>{{ __('Status') }}</flux:table.column>
-        </flux:table.columns>
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Name') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Date') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Venue') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Status') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Open') }}</span></th>
+                </tr>
+            </thead>
 
-        <flux:table.rows>
-            @foreach ($this->competitions as $competition)
-                <flux:table.row :key="$competition->id">
-                    <flux:table.cell>
-                        <flux:link :href="route('admin.competitions.show', $competition)" wire:navigate>
-                            {{ $competition->name }}
-                        </flux:link>
-                    </flux:table.cell>
-                    <flux:table.cell>{{ $competition->date->format('d.m.Y.') }}</flux:table.cell>
-                    <flux:table.cell>{{ $competition->venue }}</flux:table.cell>
-                    <flux:table.cell>
-                        <flux:badge size="sm">{{ __(Str::headline($competition->status->value)) }}</flux:badge>
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforeach
-        </flux:table.rows>
-    </flux:table>
+            <tbody>
+                @foreach ($this->competitions as $competition)
+                    @php
+                        [$statusState, $statusLabel] = match ($competition->status) {
+                            CompetitionStatus::Registration => ['registration', __('Registration open')],
+                            CompetitionStatus::Drawn => ['drawn', __('Draw done')],
+                            CompetitionStatus::InProgress => ['live', __('In progress')],
+                            CompetitionStatus::Finished => ['done', __('Finished')],
+                            default => ['none', __('Draft')],
+                        };
+                    @endphp
+
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="competition-row-{{ $competition->id }}">
+                        <td class="px-4 py-2">
+                            <a href="{{ route('admin.competitions.show', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center text-[15px] font-bold underline-offset-4 hover:underline">{{ $competition->name }}</a>
+                        </td>
+                        <td class="px-4 py-2 font-mono tabular-nums">{{ $competition->date->format('d.m.Y.') }}</td>
+                        <td class="px-4 py-2">{{ $competition->venue }}</td>
+                        <td class="px-4 py-2"><x-arena.status :state="$statusState" :label="$statusLabel" /></td>
+                        <td class="px-4 py-2 text-end">
+                            <a href="{{ route('admin.competitions.show', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1 font-semibold">
+                                {{ __('Open') }}<flux:icon.arrow-right class="size-4" />
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
+
+    <flux:pagination :paginator="$this->competitions" />
 
     <flux:modal name="competition-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">

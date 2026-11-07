@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Ždrijeb, popis kategorija</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#121621}
+@keyframes ar-in{from{opacity:0;transform:translateX(-22px) skewX(-8deg)}to{opacity:1;transform:none}}
+@keyframes ar-sweep{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(420%) skewX(-20deg)}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 8px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;overflow:hidden;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif">
+
+  <header style="height:56px;display:flex;align-items:center;gap:6px;padding:0 12px 0 4px;border-bottom:1px solid #262D3F">
+    <a href="#" aria-label="Sva natjecanja" style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;letter-spacing:.03em;text-transform:uppercase">Zimski kup Zadra 2026</span>
+  </header>
+  <nav aria-label="Odjeljci natjecanja" style="display:flex;gap:4px;overflow-x:auto;padding:0 8px;border-bottom:1px solid #262D3F;background:#0D1018">
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Kategorije</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Natjecatelji</a>
+    <a href="#" aria-current="page" data-test="tab-draw" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:inset 0 -4px 0 #D9FF3D">Ždrijeb</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Satnica</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Rezultati</a>
+  </nav>
+
+  <section style="padding:18px 16px 0;display:flex;flex-direction:column;gap:10px">
+    <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:40px;line-height:1">ŽDRIJEB</h1>
+    <h2 style="margin:6px 0 0;display:flex;align-items:center;gap:8px;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em;color:#D9FF3D"><span aria-hidden="true" style="width:9px;height:9px;border-radius:50%;background:#D9FF3D;animation:ar-pulse 1.6s infinite"></span>SE IGRA SADA</h2>
+    <sc-for list="{{now}}" as="n" hint-placeholder-count="3">
+      <a href="#" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;min-height:64px;padding:8px 12px;background:#121621;border:1px solid #262D3F;box-shadow:inset 4px 0 0 #D9FF3D;animation:ar-in .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{n.delay}}">
+        <div aria-hidden="true" style="position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);animation:ar-sweep 4s ease-in-out infinite;animation-delay:{{n.delay}}"></div>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:24px;line-height:1;background:#F3F5F9;color:#0A0C11;padding:2px 8px;transform:skewX(-10deg)">{{n.t}}</span>
+        <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-weight:700;font-size:14px">{{n.cat}}</span><span style="font-size:12px;color:#A0A8BA">{{n.round}}</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+      </a>
+    </sc-for>
+  </section>
+
+  <section style="padding:24px 16px 0;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.06em">SVE KATEGORIJE</h2>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">125</span>
+    </div>
+    <div role="radiogroup" aria-label="Disciplina" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+      <button role="radio" aria-checked="true" style="min-height:44px;border:1px solid #F3F5F9;background:#F3F5F9;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.08em;transform:skewX(-10deg)">SVE</button>
+      <button role="radio" aria-checked="false" style="min-height:44px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.08em;transform:skewX(-10deg)">KATA</button>
+      <button role="radio" aria-checked="false" style="min-height:44px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.08em;transform:skewX(-10deg)">KUMITE</button>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+        <a href="#" class="ar-row" style="display:flex;align-items:center;gap:10px;min-height:56px;padding:6px 4px;border-top:1px solid #1A2030;animation:ar-in .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{r.delay}}">
+          <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-weight:600;font-size:14px">{{r.name}}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">{{r.meta}}</span></span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.08em;color:{{r.color}};white-space:nowrap"><span aria-hidden="true" style="width:9px;height:9px;box-sizing:border-box;background:{{r.fill}};border:{{r.ring}};clip-path:{{r.shape}};border-radius:{{r.radius}}"></span>{{r.state}}</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = {
+      done: { state: 'ZAVRŠENO', color: '#C9CFDB', fill: '#C9CFDB', ring: '0', shape: 'none', radius: '0' },
+      ready: { state: 'ŽDRIJEB GOTOV', color: '#9DB8FF', fill: '#5B8CFF', ring: '0', shape: 'polygon(50% 0,100% 50%,50% 100%,0 50%)', radius: '0' },
+      none: { state: 'NEMA ŽDRIJEBA', color: '#A0A8BA', fill: 'transparent', ring: '2px dashed #A0A8BA', shape: 'none', radius: '50%' }
+    };
+    const rows = [
+      ['Kadeti - Kumite -57 kg','KUMITE · 7 · T1','done'],['Kadetkinje - Kumite -47 kg','KUMITE · 5 · T2','ready'],
+      ['Kadetkinje - Kumite +54 kg','KUMITE · 4 · T4','ready'],['Kadeti - Kata','KATA · 11 · T2','ready'],
+      ['U12 - Učenice - Kata','KATA · 6 · T2','done'],['Juniorke - Kumite -59 kg','KUMITE · 5 · T3','done'],
+      ['Juniori - Kumite -68 kg','KUMITE · 8 · T1','ready'],['Veterani 45+ - Kata','KATA · 0 · —','none']
+    ];
+    return {
+      now: [
+        { t: 'T1', cat: 'Kadeti - Kumite -52 kg', round: 'Polufinale · borba 6 od 9', delay: '.05s' },
+        { t: 'T2', cat: 'U10 - Mlađe učenice - Kata', round: '1. kolo · borba 4 od 7', delay: '.15s' },
+        { t: 'T3', cat: 'Veterani 35+ - Kumite +85 kg', round: 'Repasaž · borba 2 od 3', delay: '.25s' }
+      ],
+      rows: rows.map(([name, meta, s], i) => Object.assign({ name, meta, delay: (0.3 + i * 0.05).toFixed(2) + 's' }, st[s]))
+    };
+  }
+}
+</script>
+</body>
+</html>

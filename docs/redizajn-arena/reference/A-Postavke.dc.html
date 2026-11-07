@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Postavke računa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+@keyframes ar-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ar-check{0%{transform:scale(0) rotate(-45deg)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:28px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+    <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:52px;line-height:.9">POSTAVKE</h1>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+      <nav aria-label="Postavke" style="flex:1 1 200px;max-width:100%;display:flex;flex-direction:column;gap:2px">
+        <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;color:#C9CFDB;border:1px solid transparent">Profil</a>
+        <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;color:#C9CFDB;border:1px solid transparent">Sigurnost</a>
+        <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;font-weight:700;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D">Izgled</a>
+        <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;color:#FF4D57">Brisanje računa</a>
+      </nav>
+
+      <div style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
+        <section style="background:#121621;border:1px solid #262D3F;padding:18px;display:flex;flex-direction:column;gap:14px;animation:ar-in .5s ease-out both">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:26px;letter-spacing:.04em">IZGLED</h2>
+            <p style="margin:0;font-size:14px;color:#A0A8BA">Vrijedi za admin, konzolu tatamija i javne stranice na ovom uređaju.</p>
+          </div>
+          <div role="radiogroup" aria-label="Tema" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px">
+            <sc-for list="{{themes}}" as="t" hint-placeholder-count="3">
+              <button role="radio" aria-checked="{{t.on}}" style="position:relative;display:flex;flex-direction:column;gap:10px;padding:10px;border:2px solid {{t.border}};background:#0D1018;color:#F3F5F9;text-align:left">
+                <span aria-hidden="true" style="display:flex;flex-direction:column;gap:6px;height:110px;padding:10px;box-sizing:border-box;background:{{t.bg}};border:1px solid {{t.line}};overflow:hidden">
+                  <span style="display:block;width:60%;height:12px;background:{{t.ink}}"></span>
+                  <span style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));height:34px"><span style="background:#E8202E;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)"></span><span style="background:#2C62F0;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);margin-left:-4px"></span></span>
+                  <span style="display:block;width:40%;height:10px;background:#D9FF3D;border:{{t.voltBorder}}"></span>
+                  <span style="display:block;width:80%;height:6px;background:{{t.muted}}"></span>
+                </span>
+                <span style="display:flex;align-items:center;justify-content:space-between;min-height:28px"><span style="font-weight:700;font-size:15px">{{t.label}}</span>
+                  <sc-if value="{{t.on}}" hint-placeholder-val="{{false}}"><span style="width:24px;height:24px;display:grid;place-items:center;background:#D9FF3D;color:#0A0C11;animation:ar-check .4s cubic-bezier(.3,1.5,.5,1) both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span></sc-if>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+          <label style="display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px;cursor:pointer"><input type="checkbox" style="width:18px;height:18px;accent-color:#D9FF3D">Smanji animacije i na ovom uređaju (inače prati postavku sustava)</label>
+        </section>
+
+        <section style="background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .1s both">
+          <div style="padding:14px 18px;border-bottom:1px solid #262D3F"><h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em">SIGURNOST UKRATKO</h2></div>
+          <sc-for list="{{security}}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;min-height:56px;padding:0 18px;border-bottom:1px solid #1A2030">
+              <span aria-hidden="true" style="width:10px;height:10px;box-sizing:border-box;background:{{s.fill}};border:{{s.ring}};border-radius:{{s.radius}}"></span>
+              <span style="display:flex;flex-direction:column;flex:1"><span style="font-weight:600;font-size:14px">{{s.title}}</span><span style="font-size:12px;color:#A0A8BA">{{s.sub}}</span></span>
+              <a href="#" style="min-height:40px;display:flex;align-items:center;padding:0 12px;border:1px solid #3A4257;font-size:13px;font-weight:600">{{s.action}}</a>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      themes: [
+        { label: 'Svijetla', on: false, border: '#3A4257', bg: '#F2F3F6', line: '#D3D8E2', ink: '#0A0C11', muted: '#9AA2B4', voltBorder: '1px solid #0A0C11' },
+        { label: 'Tamna', on: true, border: '#D9FF3D', bg: '#0A0C11', line: '#262D3F', ink: '#F3F5F9', muted: '#3A4257', voltBorder: '0' },
+        { label: 'Prema sustavu', on: false, border: '#3A4257', bg: 'linear-gradient(135deg,#F2F3F6 0 50%,#0A0C11 50% 100%)', line: '#3A4257', ink: '#8C94A6', muted: '#8C94A6', voltBorder: '0' }
+      ],
+      security: [
+        { title: 'Lozinka', sub: 'Promjena lozinke računa', action: 'Promijeni', fill: '#3DDC84', ring: '0', radius: '0' },
+        { title: 'Dvofaktorska prijava (2FA)', sub: 'Uključena · aplikacija za autentifikaciju', action: 'Upravljaj', fill: '#3DDC84', ring: '0', radius: '0' },
+        { title: 'Passkeyevi', sub: '2 uređaja: MacBook, iPhone', action: 'Upravljaj', fill: '#3DDC84', ring: '0', radius: '0' },
+        { title: 'Kodovi za oporavak', sub: 'Spremi ih na sigurno mjesto, svaki vrijedi jednom', action: 'Prikaži kodove', fill: '#3DDC84', ring: '0', radius: '0' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

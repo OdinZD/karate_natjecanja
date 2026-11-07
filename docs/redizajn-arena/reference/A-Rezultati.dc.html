@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Rezultati</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+@keyframes ar-in{from{opacity:0;transform:translateX(-22px) skewX(-8deg)}to{opacity:1;transform:none}}
+@keyframes ar-medal{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.2) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 9px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;overflow:hidden;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif">
+
+  <header style="height:56px;display:flex;align-items:center;gap:6px;padding:0 12px 0 4px;border-bottom:1px solid #262D3F">
+    <a href="#" aria-label="Sva natjecanja" style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;letter-spacing:.03em;text-transform:uppercase">Zimski kup Zadra 2026</span>
+  </header>
+  <nav aria-label="Odjeljci natjecanja" style="display:flex;gap:4px;overflow-x:auto;padding:0 8px;border-bottom:1px solid #262D3F;background:#0D1018">
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Ždrijeb</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Satnica</a>
+    <a href="#" aria-current="page" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:inset 0 -4px 0 #D9FF3D">Rezultati</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Poredak</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Natjecatelji</a>
+  </nav>
+
+  <section style="padding:18px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:40px;line-height:1">REZULTATI</h1>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">41 / 125 ZAVRŠENO</span>
+    </div>
+    <div role="radiogroup" aria-label="Disciplina" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+      <sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{f.on}}" onClick="{{f.pick}}" style="min-height:44px;border:1px solid {{f.border}};background:{{f.bg}};color:{{f.fg}};font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;letter-spacing:.08em;transform:skewX(-10deg)">{{f.label}}</button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding:16px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{cards}}" as="c" hint-placeholder-count="4">
+      <article style="background:#121621;border:1px solid #262D3F;animation:ar-in .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{c.delay}}">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 12px 10px;border-bottom:1px solid #1A2030">
+          <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+            <span style="font-weight:700;font-size:15px">{{c.name}}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">{{c.meta}}</span>
+          </div>
+          <sc-if value="{{c.done}}" hint-placeholder-val="{{true}}"><span style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.1em;border:1px solid #3A4257;padding:4px 8px"><span aria-hidden="true" style="width:8px;height:8px;background:#C9CFDB"></span>ZAVRŠENO</span></sc-if>
+          <sc-if value="{{c.live}}" hint-placeholder-val="{{false}}"><span style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.1em;background:#D9FF3D;color:#0A0C11;padding:4px 8px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:7px;height:7px;border-radius:50%;background:#0A0C11;animation:ar-pulse 1.6s infinite"></span>U TIJEKU</span></sc-if>
+        </div>
+        <sc-if value="{{c.done}}" hint-placeholder-val="{{true}}">
+          <div style="display:flex;flex-direction:column;padding:4px 12px 8px">
+            <sc-for list="{{c.podium}}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:12px;min-height:46px;border-bottom:1px solid #1A2030">
+                <span aria-label="{{p.label}}" style="flex:none;width:30px;height:30px;box-sizing:border-box;border-radius:50%;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:16px;background:{{p.bg}};border:{{p.border}};color:{{p.fg}};animation:ar-medal .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:{{p.delay}}">{{p.n}}</span>
+                <span style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-weight:{{p.w}};font-size:{{p.size}}">{{p.name}}</span><span style="font-size:12px;color:#A0A8BA">{{p.club}}</span></span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{c.live}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px">
+            <div style="display:flex;gap:6px" aria-hidden="true">
+              <span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:2px dashed #3A4257"></span><span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:2px dashed #3A4257"></span><span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:2px dashed #3A4257"></span><span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:2px dashed #3A4257"></span>
+            </div>
+            <a href="#" style="min-height:44px;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#D9FF3D">{{c.liveText}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+          </div>
+        </sc-if>
+      </article>
+    </sc-for>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { filter: 'all' }; }
+  renderVals() {
+    const f = this.state.filter;
+    const medal = (n, name, club, i) => {
+      const gold = n === '1', silver = n === '2';
+      return { n, name, club, label: n + '. mjesto',
+        bg: gold ? '#E9B949' : 'transparent', fg: gold ? '#0A0C11' : '#F3F5F9',
+        border: gold ? '0' : (silver ? '3px solid #C9CFDB' : '3px dotted #C98A55'),
+        w: gold ? 700 : 600, size: gold ? '16px' : '14px', delay: (0.25 + i * 0.1).toFixed(2) + 's' };
+    };
+    const all = [
+      { d: 'kumite', name: 'Kadeti - Kumite -52 kg', meta: 'KUMITE · 9 NATJ. · T1', done: false, live: true, liveText: 'Polufinale sada, finale oko 11:05' },
+      { d: 'kata', name: 'U12 - Učenice - Kata', meta: 'KATA · 6 NATJ. · T2', done: true, live: false,
+        podium: [['1','Mia Horvat','KK Optimist'],['2','Nika Tomić','KK Mladost'],['3','Lana Babić','KK Jadran']] },
+      { d: 'kumite', name: 'Kadeti - Kumite -57 kg', meta: 'KUMITE · 7 NATJ. · T1', done: true, live: false,
+        podium: [['1','Dario Vidović','KK Jadran'],['2','Toni Lovrić','KK Optimist'],['3','Dino Šarić','KK Sokol'],['3','Bruno Kalinić','KK Zrinski']] },
+      { d: 'kumite', name: 'Juniorke - Kumite -59 kg', meta: 'KUMITE · 5 NATJ. · T3', done: true, live: false,
+        podium: [['1','Sara Knežević','KK Sokol'],['2','Iva Perković','KK Neretva'],['3','Lucija Pavić','KK Optimist'],['3','Dora Klarić','KK Jadran']] }
+    ];
+    const list = all.filter((c) => f === 'all' || c.d === f);
+    return {
+      filters: [['all','SVE'],['kata','KATA'],['kumite','KUMITE']].map(([id, label]) => ({
+        label, on: f === id,
+        bg: f === id ? '#F3F5F9' : 'transparent', fg: f === id ? '#0A0C11' : '#F3F5F9', border: f === id ? '#F3F5F9' : '#3A4257',
+        pick: () => this.setState({ filter: id })
+      })),
+      cards: list.map((c, i) => Object.assign({}, c, {
+        delay: (i * 0.1).toFixed(2) + 's',
+        podium: (c.podium || []).map((p, j) => medal(p[0], p[1], p[2], j))
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

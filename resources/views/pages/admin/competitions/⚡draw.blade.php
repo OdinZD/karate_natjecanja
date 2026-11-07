@@ -185,65 +185,90 @@ new #[Title('Draw')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6">
-        <flux:link :href="route('admin.competitions.show', $competition)" wire:navigate class="text-sm">
-            &larr; {{ $competition->name }}
-        </flux:link>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <flux:heading size="xl" level="1">{{ __('Draw') }}</flux:heading>
-            <div class="flex flex-wrap items-center gap-2">
-                @if ($this->categories->contains(fn ($category) => $category->any_bouts_count > 0))
-                    <flux:button icon="document-arrow-down" :href="route('admin.competitions.draw.pdf', $competition)" target="_blank" data-test="draw-pdf-link">
-                        {{ __('All draws (PDF)') }}
-                    </flux:button>
-                @endif
-                <flux:button variant="primary" icon="sparkles" wire:click="generateAll" wire:confirm="{{ __('Generate draws for all categories that do not have one yet?') }}" data-test="generate-all-button">
-                    {{ __('Generate all') }}
-                </flux:button>
-            </div>
-        </div>
+<section class="w-full min-w-0 space-y-5">
+    <div class="space-y-1">
+        <a href="{{ route('admin.competitions.show', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+            <flux:icon.chevron-left class="size-4" />{{ $competition->name }}
+        </a>
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Draw') }}</h1>
     </div>
 
-    <flux:table>
-        <flux:table.columns>
-            <flux:table.column>{{ __('Category') }}</flux:table.column>
-            <flux:table.column>{{ __('Discipline') }}</flux:table.column>
-            <flux:table.column>{{ __('Entries') }}</flux:table.column>
-            <flux:table.column>{{ __('Draw') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.steps :competition="$competition" current="draw" />
 
-        <flux:table.rows>
-            @foreach ($this->categories as $category)
-                <flux:table.row :key="$category->id">
-                    <flux:table.cell>{{ $category->name }}</flux:table.cell>
-                    <flux:table.cell>{{ __(Str::headline($category->discipline->value)) }}</flux:table.cell>
-                    <flux:table.cell>{{ $category->entries_count }}</flux:table.cell>
-                    <flux:table.cell>
-                        @if ($category->any_bouts_count === 0)
-                            <flux:badge size="sm" color="zinc">{{ __('No draw') }}</flux:badge>
-                        @else
-                            <flux:badge size="sm" color="green">
-                                {{ __(':played of :total bouts played', ['played' => $category->played_bouts_count, 'total' => $category->bouts_count]) }}
-                            </flux:badge>
-                        @endif
-                    </flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        @if ($category->any_bouts_count === 0)
-                            <flux:button size="sm" variant="ghost" icon="numbered-list" wire:click="openSeeds({{ $category->id }})" :tooltip="__('Seeds')" />
-                            <flux:button size="sm" variant="ghost" icon="play" wire:click="generate({{ $category->id }})" :tooltip="__('Generate draw')" data-test="generate-button-{{ $category->id }}" />
-                        @else
-                            <flux:button size="sm" variant="ghost" icon="eye" :href="route('admin.competitions.bracket', [$competition, $category])" wire:navigate :tooltip="__('Show bracket')" />
-                            <flux:button size="sm" variant="ghost" icon="document-arrow-down" :href="route('admin.competitions.bracket.pdf', [$competition, $category])" target="_blank" :tooltip="__('Print PDF')" data-test="bracket-pdf-link-{{ $category->id }}" />
-                            <flux:button size="sm" variant="ghost" icon="arrow-path" wire:click="generate({{ $category->id }})" wire:confirm="{{ __('Generate a new draw? The current one will be replaced.') }}" :tooltip="__('Regenerate draw')" />
-                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="delete({{ $category->id }})" wire:confirm="{{ __('Delete the draw of this category?') }}" :tooltip="__('Delete draw')" />
-                        @endif
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforeach
-        </flux:table.rows>
-    </flux:table>
+    <div class="flex flex-wrap items-center gap-2">
+        @if ($this->categories->contains(fn ($category) => $category->any_bouts_count > 0))
+            <x-arena.button variant="secondary" icon="document-arrow-down" :href="route('admin.competitions.draw.pdf', $competition)" target="_blank" data-test="draw-pdf-link">{{ __('All draws (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></x-arena.button>
+        @endif
+
+        <x-arena.button icon="sparkles" wire:click="generateAll" wire:confirm="{{ __('Generate draws for all categories that do not have one yet?') }}" data-test="generate-all-button">{{ __('Generate all') }}</x-arena.button>
+    </div>
+
+    <p class="text-sm text-arena-muted">{{ __(':count of :total categories drawn', ['count' => $this->categories->where('any_bouts_count', '>', 0)->count(), 'total' => $this->categories->count()]) }}</p>
+
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Category') }}</th>
+                    <th scope="col" class="px-4 py-3 font-semibold text-end">{{ __('Entries') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Draw') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach ($this->categories as $category)
+                    @php
+                        $locked = $category->played_bouts_count > 0;
+
+                        $drawState = match (true) {
+                            $category->any_bouts_count === 0 => 'none',
+                            $category->played_bouts_count === $category->bouts_count => 'done',
+                            $category->played_bouts_count > 0 => 'live',
+                            default => 'drawn',
+                        };
+                    @endphp
+
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="draw-row-{{ $category->id }}">
+                        <td class="px-4 py-2">
+                            <div class="font-bold">{{ $category->name }}</div>
+                            <div class="text-xs text-arena-muted">{{ __(Str::headline($category->discipline->value)) }}</div>
+                        </td>
+                        <td class="px-4 py-2 text-end font-mono tabular-nums">{{ $category->entries_count }}</td>
+                        <td class="px-4 py-2">
+                            @if ($category->any_bouts_count === 0)
+                                <x-arena.status state="none" :label="__('No draw')" />
+                            @else
+                                <x-arena.status :state="$drawState" :label="__(':played of :total bouts played', ['played' => $category->played_bouts_count, 'total' => $category->bouts_count])" />
+                            @endif
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                            @if ($category->any_bouts_count === 0)
+                                <x-arena.button variant="ghost" icon="numbered-list" class="min-w-11" :aria-label="__('Seeds')" wire:click="openSeeds({{ $category->id }})" />
+                                <x-arena.button variant="secondary" icon="play" wire:click="generate({{ $category->id }})" data-test="generate-button-{{ $category->id }}">{{ __('Generate draw') }}</x-arena.button>
+                            @else
+                                <x-arena.button variant="secondary" icon="eye" :href="route('admin.competitions.bracket', [$competition, $category])" wire:navigate>{{ __('Show bracket') }}</x-arena.button>
+                                <x-arena.button variant="ghost" icon="document-arrow-down" class="min-w-11" :href="route('admin.competitions.bracket.pdf', [$competition, $category])" target="_blank" :aria-label="__('Print PDF').' ('.__('Opens in a new tab').')'" data-test="bracket-pdf-link-{{ $category->id }}" />
+
+                                <flux:dropdown align="end">
+                                    <x-arena.button variant="ghost" icon="ellipsis-horizontal" class="min-w-11" :aria-label="__('More actions')" />
+
+                                    <flux:menu>
+                                        <flux:menu.item icon="arrow-path" :disabled="$locked" :aria-describedby="$locked ? 'draw-lock-'.$category->id : null" wire:click="generate({{ $category->id }})" wire:confirm="{{ __('Generate a new draw? The current one will be replaced.') }}">{{ __('Regenerate draw') }}</flux:menu.item>
+                                        <flux:menu.item icon="trash" variant="danger" :disabled="$locked" :aria-describedby="$locked ? 'draw-lock-'.$category->id : null" wire:click="delete({{ $category->id }})" wire:confirm="{{ __('Delete the draw of this category?') }}">{{ __('Delete draw') }}</flux:menu.item>
+
+                                        @if ($locked)
+                                            <div id="draw-lock-{{ $category->id }}" class="px-3 py-2 text-xs text-arena-muted">{{ __('Not possible: :count bouts have been played', ['count' => $category->played_bouts_count]) }}</div>
+                                        @endif
+                                    </flux:menu>
+                                </flux:dropdown>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
 
     <flux:modal name="draw-seeds" class="md:w-[28rem]">
         <form wire:submit="saveSeeds" class="space-y-6">
@@ -258,7 +283,7 @@ new #[Title('Draw')] class extends Component {
                         <flux:input wire:model="seeds.{{ $entry->id }}" type="number" min="1" class="w-20" />
                         <div class="min-w-0">
                             <div class="truncate text-sm font-medium">{{ $entry->competitor->last_name }} {{ $entry->competitor->first_name }}</div>
-                            <div class="truncate text-xs text-zinc-500">{{ $entry->competitor->club->name }}</div>
+                            <div class="truncate text-xs text-arena-muted">{{ $entry->competitor->club->name }}</div>
                         </div>
                     </div>
                 @endforeach
@@ -266,7 +291,7 @@ new #[Title('Draw')] class extends Component {
 
             <flux:error name="seeds" />
             @error('seeds.*')
-                <flux:text class="text-sm text-red-600">{{ $message }}</flux:text>
+                <flux:text class="text-sm text-arena-aka-text">{{ $message }}</flux:text>
             @enderror
 
             <div class="flex">

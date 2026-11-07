@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-arena-bg text-arena-ink">
+        @php
+            $link = 'flex min-h-11 items-center gap-2.5 px-2.5 text-sm font-semibold';
+            $linkOn = 'bg-arena-surface-2 text-arena-ink shadow-[inset_4px_0_0_var(--arena-focus)]';
+            $linkOff = 'text-arena-muted hover:text-arena-ink';
+
+            $platform = [
+                ['label' => __('Dashboard'), 'href' => route('dashboard'), 'current' => request()->routeIs('dashboard'), 'icon' => 'home', 'show' => true],
+                ['label' => __('Tatami'), 'href' => route('tatami.index'), 'current' => request()->routeIs('tatami.*'), 'icon' => 'computer-desktop', 'show' => auth()->user()->isAdmin() || auth()->user()->tatamis()->exists()],
+            ];
+
+            $administration = [
+                ['label' => __('Competitions'), 'href' => route('admin.competitions.index'), 'current' => request()->routeIs('admin.competitions.*'), 'icon' => 'trophy'],
+                ['label' => __('Clubs'), 'href' => route('admin.clubs.index'), 'current' => request()->routeIs('admin.clubs.*'), 'icon' => 'building-office'],
+                ['label' => __('Competitors'), 'href' => route('admin.competitors.index'), 'current' => request()->routeIs('admin.competitors.*'), 'icon' => 'user-group'],
+                ['label' => __('Users'), 'href' => route('admin.users.index'), 'current' => request()->routeIs('admin.users.*'), 'icon' => 'users'],
+            ];
+        @endphp
+
+        <flux:sidebar sticky collapsible="mobile" role="complementary" aria-label="{{ config('app.name', 'Organizacija natjecanja') }}" class="border-e border-arena-line! bg-arena-bg-2!">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <a href="{{ route('dashboard') }}" wire:navigate class="flex min-h-11 items-center px-2">
+                    <x-arena.logo size="sm" />
+                </a>
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-
-                    @if (auth()->user()->isAdmin() || auth()->user()->tatamis()->exists())
-                        <flux:sidebar.item icon="computer-desktop" :href="route('tatami.index')" :current="request()->routeIs('tatami.*')" wire:navigate>
-                            {{ __('Tatami') }}
-                        </flux:sidebar.item>
+            <nav aria-label="{{ __('Main menu') }}" class="flex flex-col gap-0.5">
+                @foreach ($platform as $item)
+                    @if ($item['show'])
+                        <a href="{{ $item['href'] }}" wire:navigate @class([$link, $linkOn => $item['current'], $linkOff => ! $item['current']]) @if ($item['current']) aria-current="page" @endif>
+                            <flux:icon :icon="$item['icon']" class="size-[18px]" />{{ $item['label'] }}
+                        </a>
                     @endif
-                </flux:sidebar.group>
+                @endforeach
 
                 @can('admin')
-                    <flux:sidebar.group :heading="__('Administration')" class="grid">
-                        <flux:sidebar.item icon="trophy" :href="route('admin.competitions.index')" :current="request()->routeIs('admin.competitions.*')" wire:navigate>
-                            {{ __('Competitions') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="building-office" :href="route('admin.clubs.index')" :current="request()->routeIs('admin.clubs.*')" wire:navigate>
-                            {{ __('Clubs') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="user-group" :href="route('admin.competitors.index')" :current="request()->routeIs('admin.competitors.*')" wire:navigate>
-                            {{ __('Competitors') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
-                            {{ __('Users') }}
-                        </flux:sidebar.item>
-                    </flux:sidebar.group>
+                    <span class="px-2.5 pb-1.5 pt-3.5 text-[11px] uppercase tracking-[.14em] text-arena-muted">{{ __('Administration') }}</span>
+
+                    @foreach ($administration as $item)
+                        <a href="{{ $item['href'] }}" wire:navigate @class([$link, $linkOn => $item['current'], $linkOff => ! $item['current']]) @if ($item['current']) aria-current="page" @endif>
+                            <flux:icon :icon="$item['icon']" class="size-[18px]" />{{ $item['label'] }}
+                        </a>
+                    @endforeach
                 @endcan
-            </flux:sidebar.nav>
+            </nav>
 
             <flux:spacer />
 
@@ -47,8 +56,12 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
+        <flux:header class="border-b border-arena-line! bg-arena-bg-2! lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+
+            <a href="{{ route('dashboard') }}" wire:navigate class="flex min-h-11 items-center px-2">
+                <x-arena.logo size="sm" />
+            </a>
 
             <flux:spacer />
 

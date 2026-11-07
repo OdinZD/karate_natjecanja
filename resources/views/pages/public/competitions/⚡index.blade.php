@@ -44,17 +44,24 @@ new #[Layout('layouts::public'), Title('Competitions')] class extends Component 
 }; ?>
 
 <section class="w-full">
-    <h1 class="ps-title text-5xl md:text-7xl">{{ __('Competitions') }}</h1>
-    <p class="mt-3 max-w-prose text-lg ps-muted">{{ __('Draw, schedule and results of local karate competitions.') }}</p>
+    <div class="arena-stripes relative -mx-4 overflow-hidden px-4 pb-6 pt-7 md:mx-0 md:px-8 md:py-12">
+        <div aria-hidden="true" class="absolute -right-[30px] top-0 h-full w-[110px] -skew-x-14 bg-arena-aka"></div>
+        <div aria-hidden="true" class="absolute -right-[100px] top-0 h-full w-[100px] -skew-x-14 bg-arena-ao"></div>
 
-    <div class="mt-10 space-y-12">
+        <div class="relative flex max-w-[290px] flex-col gap-2.5 md:max-w-xl">
+            <h1 class="animate-arena-in break-words font-display text-[64px] font-black uppercase leading-[.85] text-arena-ink md:text-7xl">{{ __('Competitions') }}</h1>
+            <p class="text-[15px] leading-snug text-arena-muted">{{ __('Draw, schedule and results of local karate competitions.') }}</p>
+        </div>
+    </div>
+
+    <div class="mt-6 space-y-10">
         <div>
-            <h2 class="ps-subtitle mb-3">{{ __('Current and upcoming') }}</h2>
+            <x-arena.section-title class="mb-3">{{ __('Current and upcoming') }}</x-arena.section-title>
 
             @if ($this->upcoming->isEmpty())
-                <p class="ps-panel p-5 ps-muted">{{ $this->finished->total() > 0 ? __('There are no current or upcoming competitions right now.') : __('There are no published competitions right now.') }}</p>
+                <x-arena.card variant="dashed" class="p-5">{{ $this->finished->total() > 0 ? __('There are no current or upcoming competitions right now.') : __('There are no published competitions right now.') }}</x-arena.card>
             @else
-                <div class="ps-panel overflow-hidden">
+                <div class="grid gap-3">
                     @foreach ($this->upcoming as $competition)
                         @include('pages.public.competitions.partials.fixture', ['competition' => $competition])
                     @endforeach
@@ -64,9 +71,9 @@ new #[Layout('layouts::public'), Title('Competitions')] class extends Component 
 
         @if ($this->finished->total() > 0)
             <div>
-                <h2 class="ps-subtitle mb-3">{{ __('Finished competitions') }}</h2>
+                <x-arena.section-title class="mb-3">{{ __('Finished competitions') }}</x-arena.section-title>
 
-                <div class="ps-panel overflow-hidden">
+                <div class="grid gap-3">
                     @foreach ($this->finished as $competition)
                         @include('pages.public.competitions.partials.fixture', ['competition' => $competition])
                     @endforeach

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Veliki ekran u dvorani</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+@keyframes ar-in{from{opacity:0;transform:translateY(30px) skewY(2deg)}to{opacity:1;transform:none}}
+@keyframes ar-sweep{0%{transform:translateX(-120%) skewX(-20deg)}55%,100%{transform:translateX(420%) skewX(-20deg)}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 16px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@keyframes ar-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ar-blink{0%,49%{opacity:1}50%,100%{opacity:.2}}
+@keyframes ar-pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:1920px;height:1080px;overflow:hidden;position:relative;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column">
+
+  <header style="height:108px;flex:none;display:flex;align-items:center;gap:28px;padding:0 40px;border-bottom:2px solid #262D3F;background:repeating-linear-gradient(-55deg,#0A0C11 0 18px,#0D1018 18px 19px)">
+    <span aria-hidden="true" style="width:56px;height:56px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span>
+    <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:64px;letter-spacing:.02em;text-transform:uppercase">Zimski kup Zadra 2026</h1>
+    <span style="display:flex;align-items:center;gap:12px;background:#D9FF3D;color:#0A0C11;font-weight:800;font-size:22px;letter-spacing:.14em;padding:10px 20px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#0A0C11;animation:ar-pulse 1.6s infinite"></span>UŽIVO</span>
+    <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:72px;letter-spacing:-.02em">{{hh}}<span style="animation:ar-blink 1s steps(1) infinite">:</span>{{mm}}</span>
+  </header>
+
+  <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:20px;padding:20px 40px">
+    <sc-for list="{{tiles}}" as="t" hint-placeholder-count="3">
+      <article style="position:relative;overflow:hidden;background:#121621;border:2px solid #262D3F;display:flex;flex-direction:column;animation:ar-in .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{t.delay}}">
+        <div aria-hidden="true" style="position:absolute;top:0;left:0;width:22%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);animation:ar-sweep 5s ease-in-out infinite;animation-delay:{{t.delay}};pointer-events:none;z-index:2"></div>
+        <div style="display:flex;align-items:center;gap:20px;padding:16px 24px">
+          <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:58px;line-height:1;background:#F3F5F9;color:#0A0C11;padding:2px 16px;transform:skewX(-10deg)">{{t.n}}</span>
+          <div style="display:flex;flex-direction:column;min-width:0">
+            <span style="font-weight:700;font-size:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{t.cat}}</span>
+            <span style="font-size:22px;color:#A0A8BA">{{t.round}}</span>
+          </div>
+        </div>
+        <div style="flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div style="background:#E8202E;clip-path:polygon(0 0,100% 0,calc(100% - 34px) 100%,0 100%);display:flex;align-items:center;justify-content:space-between;padding:0 50px 0 28px;gap:10px">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:20px;font-weight:800;letter-spacing:.18em">AKA</span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:58px;line-height:.95;text-transform:uppercase">{{t.aka}}</span><span style="font-size:24px;color:#FFE3E5">{{t.akaClub}}</span></div>
+            <sc-if value="{{t.hasScore}}" hint-placeholder-val="{{true}}"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:150px;line-height:1;animation:ar-pop .7s cubic-bezier(.3,1.6,.5,1) both;animation-delay:{{t.delay}}">{{t.akaScore}}</span></sc-if>
+          </div>
+          <div style="background:#2C62F0;clip-path:polygon(34px 0,100% 0,100% 100%,0 100%);margin-left:-17px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 50px;gap:10px">
+            <sc-if value="{{t.hasScore}}" hint-placeholder-val="{{true}}"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:150px;line-height:1;animation:ar-pop .7s cubic-bezier(.3,1.6,.5,1) both;animation-delay:{{t.delay}}">{{t.aoScore}}</span></sc-if>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0;margin-left:auto"><span style="font-size:20px;font-weight:800;letter-spacing:.18em">AO</span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:58px;line-height:.95;text-transform:uppercase">{{t.ao}}</span><span style="font-size:24px;color:#E2EAFF">{{t.aoClub}}</span></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:18px;padding:14px 24px;font-size:24px;border-top:2px solid #262D3F">
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#D9FF3D">SLIJEDI</span>
+          <span>{{t.next}}</span>
+        </div>
+      </article>
+    </sc-for>
+    <article style="position:relative;overflow:hidden;border:2px dashed #3A4257;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:32px 40px;animation:ar-in .8s cubic-bezier(.2,.8,.2,1) .45s both">
+      <div style="display:flex;align-items:center;gap:20px">
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:58px;line-height:1;border:3px solid #F3F5F9;padding:0 14px;transform:skewX(-10deg)">T4</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:64px;letter-spacing:.04em">PAUZA</span>
+      </div>
+      <span style="font-size:32px;color:#C9CFDB">Nastavak u <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#F3F5F9">10:40</span></span>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:26px">
+        <span style="color:#A0A8BA;font-size:20px;letter-spacing:.14em">PRIPREMA SE</span>
+        <span>Kadetkinje · Kumite +54 kg — 4 natjecateljice</span>
+        <span>Juniorke · Kata — 6 natjecateljica</span>
+      </div>
+    </article>
+  </div>
+
+  <div role="marquee" aria-label="Najnoviji rezultati" style="height:72px;flex:none;display:flex;align-items:center;background:#D9FF3D;color:#0A0C11;overflow:hidden">
+    <span style="flex:none;height:100%;display:flex;align-items:center;padding:0 28px;background:#0A0C11;color:#D9FF3D;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:34px;letter-spacing:.06em;z-index:1">REZULTATI</span>
+    <div style="display:flex;gap:64px;white-space:nowrap;width:max-content;animation:ar-ticker 40s linear infinite;padding-left:32px;font-size:26px;font-weight:700">
+      <sc-for list="{{ticker}}" as="r" hint-placeholder-count="6"><span>{{r}}</span></sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { now: new Date() }; }
+  componentDidMount() { this.timer = setInterval(() => this.setState({ now: new Date() }), 15000); }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const d = this.state.now;
+    const pad = (x) => String(x).padStart(2, '0');
+    const res = [
+      'U12 Učenice Kata — 1. Mia Horvat (KK Optimist) · 2. Nika Tomić (KK Mladost) · 3. Lana Babić (KK Jadran)',
+      'Juniorke Kumite −59 kg — 1. Sara Knežević (KK Sokol)',
+      'Kadeti Kumite −57 kg — 1. Dario Vidović (KK Jadran)'
+    ];
+    return {
+      hh: pad(d.getHours()), mm: pad(d.getMinutes()),
+      ticker: res.concat(res),
+      tiles: [
+        { n: 'T1', cat: 'Kadeti · Kumite −52 kg', round: 'Polufinale · borba 6 od 9', aka: 'Luka Marić', akaClub: 'KK Optimist', ao: 'Ivan Barić', aoClub: 'KK Jadran', hasScore: true, akaScore: 3, aoScore: 1, next: 'Filip Ćosić — Jakov Grgić', delay: '0s' },
+        { n: 'T2', cat: 'U10 · Mlađe učenice · Kata', round: '1. kolo · borba 4 od 7 · zastavice', aka: 'Petra Šimić', akaClub: 'KK Sokol', ao: 'Ema Jurić', aoClub: 'KK Optimist', hasScore: false, akaScore: 0, aoScore: 0, next: 'Lucija Pavić — Dora Klarić', delay: '.15s' },
+        { n: 'T3', cat: 'Veterani 35+ · Kumite +85 kg', round: 'Repasaž · borba 2 od 3', aka: 'Marko Perić', akaClub: 'KK Zrinski', ao: 'Toni Vuković', aoClub: 'KK Neretva', hasScore: true, akaScore: 0, aoScore: 2, next: 'Borba za 3. mjesto', delay: '.3s' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

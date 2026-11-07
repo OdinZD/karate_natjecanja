@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin natjecanje, detalji i tatamiji</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+@keyframes ar-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ar-chev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ar-drawer{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:24px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;color:#A0A8BA">Natjecanja / Kup Ravnih kotara 2027 · koraci se mogu raditi bilo kojim redom</span>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:46px;line-height:.9;text-transform:uppercase">Kup Ravnih kotara 2027</h1>
+          <span style="display:flex;align-items:center;gap:8px;border:1px solid #D9FF3D;color:#D9FF3D;font-weight:800;font-size:12px;letter-spacing:.12em;padding:5px 10px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:9px;height:9px;box-sizing:border-box;border:2px solid #D9FF3D;border-radius:50%"></span>PRIJAVE OTVORENE</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="#" style="min-height:44px;display:flex;align-items:center;padding:0 14px;border:1px solid #3A4257;font-size:14px;font-weight:600">Javna stranica</a>
+        <button aria-label="Više radnji: PDF ispisi, obriši natjecanje" style="width:44px;height:44px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button>
+      </div>
+    </div>
+
+    <nav aria-label="Koraci natjecanja" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:4px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+        <a href="#" aria-current="{{s.current}}" style="min-height:64px;padding:10px 22px 10px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:{{s.bg}};color:{{s.fg}};clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,12px 50%);animation:ar-chev .45s ease-out both;animation-delay:{{s.delay}}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85">{{s.n}} {{s.mark}}</span>
+          <span style="font-weight:700;font-size:15px">{{s.label}}</span>
+          <span style="font-size:12px;opacity:.8">{{s.sub}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:1 1 360px;min-width:0;background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .1s both">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #262D3F">
+          <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">01 · DETALJI</h2>
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#3DDC84"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>Spremljeno</span>
+        </div>
+        <div style="padding:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+          <sc-for list="{{fields}}" as="f" hint-placeholder-count="7">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.08em;color:#A0A8BA;grid-column:{{f.span}}">{{f.label}}
+              <input defaultValue="{{f.v}}" type="{{f.type}}" style="min-height:44px;padding:0 12px;background:#0A0C11;border:1px solid #3A4257;color:#F3F5F9;font:inherit;font-size:15px;letter-spacing:0;color-scheme:dark">
+            </label>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding:0 16px 16px"><button style="min-height:44px;padding:0 16px;border:1px solid #F3F5F9;background:transparent;color:#F3F5F9;font-weight:700">Spremi promjene</button></div>
+      </section>
+
+      <section style="flex:1.3 1 460px;min-width:0;display:flex;flex-direction:column;gap:12px;animation:ar-in .5s ease-out .18s both">
+        <div style="background:#121621;border:2px solid #D9FF3D">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #262D3F">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#D9FF3D">SADAŠNJI KORAK</span>
+              <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">02 · TATAMIJI I OPERATERI</h2>
+            </div>
+            <button style="min-height:44px;display:flex;align-items:center;gap:6px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600;font-size:14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Dodaj tatami</button>
+          </div>
+          <sc-for list="{{tatamis}}" as="t" hint-placeholder-count="4">
+            <div class="ar-row" style="display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #1A2030;background:{{t.rowBg}}">
+              <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:26px;text-align:center;background:#F3F5F9;color:#0A0C11;transform:skewX(-10deg)">{{t.n}}</span>
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <span style="font-weight:600;font-size:14px">{{t.name}}</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <sc-for list="{{t.ops}}" as="o" hint-placeholder-count="1"><span style="font-size:12px;padding:2px 8px;border:1px solid #3A4257">{{o}}</span></sc-for>
+                  <sc-if value="{{t.noOps}}" hint-placeholder-val="{{false}}"><span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#FFB15C"><span aria-hidden="true" style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid #FFB15C"></span>Nema operatera</span></sc-if>
+                </div>
+              </div>
+              <button style="min-height:40px;padding:0 12px;border:1px solid {{t.btnBorder}};background:{{t.btnBg}};color:{{t.btnFg}};font-size:13px;font-weight:700">Operateri</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <div role="dialog" aria-label="Operateri za Tatami 4" style="background:#121621;border:1px solid #3A4257;box-shadow:0 20px 50px rgba(0,0,0,.5);animation:ar-drawer .4s cubic-bezier(.2,.8,.2,1) .4s both">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #262D3F">
+            <h3 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:20px;letter-spacing:.04em">OPERATERI · TATAMI 4</h3>
+            <span style="font-size:12px;color:#A0A8BA">korisnici s ulogom Tatami operater</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:0">
+            <sc-for list="{{users}}" as="u" hint-placeholder-count="4">
+              <label style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 16px;border-bottom:1px solid #1A2030;font-size:14px;cursor:pointer"><input type="checkbox" defaultChecked="{{u.on}}" style="width:18px;height:18px;accent-color:#D9FF3D">{{u.name}}<span style="margin-left:auto;font-size:12px;color:#A0A8BA">{{u.note}}</span></label>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 16px">
+            <button style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600">Odustani</button>
+            <button style="min-height:44px;padding:0 16px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.06em">SPREMI</button>
+          </div>
+        </div>
+
+        <a href="#" style="min-height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border:1px solid #3A4257;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)">SLJEDEĆI KORAK: KATEGORIJE<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [['01','Detalji','24. 1. · Benkovac','done'],['02','Tatamiji','4 · 1 bez operatera','now'],['03','Kategorije','125 · Turnir','done'],['04','Prijave','212 · rok 15. 1.','todo'],['05','Ždrijeb','—','todo'],['06','Satnica','—','todo'],['07','Dan natjecanja','Sub 24. 1.','todo']];
+    return {
+      steps: steps.map(([n, label, sub, s], i) => ({ n, label, sub, current: s === 'now' ? 'step' : 'false', mark: s === 'done' ? '✓' : '',
+        bg: s === 'now' ? '#D9FF3D' : (s === 'done' ? '#1A2030' : '#0D1018'), fg: s === 'now' ? '#0A0C11' : (s === 'done' ? '#F3F5F9' : '#8C94A6'), delay: (i * 0.06) + 's' })),
+      fields: [
+        { label: 'NAZIV', v: 'Kup Ravnih kotara 2027', type: 'text', span: '1 / -1' },
+        { label: 'DATUM', v: '2027-01-24', type: 'date', span: 'auto' }, { label: 'POČETAK', v: '09:00', type: 'time', span: 'auto' },
+        { label: 'MJESTO', v: 'Sportska dvorana Benkovac', type: 'text', span: '1 / -1' },
+        { label: 'ORGANIZATOR', v: 'KK Sokol', type: 'text', span: 'auto' }, { label: 'ROK PRIJAVE', v: '2027-01-15', type: 'date', span: 'auto' }
+      ],
+      tatamis: [
+        { n: 'T1', name: 'Tatami 1 · glavni', ops: ['Ana Kovač'], noOps: false, rowBg: 'transparent', btnBorder: '#3A4257', btnBg: 'transparent', btnFg: '#F3F5F9' },
+        { n: 'T2', name: 'Tatami 2', ops: ['Marin Perić', 'Ivo Babić'], noOps: false, rowBg: 'transparent', btnBorder: '#3A4257', btnBg: 'transparent', btnFg: '#F3F5F9' },
+        { n: 'T3', name: 'Tatami 3', ops: ['Ivo Babić'], noOps: false, rowBg: 'transparent', btnBorder: '#3A4257', btnBg: 'transparent', btnFg: '#F3F5F9' },
+        { n: 'T4', name: 'Tatami 4', ops: [], noOps: true, rowBg: '#1A2030', btnBorder: '#D9FF3D', btnBg: '#D9FF3D', btnFg: '#0A0C11' }
+      ],
+      users: [
+        { name: 'Ana Kovač', note: 'T1', on: false }, { name: 'Marin Perić', note: 'T2', on: false },
+        { name: 'Ivo Babić', note: 'T2, T3', on: false }, { name: 'Petra Lončar', note: '—', on: true }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

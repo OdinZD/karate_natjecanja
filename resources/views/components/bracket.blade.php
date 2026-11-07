@@ -25,13 +25,13 @@
 
 <div {{ $attributes->class('space-y-10') }} data-test="bracket">
     @if ($bouts->isEmpty())
-        <flux:text>{{ __('No draw has been generated for this category yet.') }}</flux:text>
+        <p class="text-sm text-arena-muted">{{ __('No draw has been generated for this category yet.') }}</p>
     @else
-        <div class="snap-x snap-proximity overflow-x-auto pb-2">
+        <div class="relative snap-x snap-proximity overflow-x-auto pb-2" tabindex="0" role="region" aria-label="{{ __('Bracket') }}">
             <div class="flex min-w-max items-stretch gap-6">
                 @foreach ($main as $round => $roundBouts)
                     <div class="flex w-60 snap-start scroll-ms-4 flex-col">
-                        <flux:heading class="mb-3">{{ $roundName($round) }}</flux:heading>
+                        <div class="mb-3 font-display text-[15px] font-extrabold uppercase tracking-[.1em] text-arena-muted">{{ $roundName($round) }}</div>
 
                         <div class="flex flex-1 flex-col justify-around gap-3">
                             @foreach ($roundBouts->sortBy('position') as $bout)
@@ -45,12 +45,12 @@
 
         @if ($repechage->isNotEmpty())
             <div class="space-y-4">
-                <flux:heading size="lg">{{ __('Repechage') }}</flux:heading>
+                <x-arena.section-title>{{ __('Repechage') }}</x-arena.section-title>
 
                 <div class="grid gap-6 md:grid-cols-2">
                     @foreach ($repechage as $half => $steps)
                         <div class="space-y-3">
-                            <flux:text class="font-medium">{{ __('Half :number', ['number' => $half]) }}</flux:text>
+                            <p class="text-sm font-medium text-arena-muted">{{ __('Half :number', ['number' => $half]) }}</p>
 
                             @foreach ($steps->sortBy('round') as $bout)
                                 <x-bracket-bout :bout="$bout" :current="$bout->id === $currentBoutId" />
@@ -63,14 +63,14 @@
 
         @if ($placements->isNotEmpty())
             <div class="space-y-3">
-                <flux:heading size="lg">{{ __('Results') }}</flux:heading>
+                <x-arena.section-title>{{ __('Results') }}</x-arena.section-title>
 
                 <ol class="space-y-1">
                     @foreach ($placements as $placement)
                         <li class="flex items-baseline gap-3">
-                            <span class="w-24 text-sm text-zinc-500">{{ $placeName($placement->place) }}</span>
+                            <span class="w-24 text-sm text-arena-muted">{{ $placeName($placement->place) }}</span>
                             <span class="font-medium">{{ $label($placement->entry) }}</span>
-                            <span class="text-sm text-zinc-500">{{ $placement->entry->competitor->club->name }}</span>
+                            <span class="text-sm text-arena-muted">{{ $placement->entry->competitor->club->name }}</span>
                         </li>
                     @endforeach
                 </ol>

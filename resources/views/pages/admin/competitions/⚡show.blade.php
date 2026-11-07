@@ -151,87 +151,132 @@ new #[Title('Competition')] class extends Component {
     }
 }; ?>
 
-<section class="w-full space-y-10">
-    <div class="flex items-center justify-between">
-        <div>
-            <flux:link :href="route('admin.competitions.index')" wire:navigate class="text-sm">
-                &larr; {{ __('Competitions') }}
-            </flux:link>
-            <flux:heading size="xl" level="1">{{ $competition->name }}</flux:heading>
+<section class="w-full min-w-0 max-w-5xl space-y-6">
+    @php
+        [$statusState, $statusLabel] = match ($competition->status) {
+            CompetitionStatus::Registration => ['registration', __('Registration open')],
+            CompetitionStatus::Drawn => ['drawn', __('Draw done')],
+            CompetitionStatus::InProgress => ['live', __('In progress')],
+            CompetitionStatus::Finished => ['done', __('Finished')],
+            default => ['none', __('Draft')],
+        };
+
+        $hasDraws = $competition->categories()->whereHas('bouts')->exists();
+        $hasTimetable = $competition->categories()->whereNotNull('tatami_id')->exists();
+    @endphp
+
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            <a href="{{ route('admin.competitions.index') }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+                <flux:icon.chevron-left class="size-4" />{{ __('Competitions') }}
+            </a>
+
+            <h1 class="break-words font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ $competition->name }}</h1>
+
+            <x-arena.status :state="$statusState" :label="$statusLabel" />
         </div>
+
         <div class="flex items-center gap-2">
-            <flux:button :href="route('admin.competitions.categories', $competition)" icon="squares-2x2" wire:navigate data-test="categories-link">
-                {{ __('Categories') }}
-            </flux:button>
-            <flux:button :href="route('admin.competitions.entries', $competition)" icon="clipboard-document-list" wire:navigate data-test="entries-link">
-                {{ __('Entries') }}
-            </flux:button>
-            <flux:button :href="route('admin.competitions.draw', $competition)" icon="sparkles" wire:navigate data-test="draw-link">
-                {{ __('Draw') }}
-            </flux:button>
-            <flux:button :href="route('admin.competitions.timetable', $competition)" icon="clock" wire:navigate data-test="timetable-link">
-                {{ __('Time table') }}
-            </flux:button>
-            <flux:modal.trigger name="competition-delete">
-                <flux:button variant="danger" icon="trash">{{ __('Delete competition') }}</flux:button>
-            </flux:modal.trigger>
+            @if ($competition->status !== CompetitionStatus::Draft)
+                <x-arena.button variant="secondary" icon="arrow-up-right" :href="route('public.competitions.show', $competition)" target="_blank">{{ __('Public page') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></x-arena.button>
+            @endif
+
+            <flux:dropdown align="end">
+                <x-arena.button variant="secondary" icon="ellipsis-horizontal" :aria-label="__('More actions')" />
+
+                <flux:menu>
+                    @if ($hasDraws)
+                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.draw.pdf', $competition)" target="_blank">{{ __('All draws (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
+                    @endif
+                    @if ($hasTimetable)
+                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.timetable.pdf', $competition)" target="_blank">{{ __('Time table (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
+                    @endif
+                    @if ($hasDraws || $hasTimetable)
+                        <flux:menu.separator />
+                    @endif
+                    <flux:modal.trigger name="competition-delete">
+                        <flux:menu.item icon="trash" variant="danger">{{ __('Delete competition') }}</flux:menu.item>
+                    </flux:modal.trigger>
+                </flux:menu>
+            </flux:dropdown>
         </div>
     </div>
 
-    <form wire:submit="update" class="max-w-xl space-y-6">
-        <flux:heading size="lg">{{ __('Details') }}</flux:heading>
+    <x-arena.steps :competition="$competition" current="details" />
 
-        <flux:input wire:model="name" :label="__('Name')" type="text" required />
+    <x-arena.card tag="section" class="space-y-5 p-5">
+        <x-arena.section-title meta="01">{{ __('Details') }}</x-arena.section-title>
 
-        <div class="grid grid-cols-2 gap-4">
-            <flux:input wire:model="date" :label="__('Date')" type="date" required />
-            <flux:input wire:model="start_time" :label="__('Start time')" type="time" required />
+        <form wire:submit="update" class="space-y-5">
+            <flux:input wire:model="name" :label="__('Name')" type="text" required />
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <flux:input wire:model="date" :label="__('Date')" type="date" required />
+                <flux:input wire:model="start_time" :label="__('Start time')" type="time" required />
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <flux:input wire:model="venue" :label="__('Venue')" type="text" required />
+                <flux:input wire:model="organizer" :label="__('Organizer')" type="text" />
+            </div>
+
+            <flux:input wire:model="registration_deadline" :label="__('Registration deadline')" type="datetime-local" class="sm:max-w-xs" />
+
+            <fieldset class="space-y-2">
+                <legend class="text-sm font-medium text-arena-ink">{{ __('Status') }}</legend>
+
+                <div class="flex flex-wrap gap-2">
+                    @foreach (CompetitionStatus::cases() as $case)
+                        <x-arena.chip name="status" :value="$case->value" :label="__(Str::headline($case->value))" wire:model="status" />
+                    @endforeach
+                </div>
+
+                <flux:error name="status" />
+            </fieldset>
+
+            <x-arena.button type="submit" data-test="update-competition-button">{{ __('Save') }}</x-arena.button>
+        </form>
+    </x-arena.card>
+
+    <x-arena.card tag="section" id="tatami" class="space-y-4 p-5">
+        <x-arena.section-title meta="02">{{ __('Tatamis') }}</x-arena.section-title>
+
+        <div class="border border-arena-line">
+            @foreach ($this->tatamis as $tatami)
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-arena-line px-3 py-2.5 last:border-b-0" wire:key="tatami-row-{{ $tatami->id }}">
+                    <x-arena.tatami :number="$tatami->number" />
+
+                    <div class="min-w-0 grow basis-40 space-y-1.5">
+                        @if ($tatami->name)
+                            <div class="text-sm font-bold">{{ $tatami->name }}</div>
+                        @endif
+
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            @forelse ($tatami->operators as $operator)
+                                <span class="border border-arena-line-strong px-2 py-0.5 text-xs">{{ $operator->name }}</span>
+                            @empty
+                                <x-arena.status state="warn" :label="__('No operators')" />
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+                        <x-arena.button variant="secondary" icon="user-plus" wire:click="assignOperators({{ $tatami->id }})">{{ __('Operators') }}</x-arena.button>
+                        <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete tatami')" wire:click="deleteTatami({{ $tatami->id }})" wire:confirm="{{ __('Delete this tatami?') }}" />
+                    </div>
+                </div>
+            @endforeach
         </div>
 
-        <flux:input wire:model="venue" :label="__('Venue')" type="text" required />
-        <flux:input wire:model="organizer" :label="__('Organizer')" type="text" />
-        <flux:input wire:model="registration_deadline" :label="__('Registration deadline')" type="datetime-local" />
-
-        <flux:select wire:model="status" :label="__('Status')">
-            @foreach (CompetitionStatus::cases() as $case)
-                <flux:select.option :value="$case->value">{{ __(Str::headline($case->value)) }}</flux:select.option>
-            @endforeach
-        </flux:select>
-
-        <flux:button type="submit" variant="primary" data-test="update-competition-button">{{ __('Save') }}</flux:button>
-    </form>
-
-    <div class="max-w-xl space-y-4">
-        <flux:heading size="lg">{{ __('Tatamis') }}</flux:heading>
-
-        <flux:table>
-            <flux:table.columns>
-                <flux:table.column>{{ __('No.') }}</flux:table.column>
-                <flux:table.column>{{ __('Name') }}</flux:table.column>
-                <flux:table.column>{{ __('Operators') }}</flux:table.column>
-                <flux:table.column></flux:table.column>
-            </flux:table.columns>
-
-            <flux:table.rows>
-                @foreach ($this->tatamis as $tatami)
-                    <flux:table.row :key="$tatami->id">
-                        <flux:table.cell>{{ $tatami->number }}</flux:table.cell>
-                        <flux:table.cell>{{ $tatami->name }}</flux:table.cell>
-                        <flux:table.cell>{{ $tatami->operators->pluck('name')->join(', ') ?: '—' }}</flux:table.cell>
-                        <flux:table.cell class="text-end">
-                            <flux:button size="sm" variant="ghost" icon="user-plus" wire:click="assignOperators({{ $tatami->id }})" />
-                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="deleteTatami({{ $tatami->id }})" wire:confirm="{{ __('Delete this tatami?') }}" />
-                        </flux:table.cell>
-                    </flux:table.row>
-                @endforeach
-            </flux:table.rows>
-        </flux:table>
-
-        <form wire:submit="addTatami" class="flex items-end gap-4">
+        <form wire:submit="addTatami" class="flex flex-wrap items-end gap-4">
             <flux:input wire:model="tatamiNumber" :label="__('No.')" type="number" min="1" class="w-24" />
             <flux:input wire:model="tatamiName" :label="__('Name')" type="text" />
-            <flux:button type="submit" icon="plus" data-test="add-tatami-button">{{ __('Add tatami') }}</flux:button>
+            <x-arena.button type="submit" variant="secondary" icon="plus" data-test="add-tatami-button">{{ __('Add tatami') }}</x-arena.button>
         </form>
+    </x-arena.card>
+
+    <div class="flex justify-end">
+        <x-arena.button :href="route('admin.competitions.categories', $competition)" wire:navigate>{{ __('Next step: Categories') }} &rarr;</x-arena.button>
     </div>
 
     <flux:modal name="tatami-operators" class="md:w-96">

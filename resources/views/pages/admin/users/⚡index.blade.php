@@ -121,40 +121,45 @@ new #[Title('Users')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6 flex items-center justify-between">
-        <flux:heading size="xl" level="1">{{ __('Users') }}</flux:heading>
-        <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-user-button">
-            {{ __('New user') }}
-        </flux:button>
+<section class="w-full min-w-0 space-y-5">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Users') }}</h1>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <x-arena.button icon="plus" wire:click="create" data-test="create-user-button">{{ __('New user') }}</x-arena.button>
+        </div>
     </div>
 
-    <flux:table :paginate="$this->users">
-        <flux:table.columns>
-            <flux:table.column>{{ __('Name') }}</flux:table.column>
-            <flux:table.column>{{ __('Email') }}</flux:table.column>
-            <flux:table.column>{{ __('Role') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Name') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Email') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Role') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
+                </tr>
+            </thead>
 
-        <flux:table.rows>
-            @foreach ($this->users as $user)
-                <flux:table.row :key="$user->id">
-                    <flux:table.cell>{{ $user->name }}</flux:table.cell>
-                    <flux:table.cell>{{ $user->email }}</flux:table.cell>
-                    <flux:table.cell>
-                        <flux:badge :color="$user->isAdmin() ? 'blue' : 'zinc'" size="sm">
-                            {{ $user->isAdmin() ? __('Administrator') : __('Tatami operator') }}
-                        </flux:badge>
-                    </flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        <flux:button size="sm" variant="ghost" icon="pencil-square" wire:click="edit({{ $user->id }})" />
-                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="confirmDelete({{ $user->id }})" />
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforeach
-        </flux:table.rows>
-    </flux:table>
+            <tbody>
+                @foreach ($this->users as $user)
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="user-row-{{ $user->id }}">
+                        <td class="px-4 py-2 font-bold">{{ $user->name }}</td>
+                        <td class="px-4 py-2">{{ $user->email }}</td>
+                        <td class="px-4 py-2">
+                            <span class="inline-block border border-arena-line-strong px-2 py-0.5 text-xs font-bold uppercase tracking-[.1em]">{{ $user->isAdmin() ? __('Administrator') : __('Tatami operator') }}</span>
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                            <x-arena.button variant="ghost" icon="pencil-square" class="min-w-11" :aria-label="__('Edit')" wire:click="edit({{ $user->id }})" />
+                            <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete')" wire:click="confirmDelete({{ $user->id }})" />
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
+
+    <flux:pagination :paginator="$this->users" />
 
     <flux:modal name="user-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">

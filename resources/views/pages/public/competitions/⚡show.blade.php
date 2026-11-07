@@ -41,48 +41,65 @@ new #[Layout('layouts::public'), Title('Details')] class extends Component {
     <x-public.competition-header :competition="$competition" active="show" />
 
     @if ($competition->status === CompetitionStatus::InProgress)
-        <a href="{{ route('public.competitions.timetable', $competition) }}" wire:navigate class="ps-panel mb-8 flex items-center justify-between gap-4 p-5" data-test="follow-live">
+        <a href="{{ route('public.competitions.timetable', $competition) }}" wire:navigate class="mb-8 flex min-h-16 items-center justify-between gap-4 border-2 border-arena-ink bg-arena-volt p-4 text-(--arena-live-ink) dark:border-arena-volt" data-test="follow-live">
             <span>
-                <span class="ps-subtitle block">{{ __('The competition is under way') }}</span>
-                <span class="ps-muted">{{ __('See what is on each tatami right now.') }}</span>
+                <span class="block font-display text-2xl font-black uppercase leading-none tracking-[.02em]">{{ __('The competition is under way') }}</span>
+                <span class="mt-1 block text-sm">{{ __('See what is on each tatami right now.') }}</span>
             </span>
-            <x-public.status tone="live">{{ __('Follow live') }}</x-public.status>
+            <x-arena.status state="live" :label="__('Follow live')" />
         </a>
     @endif
 
     <div class="grid gap-8 md:grid-cols-2">
         <div>
-            <h2 class="ps-subtitle mb-3">{{ __('When and where') }}</h2>
+            <x-arena.section-title class="mb-3">{{ __('When and where') }}</x-arena.section-title>
 
-            <dl class="ps-panel overflow-hidden">
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Date') }}</dt><dd class="ps-num font-medium">{{ $competition->date->format('d.m.Y.') }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Start') }}</dt><dd class="ps-num font-medium">{{ substr($competition->start_time, 0, 5) }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Venue') }}</dt><dd class="font-medium text-end">{{ $competition->venue }}</dd></div>
-                @if ($competition->organizer)
-                    <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Organizer') }}</dt><dd class="font-medium text-end">{{ $competition->organizer }}</dd></div>
-                @endif
-                @if ($competition->registration_deadline)
-                    <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Registration deadline') }}</dt><dd class="ps-num font-medium">{{ $competition->registration_deadline->format('d.m.Y. H:i') }}</dd></div>
-                @endif
-            </dl>
+            <x-arena.card tag="dl">
+                @php
+                    $facts = array_filter([
+                        __('Date') => ['value' => $competition->date->format('d.m.Y.'), 'mono' => true],
+                        __('Start') => ['value' => substr($competition->start_time, 0, 5), 'mono' => true],
+                        __('Venue') => ['value' => $competition->venue, 'mono' => false],
+                        __('Organizer') => $competition->organizer ? ['value' => $competition->organizer, 'mono' => false] : null,
+                        __('Registration deadline') => $competition->registration_deadline ? ['value' => $competition->registration_deadline->format('d.m.Y. H:i'), 'mono' => true] : null,
+                    ]);
+                @endphp
+
+                @foreach ($facts as $term => $fact)
+                    <div class="flex min-h-12 items-center justify-between gap-4 border-b border-arena-line px-4 py-2 last:border-b-0">
+                        <dt class="text-sm text-arena-muted">{{ $term }}</dt>
+                        <dd @class(['text-end text-sm font-semibold', 'font-mono tabular-nums' => $fact['mono']])>{{ $fact['value'] }}</dd>
+                    </div>
+                @endforeach
+            </x-arena.card>
         </div>
 
         <div>
-            <h2 class="ps-subtitle mb-3">{{ __('In numbers') }}</h2>
+            <x-arena.section-title class="mb-3">{{ __('In numbers') }}</x-arena.section-title>
 
-            <dl class="ps-panel overflow-hidden" data-test="stats">
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Categories') }}</dt><dd class="ps-num font-medium" data-stat="categories">{{ $this->stats['categories'] }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Entries') }}</dt><dd class="ps-num font-medium" data-stat="entries">{{ $this->stats['entries'] }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Competitors') }}</dt><dd class="ps-num font-medium" data-stat="competitors">{{ $this->stats['competitors'] }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Clubs') }}</dt><dd class="ps-num font-medium" data-stat="clubs">{{ $this->stats['clubs'] }}</dd></div>
-                <div class="ps-row justify-between"><dt class="ps-muted">{{ __('Tatamis') }}</dt><dd class="ps-num font-medium" data-stat="tatamis">{{ $this->stats['tatamis'] }}</dd></div>
+            <dl class="grid grid-cols-2 gap-3" data-test="stats">
+                @foreach ([
+                    'categories' => __('Categories'),
+                    'entries' => __('Entries'),
+                    'competitors' => __('Competitors'),
+                    'clubs' => __('Clubs'),
+                    'tatamis' => __('Tatamis'),
+                ] as $stat => $label)
+                    <div class="flex flex-col gap-1 border border-arena-line bg-arena-surface p-4">
+                        <dt class="text-xs uppercase tracking-[.1em] text-arena-muted">{{ $label }}</dt>
+                        <dd class="animate-arena-pop font-display text-[44px] font-black leading-none tabular-nums text-arena-ink" data-stat="{{ $stat }}">{{ $this->stats[$stat] }}</dd>
+                    </div>
+                @endforeach
             </dl>
         </div>
     </div>
 
-    <div class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-lg">
-        <a href="{{ route('public.competitions.draw', $competition) }}" wire:navigate class="ps-link ps-nav-link">{{ __('Draw') }}</a>
-        <a href="{{ route('public.competitions.timetable', $competition) }}" wire:navigate class="ps-link ps-nav-link">{{ __('Time table') }}</a>
-        <a href="{{ route('public.competitions.results', $competition) }}" wire:navigate class="ps-link ps-nav-link">{{ __('Results') }}</a>
+    <div class="mt-10 grid gap-3 sm:grid-cols-3">
+        @foreach (['draw' => __('Draw'), 'timetable' => __('Time table'), 'results' => __('Results')] as $key => $label)
+            <a href="{{ route('public.competitions.'.$key, $competition) }}" wire:navigate class="flex min-h-16 items-center justify-between gap-3 border border-arena-line bg-arena-surface px-4 font-display text-2xl font-black uppercase tracking-[.03em] text-arena-ink">
+                {{ $label }}
+                <flux:icon.arrow-right class="size-6" />
+            </a>
+        @endforeach
     </div>
 </section>

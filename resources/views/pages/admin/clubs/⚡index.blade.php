@@ -120,41 +120,46 @@ new #[Title('Clubs')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6 flex items-center justify-between gap-4">
-        <flux:heading size="xl" level="1">{{ __('Clubs') }}</flux:heading>
-        <div class="flex items-center gap-2">
-            <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" :placeholder="__('Search clubs')" />
-            <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-club-button">
-                {{ __('New club') }}
-            </flux:button>
+<section class="w-full min-w-0 space-y-5">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Clubs') }}</h1>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" :placeholder="__('Search clubs')" :aria-label="__('Search clubs')" />
+            <x-arena.button icon="plus" wire:click="create" data-test="create-club-button">{{ __('New club') }}</x-arena.button>
         </div>
     </div>
 
-    <flux:table :paginate="$this->clubs">
-        <flux:table.columns>
-            <flux:table.column>{{ __('Name') }}</flux:table.column>
-            <flux:table.column>{{ __('City') }}</flux:table.column>
-            <flux:table.column>{{ __('Country') }}</flux:table.column>
-            <flux:table.column>{{ __('Competitors') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Name') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('City') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Country') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Competitors') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
+                </tr>
+            </thead>
 
-        <flux:table.rows>
-            @foreach ($this->clubs as $club)
-                <flux:table.row :key="$club->id">
-                    <flux:table.cell>{{ $club->name }}</flux:table.cell>
-                    <flux:table.cell>{{ $club->city }}</flux:table.cell>
-                    <flux:table.cell>{{ $club->country }}</flux:table.cell>
-                    <flux:table.cell>{{ $club->competitors_count }}</flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        <flux:button size="sm" variant="ghost" icon="pencil-square" wire:click="edit({{ $club->id }})" />
-                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="confirmDelete({{ $club->id }})" />
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforeach
-        </flux:table.rows>
-    </flux:table>
+            <tbody>
+                @foreach ($this->clubs as $club)
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="club-row-{{ $club->id }}">
+                        <td class="px-4 py-2 font-bold">{{ $club->name }}</td>
+                        <td class="px-4 py-2">{{ $club->city }}</td>
+                        <td class="px-4 py-2">{{ $club->country }}</td>
+                        <td class="px-4 py-2 font-mono tabular-nums">{{ $club->competitors_count }}</td>
+                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                            <x-arena.button variant="ghost" icon="pencil-square" class="min-w-11" :aria-label="__('Edit')" wire:click="edit({{ $club->id }})" />
+                            <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete')" wire:click="confirmDelete({{ $club->id }})" />
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
+
+    <flux:pagination :paginator="$this->clubs" />
 
     <flux:modal name="club-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">

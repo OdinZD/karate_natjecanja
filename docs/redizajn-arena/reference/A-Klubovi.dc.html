@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin klubovi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+@keyframes ar-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes ar-drawer{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecanja</a>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:28px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:52px;line-height:.9">KLUBOVI <span style="font-size:28px;color:#8C94A6">18</span></h1>
+      <button style="min-height:48px;display:flex;align-items:center;gap:8px;padding:0 20px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>NOVI KLUB</button>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:3 1 560px;min-width:0;background:#121621;border:1px solid #262D3F">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;border-bottom:1px solid #262D3F">
+          <label style="display:flex;align-items:center;gap:8px;min-height:44px;padding:0 10px;background:#0A0C11;border:1px solid #262D3F;flex:1 1 220px;max-width:340px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0A8BA" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+            <span style="position:absolute;left:-9999px">Pretraži klubove</span>
+            <input placeholder="Naziv ili grad…" style="flex:1;min-width:0;border:0;background:transparent;color:#F3F5F9;font:inherit;font-size:14px;outline:none">
+          </label>
+          <button style="min-height:44px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px">Sve države<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:560px">
+            <thead><tr style="text-align:left;color:#A0A8BA;font-size:12px;letter-spacing:.08em">
+              <th style="padding:10px 16px;font-weight:600">NAZIV</th><th style="padding:10px 8px;font-weight:600">GRAD</th><th style="padding:10px 8px;font-weight:600">DRŽAVA</th><th style="padding:10px 8px;font-weight:600">NATJECATELJI</th><th style="padding:10px 16px"></th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+                <tr class="ar-row" style="border-top:1px solid #1A2030;background:{{r.bg}};box-shadow:{{r.mark}};animation:ar-in .35s ease-out both;animation-delay:{{r.delay}}">
+                  <td style="padding:12px 16px;font-weight:600">{{r.name}}</td>
+                  <td style="padding:12px 8px;color:#C9CFDB">{{r.city}}</td>
+                  <td style="padding:12px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.cc}}</td>
+                  <td style="padding:12px 8px;font-family:'JetBrains Mono',monospace">{{r.n}}</td>
+                  <td style="padding:6px 16px;text-align:right"><button aria-label="Uredi klub" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:inline-grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg></button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <nav aria-label="Stranice" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid #262D3F;font-size:13px;color:#A0A8BA">
+          <span>1–8 od 18</span>
+          <span style="display:flex;gap:6px"><a href="#" aria-current="page" style="width:40px;height:40px;display:grid;place-items:center;background:#F3F5F9;color:#0A0C11;font-weight:700">1</a><a href="#" style="width:40px;height:40px;display:grid;place-items:center;border:1px solid #3A4257">2</a><a href="#" style="width:40px;height:40px;display:grid;place-items:center;border:1px solid #3A4257">3</a></span>
+        </nav>
+      </section>
+
+      <aside role="dialog" aria-labelledby="uredi-klub" style="flex:1 1 320px;min-width:0;background:#121621;border:1px solid #3A4257;box-shadow:0 20px 50px rgba(0,0,0,.45);animation:ar-drawer .45s cubic-bezier(.2,.8,.2,1) .3s both">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #262D3F;position:relative">
+          <span aria-hidden="true" style="position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(#E8202E 0 50%,#2C62F0 50% 100%)"></span>
+          <h2 id="uredi-klub" style="margin:0 0 0 6px;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:24px;letter-spacing:.03em">UREDI KLUB</h2>
+          <button aria-label="Zatvori" style="width:44px;height:44px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.08em;color:#A0A8BA">NAZIV<input defaultValue="KK Sokol" style="min-height:48px;padding:0 12px;background:#0A0C11;border:1px solid #3A4257;color:#F3F5F9;font:inherit;font-size:15px;letter-spacing:0"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.08em;color:#A0A8BA">GRAD<input defaultValue="Benkovac" style="min-height:48px;padding:0 12px;background:#0A0C11;border:1px solid #3A4257;color:#F3F5F9;font:inherit;font-size:15px;letter-spacing:0"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.08em;color:#A0A8BA">DRŽAVA<span style="min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#0A0C11;border:1px solid #3A4257;color:#F3F5F9;font-size:15px;letter-spacing:0">Hrvatska<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span></label>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#0D1018;border:1px solid #262D3F;font-size:13px;color:#C9CFDB"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:26px;color:#F3F5F9">24</span>natjecatelja u klubu · <a href="#" style="color:#D9FF3D;font-weight:600">prikaži</a></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:14px 16px;border-top:1px solid #262D3F">
+          <button style="min-height:44px;padding:0 14px;border:1px solid #E8202E;background:transparent;color:#FF4D57;font-weight:600">Obriši klub</button>
+          <span style="display:flex;gap:8px"><button style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600">Odustani</button><button style="min-height:44px;padding:0 16px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.05em">SPREMI</button></span>
+        </div>
+        <p style="margin:0;padding:0 16px 16px;font-size:12px;color:#8C94A6">Isti obrazac (tablica s pretragom + bočni panel) koriste Natjecatelji i Korisnici. Korisnici imaju i odabir uloge: Administrator ili Tatami operater.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const rows = [['KK Jadran','Zadar','HR',31],['KK Mladost','Split','HR',19],['KK Neretva','Metković','HR',14],['KK Optimist','Zadar','HR',42],['KK Sokol','Benkovac','HR',24],['KK Split','Split','HR',12],['KK Zrinski','Šibenik','HR',27],['KK Una','Bihać','BA',9]];
+    return {
+      rows: rows.map(([name, city, cc, n], i) => ({ name, city, cc, n, delay: (i * 0.04) + 's',
+        bg: name === 'KK Sokol' ? '#1A2030' : 'transparent', mark: name === 'KK Sokol' ? 'inset 4px 0 0 #D9FF3D' : 'none' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

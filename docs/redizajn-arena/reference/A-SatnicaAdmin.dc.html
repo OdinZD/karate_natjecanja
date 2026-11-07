@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin satnica</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-tbtn:hover{background:#F3F5F9!important;color:#0A0C11!important}
+@keyframes ar-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ar-chev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ar-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:24px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;color:#A0A8BA">Natjecanja / Zimski kup Zadra 2026</span>
+        <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:46px;line-height:.9;text-transform:uppercase">Zimski kup Zadra 2026</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="display:flex;flex-direction:column;align-items:flex-end"><span style="font-size:11px;letter-spacing:.12em;color:#A0A8BA">PROCJENA KRAJA</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:30px;line-height:1">16:20</span></span>
+        <button style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px;font-weight:600">Cijela satnica (PDF)</button>
+      </div>
+    </div>
+    <nav aria-label="Koraci natjecanja" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:4px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+        <a href="#" aria-current="{{s.current}}" style="min-height:56px;padding:8px 22px 8px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:{{s.bg}};color:{{s.fg}};clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,12px 50%);animation:ar-chev .45s ease-out both;animation-delay:{{s.delay}}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85">{{s.n}} {{s.mark}}</span>
+          <span style="font-weight:700;font-size:15px">{{s.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <section aria-label="Kategorije bez tatamija" style="background:#121621;border:1px solid #FFB15C;animation:ar-in .5s ease-out .1s both">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #262D3F">
+        <span aria-hidden="true" style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #FFB15C"></span>
+        <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em">BEZ TATAMIJA · 3</h2>
+        <span style="font-size:13px;color:#A0A8BA">Dodijeli tatami jednim klikom. Kategorija ide na kraj reda tog tatamija.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))">
+        <sc-for list="{{tray}}" as="c" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-right:1px solid #1A2030">
+            <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-weight:600;font-size:14px">{{c.name}}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">{{c.meta}}</span></span>
+            <div role="group" aria-label="Dodijeli tatami" style="display:flex;gap:4px">
+              <button class="ar-tbtn" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:16px">T1</button>
+              <button class="ar-tbtn" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:16px">T2</button>
+              <button class="ar-tbtn" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:16px">T3</button>
+              <button class="ar-tbtn" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:16px">T4</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px">
+      <sc-for list="{{lanes}}" as="l" hint-placeholder-count="4">
+        <section style="background:#121621;border:1px solid #262D3F;display:flex;flex-direction:column;animation:ar-in .5s ease-out both;animation-delay:{{l.delay}}">
+          <div style="padding:12px 14px;border-bottom:1px solid #262D3F;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:28px;line-height:1;background:#F3F5F9;color:#0A0C11;padding:2px 10px;transform:skewX(-10deg)">{{l.n}}</span>
+              <span style="display:flex;flex-direction:column;flex:1"><span style="font-size:12px;color:#A0A8BA">{{l.op}}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{l.stats}}</span></span>
+              <button aria-label="{{l.pdf}}" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3H6v18h12V7z"></path><path d="M14 3v4h4"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;letter-spacing:.12em;color:#A0A8BA">KRAJ</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px;color:{{l.endColor}}">{{l.end}}</span></div>
+            <div style="height:4px;background:#1A2030"><div style="height:100%;width:{{l.load}};background:{{l.endColor}};transform-origin:left;animation:ar-bar 1s ease-out .5s both"></div></div>
+          </div>
+          <ol style="list-style:none;margin:0;padding:0">
+            <sc-for list="{{l.items}}" as="it" hint-placeholder-count="5">
+              <li style="display:grid;grid-template-columns:20px 46px minmax(0,1fr);align-items:center;gap:8px;min-height:48px;padding:4px 12px 4px 8px;border-bottom:1px solid #1A2030;background:{{it.bg}};color:{{it.fg}}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="opacity:.6"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{it.t}}</span>
+                <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{it.name}}</span><span style="font-size:11px;opacity:.75">{{it.meta}}</span></span>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+      </sc-for>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [['01','Detalji','done'],['02','Tatamiji','done'],['03','Kategorije','done'],['04','Prijave','done'],['05','Ždrijeb','done'],['06','Satnica','now'],['07','Dan natjecanja','todo']];
+    const it = (t, name, meta, s) => ({ t, name, meta,
+      bg: s === 'live' ? '#D9FF3D' : 'transparent', fg: s === 'live' ? '#0A0C11' : (s === 'done' ? '#8C94A6' : '#F3F5F9') });
+    return {
+      steps: steps.map(([n, label, s], i) => ({ n, label, current: s === 'now' ? 'step' : 'false', mark: s === 'done' ? '✓' : '',
+        bg: s === 'now' ? '#D9FF3D' : (s === 'done' ? '#1A2030' : '#0D1018'), fg: s === 'now' ? '#0A0C11' : (s === 'done' ? '#F3F5F9' : '#8C94A6'), delay: (i * 0.06) + 's' })),
+      tray: [
+        { name: 'Kadeti - Kumite -63 kg', meta: '6 prijava × 120 s' },
+        { name: 'Juniorke - Kumite -53 kg', meta: '4 prijave × 120 s' },
+        { name: 'U12 - Učenice - Kumite -35 kg', meta: '9 prijava × 90 s' }
+      ],
+      lanes: [
+        { n: 'T1', op: 'Ana Kovač', stats: '96 borbi · 6 h 05 min', end: '15:05', endColor: '#F3F5F9', load: '76%', pdf: 'PDF satnice za tatami 1', delay: '.15s', items: [
+          it('09:00','Kadeti - Kumite -57 kg','7 prijava · završeno','done'), it('09:40','Kadeti - Kumite -52 kg','9 prijava · u tijeku','live'),
+          it('10:35','Juniori - Kumite -68 kg','8 prijava','plan'), it('11:30','Juniori - Kumite -61 kg','6 prijava','plan'), it('12:10','Seniori - Kumite -75 kg','10 prijava','plan') ] },
+        { n: 'T2', op: 'Marin Perić', stats: '88 borbi · 6 h', end: '15:00', endColor: '#F3F5F9', load: '75%', pdf: 'PDF satnice za tatami 2', delay: '.22s', items: [
+          it('09:00','U12 - Učenice - Kata','6 prijava · završeno','done'), it('09:50','U10 - Mlađe učenice - Kata','7 prijava · u tijeku','live'),
+          it('10:35','U10 - Mlađi učenici - Kata','9 prijava','plan'), it('11:10','Kadetkinje - Kumite -47 kg','5 prijava','plan'), it('12:10','Kadeti - Kata','11 prijava','plan') ] },
+        { n: 'T3', op: 'Ivo Babić', stats: '104 borbe · 7 h 08 min', end: '16:20', endColor: '#FFB15C', load: '92%', pdf: 'PDF satnice za tatami 3', delay: '.29s', items: [
+          it('09:00','Veterani 35+ - Kumite -75 kg','5 prijava · završeno','done'), it('09:35','Veterani 35+ - Kumite +85 kg','6 prijava · u tijeku','live'),
+          it('10:25','U21 - Kumite -67 kg','8 prijava','plan'), it('11:25','U21 - Kumite -75 kg','9 prijava','plan'), it('12:45','Seniorke - Kumite -55 kg','10 prijava','plan') ] },
+        { n: 'T4', op: 'bez operatera', stats: '62 borbe · 5 h 30 min', end: '14:30', endColor: '#F3F5F9', load: '58%', pdf: 'PDF satnice za tatami 4', delay: '.36s', items: [
+          it('09:00','U10 - Mlađe učenice - Kumite -30 kg','6 prijava · završeno','done'), it('10:40','Kadetkinje - Kumite +54 kg','4 prijave','plan'),
+          it('11:25','U14 - Kumite -40 kg','7 prijava','plan'), it('12:25','Veterani - Kata','5 prijava','plan'), it('13:40','U12 - Učenici - Kumite -35 kg','8 prijava','plan') ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

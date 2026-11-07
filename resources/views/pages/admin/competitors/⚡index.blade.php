@@ -141,49 +141,54 @@ new #[Title('Competitors')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <flux:heading size="xl" level="1">{{ __('Competitors') }}</flux:heading>
+<section class="w-full min-w-0 space-y-5">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Competitors') }}</h1>
+
         <div class="flex flex-wrap items-center gap-2">
-            <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" :placeholder="__('Search by name')" />
-            <flux:select wire:model.live="clubFilter" class="min-w-48">
+            <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" :placeholder="__('Search by name')" :aria-label="__('Search by name')" />
+            <flux:select wire:model.live="clubFilter" class="min-w-48" :aria-label="__('Club')">
                 <flux:select.option value="">{{ __('All clubs') }}</flux:select.option>
                 @foreach ($this->clubs as $club)
                     <flux:select.option :value="$club->id">{{ $club->name }}</flux:select.option>
                 @endforeach
             </flux:select>
-            <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-competitor-button">
-                {{ __('New competitor') }}
-            </flux:button>
+            <x-arena.button icon="plus" wire:click="create" data-test="create-competitor-button">{{ __('New competitor') }}</x-arena.button>
         </div>
     </div>
 
-    <flux:table :paginate="$this->competitors">
-        <flux:table.columns>
-            <flux:table.column>{{ __('Last name') }}</flux:table.column>
-            <flux:table.column>{{ __('First name') }}</flux:table.column>
-            <flux:table.column>{{ __('Gender') }}</flux:table.column>
-            <flux:table.column>{{ __('Date of birth') }}</flux:table.column>
-            <flux:table.column>{{ __('Club') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Last name') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('First name') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Gender') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Date of birth') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Club') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
+                </tr>
+            </thead>
 
-        <flux:table.rows>
-            @foreach ($this->competitors as $competitor)
-                <flux:table.row :key="$competitor->id">
-                    <flux:table.cell>{{ $competitor->last_name }}</flux:table.cell>
-                    <flux:table.cell>{{ $competitor->first_name }}</flux:table.cell>
-                    <flux:table.cell>{{ $competitor->gender === Gender::Male ? __('Male') : __('Female') }}</flux:table.cell>
-                    <flux:table.cell>{{ $competitor->birth_date->format('d.m.Y.') }}</flux:table.cell>
-                    <flux:table.cell>{{ $competitor->club->name }}</flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        <flux:button size="sm" variant="ghost" icon="pencil-square" wire:click="edit({{ $competitor->id }})" />
-                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="confirmDelete({{ $competitor->id }})" />
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforeach
-        </flux:table.rows>
-    </flux:table>
+            <tbody>
+                @foreach ($this->competitors as $competitor)
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="competitor-row-{{ $competitor->id }}">
+                        <td class="px-4 py-2 font-bold">{{ $competitor->last_name }}</td>
+                        <td class="px-4 py-2">{{ $competitor->first_name }}</td>
+                        <td class="px-4 py-2">{{ $competitor->gender === Gender::Male ? __('Male') : __('Female') }}</td>
+                        <td class="px-4 py-2 font-mono tabular-nums">{{ $competitor->birth_date->format('d.m.Y.') }}</td>
+                        <td class="px-4 py-2">{{ $competitor->club->name }}</td>
+                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                            <x-arena.button variant="ghost" icon="pencil-square" class="min-w-11" :aria-label="__('Edit')" wire:click="edit({{ $competitor->id }})" />
+                            <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete')" wire:click="confirmDelete({{ $competitor->id }})" />
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
+
+    <flux:pagination :paginator="$this->competitors" />
 
     <flux:modal name="competitor-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">
