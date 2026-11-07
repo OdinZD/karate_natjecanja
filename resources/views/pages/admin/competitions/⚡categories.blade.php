@@ -229,61 +229,104 @@ new #[Title('Categories')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6">
-        <flux:link :href="route('admin.competitions.show', $competition)" wire:navigate class="text-sm">
-            &larr; {{ $competition->name }}
-        </flux:link>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <flux:heading size="xl" level="1">{{ __('Categories') }}</flux:heading>
-            <div class="flex items-center gap-2">
-                <flux:button icon="arrow-down-tray" wire:click="openImportOfficial" data-test="import-official-button">
-                    {{ __('Import official categories') }}
-                </flux:button>
-                <flux:button icon="document-duplicate" wire:click="openCopy" data-test="copy-categories-button">
-                    {{ __('Copy from competition') }}
-                </flux:button>
-                <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-category-button">
-                    {{ __('New category') }}
-                </flux:button>
-            </div>
-        </div>
+<section class="w-full min-w-0 space-y-5">
+    <div class="space-y-1">
+        <a href="{{ route('admin.competitions.show', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+            <flux:icon.chevron-left class="size-4" />{{ $competition->name }}
+        </a>
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Categories') }}</h1>
     </div>
 
-    <flux:table>
-        <flux:table.columns>
-            <flux:table.column>{{ __('Name') }}</flux:table.column>
-            <flux:table.column>{{ __('Discipline') }}</flux:table.column>
-            <flux:table.column>{{ __('Gender') }}</flux:table.column>
-            <flux:table.column>{{ __('Birth years') }}</flux:table.column>
-            <flux:table.column>{{ __('Weight (kg)') }}</flux:table.column>
-            <flux:table.column>{{ __('Entries') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.steps :competition="$competition" current="categories" />
 
-        <flux:table.rows>
-            @foreach ($this->categories as $category)
-                <flux:table.row :key="$category->id">
-                    <flux:table.cell>{{ $category->name }}</flux:table.cell>
-                    <flux:table.cell>{{ __(Str::headline($category->discipline->value)) }}</flux:table.cell>
-                    <flux:table.cell>{{ $category->gender ? __(Str::headline($category->gender->value)) : __('Mixed') }}</flux:table.cell>
-                    <flux:table.cell>{{ $category->birth_year_from }}–{{ $category->birth_year_to }}</flux:table.cell>
-                    <flux:table.cell>
-                        @if ($category->weight_min === null && $category->weight_max === null)
-                            —
-                        @else
-                            {{ $category->weight_min !== null ? (float) $category->weight_min : '' }}–{{ $category->weight_max !== null ? (float) $category->weight_max : '' }}
-                        @endif
-                    </flux:table.cell>
-                    <flux:table.cell>{{ $category->entries_count }}</flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        <flux:button size="sm" variant="ghost" icon="pencil-square" wire:click="edit({{ $category->id }})" />
-                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="confirmDelete({{ $category->id }})" />
-                    </flux:table.cell>
-                </flux:table.row>
+    <div class="flex flex-wrap items-center gap-2">
+        <x-arena.button variant="secondary" icon="arrow-down-tray" wire:click="openImportOfficial" data-test="import-official-button">{{ __('Import official categories') }}</x-arena.button>
+        <x-arena.button variant="secondary" icon="document-duplicate" wire:click="openCopy" data-test="copy-categories-button">{{ __('Copy from competition') }}</x-arena.button>
+        <x-arena.button icon="plus" wire:click="create" data-test="create-category-button">{{ __('New category') }}</x-arena.button>
+    </div>
+
+    @if ($this->categories->isNotEmpty())
+        @php($groups = $this->categories->groupBy(fn ($category) => $category->birth_year_from.'–'.$category->birth_year_to))
+
+        <div
+            class="space-y-4"
+            x-data="{
+                q: '',
+                f: '',
+                match(el) {
+                    const d = el.dataset
+                    const q = this.q.trim().toLowerCase()
+
+                    if (q !== '' && ! d.search.includes(q)) return false
+
+                    return this.f === '' || d.kind === this.f
+                },
+            }"
+        >
+            <flux:input x-model="q" icon="magnifying-glass" type="search" :placeholder="__('Search categories')" :aria-label="__('Search categories')" />
+
+            <div role="radiogroup" aria-label="{{ __('Filter categories') }}" class="flex flex-wrap gap-2">
+                @foreach (['' => __('All'), 'kata' => __('Kata'), 'kumite' => __('Kumite')] as $value => $label)
+                    <x-arena.chip name="admin-category-filter" :value="$value" :label="$label" x-model="f" />
+                @endforeach
+            </div>
+
+            @foreach ($groups as $years => $items)
+                @php($first = $items->first())
+
+                <details open class="relative border border-arena-line bg-arena-surface" x-bind:hidden="! [...$el.querySelectorAll('[data-cat]')].some((row) => match(row))">
+                    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 bg-arena-bg-2 px-3 [&::-webkit-details-marker]:hidden">
+                        <span class="font-display text-xl font-extrabold uppercase tracking-[.04em]">{{ str_contains($first->name, ' - ') ? Str::before($first->name, ' - ') : $years }}</span>
+                        <span class="font-mono text-xs tabular-nums text-arena-muted">{{ $years }} · {{ $items->count() }}</span>
+                    </summary>
+
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-start text-sm">
+                            <thead>
+                                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Name') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Discipline') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Gender') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Weight (kg)') }}</th>
+                                    <th scope="col" class="px-4 py-3 font-semibold text-end">{{ __('Entries') }}</th>
+                                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach ($items as $category)
+                                    <tr
+                                        class="border-t border-arena-line"
+                                        data-cat
+                                        data-search="{{ Str::lower($category->name) }}"
+                                        data-kind="{{ $category->discipline->value }}"
+                                        wire:key="category-row-{{ $category->id }}"
+                                        x-bind:hidden="! match($el)"
+                                    >
+                                        <td class="px-4 py-2 font-bold">{{ $category->name }}</td>
+                                        <td class="px-4 py-2">{{ __(Str::headline($category->discipline->value)) }}</td>
+                                        <td class="px-4 py-2">{{ $category->gender ? __(Str::headline($category->gender->value)) : __('Mixed') }}</td>
+                                        <td class="px-4 py-2 font-mono tabular-nums">
+                                            @if ($category->weight_min === null && $category->weight_max === null)
+                                                —
+                                            @else
+                                                {{ $category->weight_min !== null ? (float) $category->weight_min : '' }}–{{ $category->weight_max !== null ? (float) $category->weight_max : '' }}
+                                            @endif
+                                        </td>
+                                        <td @class(['px-4 py-2 text-end font-mono tabular-nums', 'font-bold text-arena-warn' => $category->entries_count === 0])>{{ $category->entries_count }}</td>
+                                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                                            <x-arena.button variant="ghost" icon="pencil-square" class="min-w-11" :aria-label="__('Edit')" wire:click="edit({{ $category->id }})" />
+                                            <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete')" wire:click="confirmDelete({{ $category->id }})" />
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
             @endforeach
-        </flux:table.rows>
-    </flux:table>
+        </div>
+    @endif
 
     <flux:modal name="category-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">

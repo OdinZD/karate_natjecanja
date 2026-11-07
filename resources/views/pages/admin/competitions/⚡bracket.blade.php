@@ -43,21 +43,21 @@ new #[Title('Bracket')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6">
-        <flux:link :href="route('admin.competitions.draw', $competition)" wire:navigate class="text-sm">
-            &larr; {{ __('Draw') }}
-        </flux:link>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <flux:heading size="xl" level="1">{{ $category->name }}</flux:heading>
-
-            @if ($this->bouts->isNotEmpty())
-                <flux:button icon="document-arrow-down" :href="route('admin.competitions.bracket.pdf', [$competition, $category])" target="_blank" data-test="bracket-pdf-link">
-                    {{ __('Print PDF') }}
-                </flux:button>
-            @endif
-        </div>
+<section class="w-full min-w-0 space-y-5">
+    <div class="space-y-1">
+        <a href="{{ route('admin.competitions.draw', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+            <flux:icon.chevron-left class="size-4" />{{ __('Draw') }}
+        </a>
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ $category->name }}</h1>
     </div>
+
+    <x-arena.steps :competition="$competition" current="draw" />
+
+    @if ($this->bouts->isNotEmpty())
+        <div>
+            <x-arena.button variant="secondary" icon="document-arrow-down" :href="route('admin.competitions.bracket.pdf', [$competition, $category])" target="_blank" data-test="bracket-pdf-link">{{ __('Print PDF') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></x-arena.button>
+        </div>
+    @endif
 
     <x-bracket :category="$category" :bouts="$this->bouts" :placements="$this->placements" />
 </section>

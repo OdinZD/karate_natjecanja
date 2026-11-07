@@ -335,5 +335,10 @@
     "Main menu": "Glavni izbornik",
     "No operators": "Nema operatera",
     "Delete tatami": "Obriši tatami",
-    "Open": "Otvori"
+    "Open": "Otvori",
+    "Edit": "Uredi",
+    "Opens in a new tab": "Otvara se u novoj kartici",
+    ":count of :total categories drawn": ":count od :total kategorija ima ždrijeb",
+    "Not possible: :count bouts have been played": "Nije moguće: :count borbi je odigrano",
+    "Actions": "Radnje"
 }

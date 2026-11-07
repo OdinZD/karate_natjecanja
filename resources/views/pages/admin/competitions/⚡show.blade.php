@@ -178,7 +178,7 @@ new #[Title('Competition')] class extends Component {
 
         <div class="flex items-center gap-2">
             @if ($competition->status !== CompetitionStatus::Draft)
-                <x-arena.button variant="secondary" icon="arrow-up-right" :href="route('public.competitions.show', $competition)" target="_blank">{{ __('Public page') }}</x-arena.button>
+                <x-arena.button variant="secondary" icon="arrow-up-right" :href="route('public.competitions.show', $competition)" target="_blank">{{ __('Public page') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></x-arena.button>
             @endif
 
             <flux:dropdown align="end">
@@ -186,10 +186,10 @@ new #[Title('Competition')] class extends Component {
 
                 <flux:menu>
                     @if ($hasDraws)
-                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.draw.pdf', $competition)" target="_blank">{{ __('All draws (PDF)') }}</flux:menu.item>
+                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.draw.pdf', $competition)" target="_blank">{{ __('All draws (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
                     @endif
                     @if ($hasTimetable)
-                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.timetable.pdf', $competition)" target="_blank">{{ __('Time table (PDF)') }}</flux:menu.item>
+                        <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.timetable.pdf', $competition)" target="_blank">{{ __('Time table (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
                     @endif
                     @if ($hasDraws || $hasTimetable)
                         <flux:menu.separator />

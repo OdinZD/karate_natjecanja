@@ -269,59 +269,67 @@ new #[Title('Entries')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <div class="mb-6">
-        <flux:link :href="route('admin.competitions.show', $competition)" wire:navigate class="text-sm">
-            &larr; {{ $competition->name }}
-        </flux:link>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <flux:heading size="xl" level="1">{{ __('Entries') }}</flux:heading>
-            <div class="flex flex-wrap items-center gap-2">
-                <flux:select wire:model.live="categoryFilter" class="min-w-56">
-                    <flux:select.option value="">{{ __('All categories') }}</flux:select.option>
-                    @foreach ($this->categories as $category)
-                        <flux:select.option :value="$category->id">{{ $category->name }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-                <flux:button icon="arrow-down-tray" :href="route('admin.competitions.entries.template', $competition)" data-test="download-template-button">
-                    {{ __('Template for clubs') }}
-                </flux:button>
-                <flux:button icon="user-group" wire:click="openClubImport" data-test="import-club-entries-button">
-                    {{ __('Import club entries') }}
-                </flux:button>
-                <flux:button icon="arrow-up-tray" wire:click="openImport" data-test="import-entries-button">
-                    {{ __('Import from Excel') }}
-                </flux:button>
-                <flux:button variant="primary" icon="plus" wire:click="create" data-test="create-entry-button">
-                    {{ __('New entry') }}
-                </flux:button>
-            </div>
-        </div>
+<section class="w-full min-w-0 space-y-5">
+    <div class="space-y-1">
+        <a href="{{ route('admin.competitions.show', $competition) }}" wire:navigate class="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-arena-muted">
+            <flux:icon.chevron-left class="size-4" />{{ $competition->name }}
+        </a>
+        <h1 class="font-display text-4xl font-black uppercase leading-[.95] tracking-[.01em] text-arena-ink md:text-5xl">{{ __('Entries') }}</h1>
     </div>
 
-    <flux:table :paginate="$this->entries">
-        <flux:table.columns>
-            <flux:table.column>{{ __('Competitor') }}</flux:table.column>
-            <flux:table.column>{{ __('Club') }}</flux:table.column>
-            <flux:table.column>{{ __('Category') }}</flux:table.column>
-            <flux:table.column>{{ __('Weight (kg)') }}</flux:table.column>
-            <flux:table.column></flux:table.column>
-        </flux:table.columns>
+    <x-arena.steps :competition="$competition" current="entries" />
 
-        <flux:table.rows>
-            @foreach ($this->entries as $entry)
-                <flux:table.row :key="$entry->id">
-                    <flux:table.cell>{{ $entry->competitor->last_name }} {{ $entry->competitor->first_name }}</flux:table.cell>
-                    <flux:table.cell>{{ $entry->competitor->club->name }}</flux:table.cell>
-                    <flux:table.cell>{{ $entry->category->name }}</flux:table.cell>
-                    <flux:table.cell>{{ $entry->weight !== null ? (float) $entry->weight : '—' }}</flux:table.cell>
-                    <flux:table.cell class="text-end">
-                        <flux:button size="sm" variant="ghost" icon="trash" wire:click="delete({{ $entry->id }})" wire:confirm="{{ __('Delete this entry?') }}" />
-                    </flux:table.cell>
-                </flux:table.row>
+    <div class="flex flex-wrap items-center gap-2">
+        <flux:select wire:model.live="categoryFilter" class="min-w-56" :aria-label="__('Category')">
+            <flux:select.option value="">{{ __('All categories') }}</flux:select.option>
+            @foreach ($this->categories as $category)
+                <flux:select.option :value="$category->id">{{ $category->name }}</flux:select.option>
             @endforeach
-        </flux:table.rows>
-    </flux:table>
+        </flux:select>
+
+        <x-arena.button variant="secondary" icon="arrow-down-tray" :href="route('admin.competitions.entries.template', $competition)" data-test="download-template-button">{{ __('Template for clubs') }}</x-arena.button>
+
+        <flux:dropdown align="end">
+            <x-arena.button variant="secondary" icon="arrow-up-tray">{{ __('Import') }}</x-arena.button>
+
+            <flux:menu>
+                <flux:menu.item icon="user-group" wire:click="openClubImport" data-test="import-club-entries-button">{{ __('Import club entries') }}</flux:menu.item>
+                <flux:menu.item icon="arrow-up-tray" wire:click="openImport" data-test="import-entries-button">{{ __('Import from Excel') }}</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
+
+        <x-arena.button icon="plus" wire:click="create" data-test="create-entry-button">{{ __('New entry') }}</x-arena.button>
+    </div>
+
+    <x-arena.card class="overflow-x-auto">
+        <table class="w-full text-start text-sm">
+            <thead>
+                <tr class="border-b border-arena-line text-xs uppercase tracking-[.1em] text-arena-muted">
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Competitor') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Club') }}</th>
+                    <th scope="col" class="px-4 py-3 text-start font-semibold">{{ __('Category') }}</th>
+                    <th scope="col" class="px-4 py-3 font-semibold text-end">{{ __('Weight (kg)') }}</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">{{ __('Delete') }}</span></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach ($this->entries as $entry)
+                    <tr class="border-b border-arena-line last:border-b-0" wire:key="entry-row-{{ $entry->id }}">
+                        <td class="px-4 py-2 font-bold">{{ $entry->competitor->last_name }} {{ $entry->competitor->first_name }}</td>
+                        <td class="px-4 py-2">{{ $entry->competitor->club->name }}</td>
+                        <td class="px-4 py-2">{{ $entry->category->name }}</td>
+                        <td class="px-4 py-2 text-end font-mono tabular-nums">{{ $entry->weight !== null ? (float) $entry->weight : '—' }}</td>
+                        <td class="whitespace-nowrap px-2 py-1 text-end">
+                            <x-arena.button variant="ghost" icon="trash" class="min-w-11" :aria-label="__('Delete')" wire:click="delete({{ $entry->id }})" wire:confirm="{{ __('Delete this entry?') }}" />
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-arena.card>
+
+    <flux:pagination :paginator="$this->entries" />
 
     <flux:modal name="entry-form" class="md:w-96">
         <form wire:submit="save" class="space-y-6">
