@@ -12,11 +12,12 @@
     ];
 @endphp
 
-<nav aria-label="{{ __('Competition steps') }}" {{ $attributes->class('grid grid-cols-[repeat(auto-fit,minmax(min(140px,100%),1fr))] gap-1') }}>
+<nav aria-label="{{ __('Competition steps') }}" {{ $attributes->class('grid grid-cols-[repeat(auto-fit,minmax(min(120px,100%),1fr))] gap-1') }}>
     @foreach ($steps as $key => [$label, $url])
         <a
             href="{{ $url }}"
             wire:navigate
+            data-test="{{ $key }}-link"
             style="animation-delay: {{ $loop->index * 60 }}ms"
             @class([
                 'arena-chevron animate-arena-in relative flex min-h-[76px] flex-col justify-center gap-0.5 py-3 pl-[18px] pr-[22px] focus-visible:[clip-path:none]',

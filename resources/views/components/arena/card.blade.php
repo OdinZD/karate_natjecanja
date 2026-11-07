@@ -9,4 +9,4 @@
     };
 @endphp
 
-<{{ $tag }} {{ $attributes->class($look) }}>{{ $slot }}</{{ $tag }}>
+<{{ $tag }} {{ $attributes->class(['relative', $look]) }}>{{ $slot }}</{{ $tag }}>
