@@ -293,6 +293,8 @@ new #[Title('Tatami console')] class extends Component {
                         <div class="relative">
                             @foreach (['aka' => $current->aka, 'ao' => $current->ao] as $side => $entry)
                                 @php($scoreLabel = $side === 'aka' ? __('AKA score') : __('AO score'))
+                                @php($increaseLabel = $side === 'aka' ? __('Increase AKA score') : __('Increase AO score'))
+                                @php($decreaseLabel = $side === 'aka' ? __('Decrease AKA score') : __('Decrease AO score'))
 
                                 <div
                                     x-bind:class="{ 'arena-sweep': winner === '{{ $side }}', 'opacity-45': winner !== '' && winner !== '{{ $side }}' }"
@@ -321,7 +323,7 @@ new #[Title('Tatami console')] class extends Component {
                                     </button>
 
                                     <div @class(['relative flex flex-col items-center justify-center gap-0.5 pe-2.5', 'pb-3.5' => $side === 'aka', 'pt-2' => $side === 'ao'])>
-                                        <button type="button" x-on:click="step('{{ $side }}', 1)" aria-label="{{ $scoreLabel }} +" class="h-11 w-12 cursor-pointer bg-black/20 text-[22px] font-bold">+</button>
+                                        <button type="button" x-on:click="step('{{ $side }}', 1)" aria-label="{{ $increaseLabel }}" class="h-11 w-12 cursor-pointer bg-black/20 text-[22px] font-bold">+</button>
                                         <input
                                             x-ref="{{ $side }}"
                                             wire:model="{{ $side }}Score"
@@ -333,7 +335,7 @@ new #[Title('Tatami console')] class extends Component {
                                             aria-label="{{ $scoreLabel }}"
                                             class="w-14 bg-transparent text-center font-display text-[44px] font-black leading-none text-white [appearance:textfield] placeholder:text-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                         >
-                                        <button type="button" x-on:click="step('{{ $side }}', -1)" aria-label="{{ $scoreLabel }} −" class="h-11 w-12 cursor-pointer bg-black/20 text-[22px] font-bold">−</button>
+                                        <button type="button" x-on:click="step('{{ $side }}', -1)" aria-label="{{ $decreaseLabel }}" class="h-11 w-12 cursor-pointer bg-black/20 text-[22px] font-bold">−</button>
                                     </div>
                                 </div>
                             @endforeach
