@@ -340,5 +340,14 @@
     "Opens in a new tab": "Otvara se u novoj kartici",
     ":count of :total categories drawn": ":count od :total kategorija ima ždrijeb",
     "Not possible: :count bouts have been played": "Nije moguće: :count borbi je odigrano",
-    "Actions": "Radnje"
+    "Actions": "Radnje",
+    "Bouts played": "Borbe odigrane",
+    "Categories finished": "Kategorije završene",
+    "Estimated end": "Procjena kraja",
+    ":competitors competitors · :clubs clubs": ":competitors natjecatelja · :clubs klubova",
+    "Tatamis live": "Tatamiji uživo",
+    "Break": "Pauza",
+    "Upcoming competitions": "Nadolazeća natjecanja",
+    "No active competition": "Nema aktivnog natjecanja",
+    "A competition becomes active when its status is In progress.": "Natjecanje postaje aktivno kad mu je status „U tijeku”."
 }
