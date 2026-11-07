@@ -30,30 +30,61 @@ new #[Title('Tatami')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
-    <flux:heading size="xl" level="1" class="mb-6">{{ __('Tatami') }}</flux:heading>
+<section class="mx-auto w-full max-w-2xl space-y-4">
+    <div class="space-y-1.5">
+        <h1 class="font-display text-[44px] font-black uppercase leading-[.95] text-arena-ink">{{ __('Tatami') }}</h1>
+        <p class="text-sm text-arena-muted">{{ __('Choose the tatami you record results for.') }}</p>
+    </div>
 
     @if ($this->tatamis->isEmpty())
-        <flux:text>{{ __('You have no tatamis assigned. Ask the administrator to assign you to one.') }}</flux:text>
+        <x-arena.card variant="dashed" class="p-5">{{ __('You have no tatamis assigned. Ask the administrator to assign you to one.') }}</x-arena.card>
     @else
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div class="grid gap-3">
             @foreach ($this->tatamis as $tatami)
-                <a
-                    href="{{ route('tatami.console', $tatami) }}"
+                @php
+                    $live = $tatami->competition->status === CompetitionStatus::InProgress;
+
+                    [$statusState, $statusLabel] = match ($tatami->competition->status) {
+                        CompetitionStatus::InProgress => ['live', __('Live')],
+                        CompetitionStatus::Registration => ['registration', __('Registration open')],
+                        CompetitionStatus::Drawn => ['drawn', __('Draw done')],
+                        default => ['none', __('Draft')],
+                    };
+                @endphp
+
+                <x-arena.card
+                    :variant="$live ? 'live' : 'default'"
+                    tag="a"
+                    :href="route('tatami.console', $tatami)"
                     wire:navigate
                     wire:key="tatami-{{ $tatami->id }}"
-                    class="block rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-500"
+                    class="flex flex-col"
                     data-test="tatami-card"
                 >
-                    <div class="text-sm text-zinc-500">{{ $tatami->competition->name }} · {{ $tatami->competition->date->format('d.m.Y.') }}</div>
-                    <div class="mt-1 text-xl font-semibold">
-                        {{ __('Tatami :number', ['number' => $tatami->number]) }}
-                        @if ($tatami->name)
-                            <span class="font-normal text-zinc-500">· {{ $tatami->name }}</span>
-                        @endif
-                    </div>
-                    <div class="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Open console') }} &rarr;</div>
-                </a>
+                    <span class="flex gap-3.5 p-3.5">
+                        <x-arena.tatami :number="$tatami->number" size="lg" class="self-start" />
+
+                        <span class="flex min-w-0 flex-col gap-1">
+                            <x-arena.status :state="$statusState" :label="$statusLabel" class="self-start" />
+                            <span class="text-base font-bold text-arena-ink">
+                                {{ __('Tatami :number', ['number' => $tatami->number]) }}
+                                @if ($tatami->name)
+                                    <span class="font-normal text-arena-muted">· {{ $tatami->name }}</span>
+                                @endif
+                            </span>
+                            <span class="text-[13px] text-arena-muted">{{ $tatami->competition->name }} · {{ $tatami->competition->date->format('d.m.Y.') }}</span>
+                        </span>
+                    </span>
+
+                    <span @class([
+                        'flex min-h-12 items-center justify-between px-3.5',
+                        'bg-arena-volt font-display text-xl font-black uppercase tracking-[.06em] text-(--arena-live-ink)' => $live,
+                        'border-t border-arena-line text-sm font-semibold text-arena-ink' => ! $live,
+                    ])>
+                        {{ __('Open console') }}
+                        <flux:icon.arrow-right class="size-5" />
+                    </span>
+                </x-arena.card>
             @endforeach
         </div>
     @endif
