@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Kategorije natjecanja</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#121621}
+@keyframes ar-in{from{opacity:0;transform:translateX(-22px) skewX(-8deg)}to{opacity:1;transform:none}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 8px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;overflow:hidden;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif">
+
+  <header style="height:56px;display:flex;align-items:center;gap:6px;padding:0 12px 0 4px;border-bottom:1px solid #262D3F">
+    <a href="#" aria-label="Sva natjecanja" style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;letter-spacing:.03em;text-transform:uppercase">Zimski kup Zadra 2026</span>
+  </header>
+  <nav aria-label="Odjeljci natjecanja" style="display:flex;gap:4px;overflow-x:auto;padding:0 8px;border-bottom:1px solid #262D3F;background:#0D1018">
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Detalji</a>
+    <a href="#" aria-current="page" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:inset 0 -4px 0 #D9FF3D">Kategorije</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Natjecatelji</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Ždrijeb</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA;white-space:nowrap">Satnica</a>
+  </nav>
+
+  <section style="padding:16px 16px 0;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:40px;line-height:1">KATEGORIJE</h1>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">125</span>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;background:#121621;border:1px solid #262D3F">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A0A8BA" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+      <span style="position:absolute;left:-9999px">Pretraži kategorije</span>
+      <input placeholder="npr. -52 kg ili kata" style="flex:1;min-width:0;border:0;background:transparent;color:#F3F5F9;font:inherit;font-size:16px;outline:none">
+    </label>
+    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+        <button aria-pressed="{{c.on}}" style="flex:none;min-height:40px;padding:0 14px;border:1px solid {{c.border}};background:{{c.bg}};color:{{c.fg}};font-size:13px;font-weight:700;transform:skewX(-10deg)">{{c.label}}</button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding:14px 0 0">
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
+      <div style="border-top:1px solid #262D3F">
+        <button aria-expanded="{{g.open}}" style="width:100%;min-height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border:0;background:#0D1018;color:#F3F5F9;text-align:left">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true" style="transform:rotate({{g.rot}})"><path d="M9 6l6 6-6 6"></path></svg>
+          <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em">{{g.title}}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">{{g.years}}</span>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">{{g.count}}</span>
+        </button>
+        <sc-if value="{{g.open}}" hint-placeholder-val="{{false}}">
+          <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="4">
+            <a href="#" class="ar-row" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;min-height:60px;padding:8px 16px;border-top:1px solid #1A2030;animation:ar-in .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{r.delay}}">
+              <span style="font-weight:600;font-size:14px">{{r.name}}</span>
+              <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:{{r.stColor}}">
+                <sc-if value="{{r.live}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#D9FF3D;animation:ar-pulse 1.6s infinite"></span></sc-if>
+                <sc-if value="{{r.notLive}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="width:9px;height:9px;box-sizing:border-box;background:{{r.dot}};border:{{r.ring}};clip-path:{{r.shape}}"></span></sc-if>
+                {{r.state}}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">{{r.meta}}</span>
+              <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:15px;background:#1A2030;padding:0 6px;transform:skewX(-10deg);justify-self:end">{{r.t}}</span>
+            </a>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-for>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = {
+      live: { state: 'UŽIVO', stColor: '#D9FF3D', live: true, notLive: false, dot: '', ring: '0', shape: 'none' },
+      done: { state: 'ZAVRŠENO', stColor: '#C9CFDB', live: false, notLive: true, dot: '#C9CFDB', ring: '0', shape: 'inset(0)' },
+      ready: { state: 'ŽDRIJEB GOTOV', stColor: '#9DB8FF', live: false, notLive: true, dot: '#5B8CFF', ring: '0', shape: 'polygon(50% 0,100% 50%,50% 100%,0 50%)' }
+    };
+    const r = (name, meta, t, st, i) => Object.assign({ name, meta, t, delay: (i * 0.06).toFixed(2) + 's' }, S[st]);
+    const chips = ['Sve','Kata','Kumite','Ž','M','Uživo'];
+    return {
+      chips: chips.map((label, i) => ({ label, on: i === 0, bg: i === 0 ? '#F3F5F9' : 'transparent', fg: i === 0 ? '#0A0C11' : '#F3F5F9', border: i === 0 ? '#F3F5F9' : '#3A4257' })),
+      groups: [
+        { title: 'KADETI', years: '2011–2012', count: '14', open: true, rot: '90deg', rows: [
+          r('Kadeti - Kumite -52 kg', 'M · 9 prijava', 'T1', 'live', 0),
+          r('Kadeti - Kumite -57 kg', 'M · 7 prijava', 'T1', 'done', 1),
+          r('Kadetkinje - Kumite -47 kg', 'Ž · 5 prijava', 'T2', 'ready', 2),
+          r('Kadetkinje - Kumite +54 kg', 'Ž · 4 prijave', 'T4', 'ready', 3),
+          r('Kadeti - Kata', 'M · 11 prijava', 'T2', 'ready', 4)
+        ] },
+        { title: 'U10', years: '2017–2018', count: '12', open: true, rot: '90deg', rows: [
+          r('U10 - Mlađe učenice - Kata', 'Ž · 7 prijava', 'T2', 'live', 5),
+          r('U10 - Mlađe učenice - Kumite -30 kg', 'Ž · 6 prijava', 'T4', 'ready', 6),
+          r('U10 - Mlađi učenici - Kata', 'M · 9 prijava', 'T2', 'ready', 7)
+        ] },
+        { title: 'U12', years: '2015–2016', count: '16', open: false, rot: '0deg', rows: [] },
+        { title: 'JUNIORI', years: '2009–2010', count: '12', open: false, rot: '0deg', rows: [] },
+        { title: 'VETERANI', years: '35+', count: '8', open: false, rot: '0deg', rows: [] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Dizajn sustav</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#D9FF3D}a:hover{color:#F3F5F9}
+button{font:inherit}
+@keyframes ar-in{from{opacity:0;transform:translateX(-28px) skewX(-8deg)}to{opacity:1;transform:none}}
+@keyframes ar-in-loop{0%{opacity:0;transform:translateX(-28px) skewX(-8deg)}25%,85%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes ar-sweep{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(420%) skewX(-20deg)}}
+@keyframes ar-pop-loop{0%,20%{transform:scale(.4);opacity:0}35%{transform:scale(1.15);opacity:1}45%,100%{transform:scale(1);opacity:1}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 12px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@keyframes ar-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:1600px;height:1320px;overflow:hidden;box-sizing:border-box;padding:48px 56px;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;gap:32px">
+
+  <header style="display:flex;align-items:flex-end;gap:28px;animation:ar-in .8s cubic-bezier(.2,.8,.2,1) both">
+    <span aria-hidden="true" style="width:64px;height:64px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span>
+    <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:96px;line-height:.8;letter-spacing:.01em">ARENA</h1>
+    <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:4px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#A0A8BA">DIZAJN SUSTAV · JAVNO, ADMIN, KONZOLA, DVORANA</span>
+      <span style="font-size:17px;color:#C9CFDB">Kosi rez, velike brojke, volt žuta samo za ono što je uživo ili primarno. AKA crvena i AO plava ne mijenjaju se nikad.</span>
+    </div>
+  </header>
+
+  <div style="display:grid;grid-template-columns:340px 340px minmax(0,1fr);gap:32px">
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">BOJE · TAMNA (ZADANO)</h2>
+      <sc-for list="{{dark}}" as="c" hint-placeholder-count="12">
+        <div style="display:grid;grid-template-columns:30px 120px minmax(0,1fr);align-items:center;gap:10px;min-height:28px">
+          <span style="width:30px;height:24px;background:{{c.hex}};border:1px solid #3A4257;box-sizing:border-box"></span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{c.name}}</span>
+          <span style="font-size:12px;color:#A0A8BA"><span style="font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{c.hex}}</span> · {{c.use}}</span>
+        </div>
+      </sc-for>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">BOJE · SVIJETLA</h2>
+      <sc-for list="{{light}}" as="c" hint-placeholder-count="12">
+        <div style="display:grid;grid-template-columns:30px 120px minmax(0,1fr);align-items:center;gap:10px;min-height:28px">
+          <span style="width:30px;height:24px;background:{{c.hex}};border:1px solid #3A4257;box-sizing:border-box"></span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{c.name}}</span>
+          <span style="font-size:12px;color:#A0A8BA"><span style="font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{c.hex}}</span> · {{c.use}}</span>
+        </div>
+      </sc-for>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">TIPOGRAFIJA</h2>
+      <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #262D3F;padding-top:10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">DISPLAY · BIG SHOULDERS 900 · 54–96 PX · VELIKA SLOVA, PROR. 0,88</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:64px;line-height:.9">ZIMSKI KUP ZADRA</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #262D3F;padding-top:10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">NASLOV ODJELJKA · BIG SHOULDERS 800 · 24–28 PX · RAZMAK 0,04 EM</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:28px;letter-spacing:.04em">SADA NA TATAMIJIMA</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #262D3F;padding-top:10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">TEKST · INTER 400–700 · 15 / 14 / 13 PX · OZNAKE 11–12 PX VELIKIM SLOVIMA, RAZMAK 0,12 EM</span>
+        <span style="font-size:15px;line-height:1.5">Kadeti · Kumite −52 kg. Polufinale, borba 6 od 9. Ždrijeb je s nositeljima i razdvajanjem klubova.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #262D3F;padding-top:10px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A0A8BA">BROJKE I VRIJEME · JETBRAINS MONO 500–700 · TABULARNE</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700">10:40 · 214 / 372 · 51,4 kg</span>
+      </div>
+    </section>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">KOMPONENTE</h2>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px;padding:20px;background:#121621;border:1px solid #262D3F">
+      <div style="display:flex;gap:10px;align-items:center">
+        <button style="min-height:48px;padding:0 20px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%)">ZAPIŠI REZULTAT</button>
+        <button style="min-height:48px;padding:0 16px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600;font-size:14px">Sekundarni</button>
+        <button style="min-height:48px;padding:0 12px;border:0;background:transparent;color:#D9FF3D;font-weight:600;font-size:14px">Tekstualni</button>
+      </div>
+      <span aria-hidden="true" style="width:1px;height:48px;background:#262D3F"></span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:8px;background:#D9FF3D;color:#0A0C11;font-weight:800;font-size:12px;letter-spacing:.14em;padding:6px 12px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#0A0C11;animation:ar-pulse 1.6s infinite"></span>UŽIVO</span>
+        <span style="display:flex;align-items:center;gap:8px;border:1px solid #D9FF3D;color:#D9FF3D;font-weight:800;font-size:12px;letter-spacing:.12em;padding:5px 10px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:9px;height:9px;box-sizing:border-box;border:2px solid #D9FF3D;border-radius:50%"></span>PRIJAVE OTVORENE</span>
+        <span style="display:flex;align-items:center;gap:8px;border:1px solid #3A4257;font-weight:800;font-size:12px;letter-spacing:.12em;padding:5px 10px"><span aria-hidden="true" style="width:10px;height:10px;background:#5B8CFF;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span>ČEKA</span>
+        <span style="display:flex;align-items:center;gap:8px;border:1px solid #3A4257;font-weight:800;font-size:12px;letter-spacing:.12em;padding:5px 10px"><span aria-hidden="true" style="width:9px;height:9px;background:#C9CFDB"></span>ZAVRŠENO</span>
+      </div>
+      <span aria-hidden="true" style="width:1px;height:48px;background:#262D3F"></span>
+      <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:30px;line-height:1;background:#F3F5F9;color:#0A0C11;padding:2px 10px;transform:skewX(-10deg)">T1</span>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:300px;height:56px">
+        <div style="background:#E8202E;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 10px"><span style="display:flex;flex-direction:column"><span style="font-size:10px;font-weight:800;letter-spacing:.14em">AKA</span><span style="font-weight:700;font-size:14px">Marić</span></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:34px;animation:ar-pop-loop 3s ease-out infinite">3</span></div>
+        <div style="background:#2C62F0;clip-path:polygon(12px 0,100% 0,100% 100%,0 100%);margin-left:-6px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 18px"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:34px">1</span><span style="display:flex;flex-direction:column;align-items:flex-end"><span style="font-size:10px;font-weight:800;letter-spacing:.14em">AO</span><span style="font-weight:700;font-size:14px">Barić</span></span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span aria-label="1. mjesto" style="width:32px;height:32px;border-radius:50%;background:#E9B949;color:#0A0C11;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900">1</span>
+        <span aria-label="2. mjesto" style="width:32px;height:32px;box-sizing:border-box;border-radius:50%;border:3px solid #C9CFDB;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900">2</span>
+        <span aria-label="3. mjesto" style="width:32px;height:32px;box-sizing:border-box;border-radius:50%;border:3px dotted #C98A55;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900">3</span>
+      </div>
+      <div style="display:flex;gap:4px;align-items:stretch;height:44px;border-bottom:1px solid #262D3F">
+        <span style="display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA">Ždrijeb</span>
+        <span style="display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:700;box-shadow:inset 0 -4px 0 #D9FF3D">Satnica</span>
+        <span style="display:flex;align-items:center;padding:0 12px;font-size:14px;color:#A0A8BA">Rezultati</span>
+      </div>
+    </div>
+    <p style="margin:0;font-size:13px;color:#A0A8BA">Stanje se uvijek pokazuje tekstom i oblikom (krug, prsten, romb, kvadrat), nikad samo bojom. Ciljevi dodira najmanje 44 px, fokus je volt obrub od 3 px.</p>
+  </section>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:32px;flex:1;min-height:0">
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">ANIMACIJE</h2>
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+        <div style="display:flex;flex-direction:column;gap:8px;background:#121621;border:1px solid #262D3F;padding:12px">
+          <div style="height:64px;display:flex;align-items:center;overflow:hidden"><span style="width:100%;height:36px;background:#1A2030;border:1px solid #3A4257;animation:ar-in-loop 2.4s cubic-bezier(.2,.8,.2,1) infinite"></span></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">ar-in · ulazak</span>
+          <span style="font-size:12px;color:#A0A8BA;line-height:1.4">700 ms, cubic-bezier(.2,.8,.2,1), razmak 120 ms. Kartice i redovi.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;background:#121621;border:1px solid #262D3F;padding:12px">
+          <div style="height:64px;position:relative;overflow:hidden;background:#1A2030"><span style="position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:ar-sweep 2.4s ease-in-out infinite"></span></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">ar-sweep · svjetlo</span>
+          <span style="font-size:12px;color:#A0A8BA;line-height:1.4">3,6 s ease-in-out, ponavlja se. Samo kartica „Sada”.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;background:#121621;border:1px solid #262D3F;padding:12px">
+          <div style="height:64px;display:grid;place-items:center;background:#E8202E"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;animation:ar-pop-loop 2.4s ease-out infinite">4</span></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">ar-pop · bodovi</span>
+          <span style="font-size:12px;color:#A0A8BA;line-height:1.4">600 ms, cubic-bezier(.3,1.6,.5,1). Kad se rezultat promijeni.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;background:#121621;border:1px solid #262D3F;padding:12px">
+          <div style="height:64px;display:grid;place-items:center"><span style="width:14px;height:14px;border-radius:50%;background:#D9FF3D;animation:ar-pulse 1.6s infinite"></span></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">ar-pulse · uživo</span>
+          <span style="font-size:12px;color:#A0A8BA;line-height:1.4">1,6 s, ponavlja se. Samo točka UŽIVO.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;background:#121621;border:1px solid #262D3F;padding:12px">
+          <div style="height:64px;display:flex;align-items:center;overflow:hidden;background:#D9FF3D;color:#0A0C11"><span style="display:flex;gap:20px;white-space:nowrap;width:max-content;font-size:12px;font-weight:700;animation:ar-ticker 8s linear infinite"><span>1. Mia Horvat</span><span>1. Sara Knežević</span><span>1. Dario Vidović</span><span>1. Mia Horvat</span><span>1. Sara Knežević</span><span>1. Dario Vidović</span></span></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">ar-ticker · traka</span>
+          <span style="font-size:12px;color:#A0A8BA;line-height:1.4">26 s linear (40 s na velikom ekranu). Zadnji rezultati.</span>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13px;color:#A0A8BA">Uz prefers-reduced-motion sve se animacije gase. Ništa ne treperi brže od 3 puta u sekundi.</p>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.06em">TAILWIND 4 · JEDAN IZVOR BOJA</h2>
+      <pre style="margin:0;padding:14px 16px;background:#05070B;border:1px solid #262D3F;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;color:#C9CFDB;white-space:pre;overflow:hidden">{{code}}</pre>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const row = ([name, hex, use]) => ({ name, hex, use });
+    return {
+      dark: [
+        ['bg','#0A0C11','pozadina'],['surface','#121621','kartice'],['surface-2','#1A2030','trake, prazno'],['line','#262D3F','linije'],
+        ['ink','#F3F5F9','tekst'],['muted','#A0A8BA','sporedni tekst'],['volt','#D9FF3D','uživo, primarno'],['aka','#E8202E','AKA ploča'],
+        ['aka-text','#FF4D57','AKA kao tekst'],['ao','#2C62F0','AO ploča'],['ao-text','#5B8CFF','AO kao tekst'],['warn','#FFB15C','kašnjenje']
+      ].map(row),
+      light: [
+        ['bg','#F2F3F6','pozadina'],['surface','#FFFFFF','kartice'],['surface-2','#E8EBF1','trake, prazno'],['line','#D3D8E2','linije'],
+        ['ink','#0A0C11','tekst, fokus'],['muted','#4B5468','sporedni tekst'],['volt','#D9FF3D','samo podloga'],['aka','#E8202E','AKA ploča'],
+        ['aka-text','#B5121F','AKA kao tekst'],['ao','#2C62F0','AO ploča'],['ao-text','#1F4FD1','AO kao tekst'],['warn','#9A4D00','kašnjenje']
+      ].map(row),
+      code: [
+        '@custom-variant dark (&:where(.dark, .dark *));',
+        '',
+        ':root { --a-bg:#F2F3F6; --a-surface:#FFFFFF; --a-line:#D3D8E2;',
+        '        --a-ink:#0A0C11; --a-muted:#4B5468; --a-aka-text:#B5121F; }',
+        '.dark { --a-bg:#0A0C11; --a-surface:#121621; --a-line:#262D3F;',
+        '        --a-ink:#F3F5F9; --a-muted:#A0A8BA; --a-aka-text:#FF4D57; }',
+        '',
+        '@theme inline {',
+        '  --color-bg: var(--a-bg);       --color-surface: var(--a-surface);',
+        '  --color-line: var(--a-line);   --color-ink: var(--a-ink);',
+        '  --color-muted: var(--a-muted); --color-aka-text: var(--a-aka-text);',
+        '  --color-volt: #D9FF3D; --color-aka: #E8202E; --color-ao: #2C62F0;',
+        '  --font-display: "Big Shoulders", Impact, sans-serif;',
+        '  --font-sans: Inter, system-ui, sans-serif;',
+        '  --font-mono: "JetBrains Mono", monospace;',
+        '}',
+        '',
+        '/* x-bracket, javne stranice i konzola koriste bg-aka, bg-ao,',
+        '   text-ink… umjesto fiksnih red-600/blue-600. */'
+      ].join('\n')
+    };
+  }
+}
+</script>
+</body>
+</html>

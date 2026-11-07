@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin ždrijeb i nositelji</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+@keyframes ar-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes ar-chev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ar-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ar-menu{from{opacity:0;transform:translateY(-8px) scaleY(.92)}to{opacity:1;transform:none}}
+@keyframes ar-drawer{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:24px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;color:#A0A8BA">Natjecanja / Zimski kup Zadra 2026</span>
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:46px;line-height:.9;text-transform:uppercase">Zimski kup Zadra 2026</h1>
+    </div>
+    <nav aria-label="Koraci natjecanja" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:4px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+        <a href="#" aria-current="{{s.current}}" style="min-height:56px;padding:8px 22px 8px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:{{s.bg}};color:{{s.fg}};clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,12px 50%);animation:ar-chev .45s ease-out both;animation-delay:{{s.delay}}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85">{{s.n}} {{s.mark}}</span>
+          <span style="font-weight:700;font-size:15px">{{s.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:3 1 600px;min-width:0;background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .1s both">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:16px;border-bottom:1px solid #262D3F">
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1 1 260px">
+            <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:26px;letter-spacing:.04em">ŽDRIJEB <span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#A0A8BA">113 / 125</span></h2>
+            <div style="height:6px;background:#1A2030"><div style="height:100%;width:90%;background:#D9FF3D;transform-origin:left;animation:ar-bar 1.1s cubic-bezier(.2,.8,.2,1) .3s both"></div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px;font-weight:600">Svi ždrijebovi (PDF)</button>
+            <button style="min-height:44px;padding:0 16px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;letter-spacing:.05em;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)">GENERIRAJ PREOSTALE · 12</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid #262D3F">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+            <button aria-pressed="{{c.on}}" style="min-height:40px;padding:0 12px;border:1px solid {{c.border}};background:{{c.bg}};color:{{c.fg}};font-size:13px;font-weight:700;transform:skewX(-10deg)">{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:760px">
+            <thead><tr style="text-align:left;color:#A0A8BA;font-size:12px;letter-spacing:.08em">
+              <th style="padding:10px 16px;font-weight:600">KATEGORIJA</th><th style="padding:10px 8px;font-weight:600">PRIJAVE</th><th style="padding:10px 8px;font-weight:600">NOSITELJI</th><th style="padding:10px 8px;font-weight:600">STANJE</th><th style="padding:10px 16px;font-weight:600;text-align:right">RADNJE</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+                <tr class="ar-row" style="border-top:1px solid #1A2030;background:{{r.rowBg}}">
+                  <td style="padding:10px 16px;font-weight:600">{{r.name}}</td>
+                  <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace">{{r.n}}</td>
+                  <td style="padding:10px 8px"><button style="min-height:36px;padding:0 10px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:13px">{{r.seeds}}</button></td>
+                  <td style="padding:10px 8px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.06em;color:{{r.color}}"><span aria-hidden="true" style="width:9px;height:9px;box-sizing:border-box;background:{{r.dot}};border:{{r.ring}};border-radius:{{r.radius}};clip-path:{{r.shape}}"></span>{{r.state}}</span></td>
+                  <td style="padding:8px 16px">
+                    <div style="display:flex;gap:6px;justify-content:flex-end;position:relative">
+                      <button style="min-height:38px;padding:0 12px;border:1px solid {{r.pBorder}};background:{{r.pBg}};color:{{r.pFg}};font-size:13px;font-weight:700">{{r.primary}}</button>
+                      <button aria-label="PDF ždrijeba" style="width:38px;height:38px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3H6v18h12V7z"></path><path d="M14 3v4h4"></path></svg></button>
+                      <button aria-label="Više radnji" aria-expanded="{{r.menu}}" style="width:38px;height:38px;border:1px solid {{r.mBorder}};background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button>
+                      <sc-if value="{{r.menu}}" hint-placeholder-val="{{false}}">
+                        <div role="menu" style="position:absolute;top:44px;right:0;z-index:5;width:280px;background:#1A2030;border:1px solid #3A4257;box-shadow:0 20px 50px rgba(0,0,0,.55);text-align:left;transform-origin:top right;animation:ar-menu .3s cubic-bezier(.2,.8,.2,1) .4s both">
+                          <button role="menuitem" aria-disabled="true" style="width:100%;min-height:48px;display:flex;flex-direction:column;justify-content:center;padding:6px 14px;border:0;background:transparent;color:#8C94A6;text-align:left"><span style="font-weight:600;font-size:14px">Regeneriraj ždrijeb</span><span style="font-size:12px">Nije moguće: 5 borbi je odigrano</span></button>
+                          <button role="menuitem" aria-disabled="true" style="width:100%;min-height:48px;display:flex;flex-direction:column;justify-content:center;padding:6px 14px;border:0;border-top:1px solid #262D3F;background:transparent;color:#8C94A6;text-align:left"><span style="font-weight:600;font-size:14px">Obriši ždrijeb</span><span style="font-size:12px">Nije moguće: 5 borbi je odigrano</span></button>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside role="dialog" aria-label="Nositelji za Kadetkinje Kumite -47 kg" style="flex:1 1 300px;min-width:0;background:#121621;border:1px solid #3A4257;box-shadow:0 20px 50px rgba(0,0,0,.45);animation:ar-drawer .45s cubic-bezier(.2,.8,.2,1) .3s both">
+        <div style="padding:14px 16px;border-bottom:1px solid #262D3F;display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:11px;font-weight:800;letter-spacing:.14em;color:#D9FF3D">NOSITELJI</span>
+          <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.03em">KADETKINJE - KUMITE -47 KG</h2>
+          <span style="font-size:12px;color:#A0A8BA">Ždrijeb uzima u obzir nositelje i klubove.</span>
+        </div>
+        <ol style="list-style:none;margin:0;padding:8px 0">
+          <sc-for list="{{seeds}}" as="s" hint-placeholder-count="5">
+            <li style="display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;border-bottom:1px solid #1A2030">
+              <span style="width:32px;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;text-align:center;background:{{s.bg}};color:{{s.fg}};transform:skewX(-10deg)">{{s.n}}</span>
+              <span style="display:flex;flex-direction:column;flex:1"><span style="font-weight:600;font-size:14px">{{s.name}}</span><span style="font-size:12px;color:#A0A8BA">{{s.club}}</span></span>
+              <button aria-label="{{s.aria}}" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"></path></svg></button>
+            </li>
+          </sc-for>
+        </ol>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid #262D3F">
+          <button style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600">Zatvori</button>
+          <button style="min-height:44px;padding:0 16px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.05em">SPREMI I GENERIRAJ</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [['01','Detalji','done'],['02','Tatamiji','done'],['03','Kategorije','done'],['04','Prijave','done'],['05','Ždrijeb','now'],['06','Satnica','todo'],['07','Dan natjecanja','todo']];
+    const chips = ['Sve · 125','Bez ždrijeba · 12','S ždrijebom · 113','Ima odigranih · 41'];
+    const S = {
+      none: { state: 'NEMA ŽDRIJEBA', color: '#A0A8BA', dot: 'transparent', ring: '2px dashed #A0A8BA', radius: '50%', shape: 'none', primary: 'Generiraj', pBg: '#D9FF3D', pFg: '#0A0C11', pBorder: '#D9FF3D' },
+      ready: { state: 'ŽDRIJEB GOTOV', color: '#9DB8FF', dot: '#5B8CFF', ring: '0', radius: '0', shape: 'polygon(50% 0,100% 50%,50% 100%,0 50%)', primary: 'Pogledaj', pBg: 'transparent', pFg: '#F3F5F9', pBorder: '#3A4257' },
+      played: { state: 'IGRA SE · 5/9', color: '#D9FF3D', dot: '#D9FF3D', ring: '0', radius: '50%', shape: 'none', primary: 'Pogledaj', pBg: 'transparent', pFg: '#F3F5F9', pBorder: '#3A4257' },
+      one: { state: '1 PRIJAVA', color: '#FFB15C', dot: 'transparent', ring: '0', radius: '0', shape: 'none', primary: 'Proglasi', pBg: 'transparent', pFg: '#F3F5F9', pBorder: '#FFB15C' }
+    };
+    const r = (name, n, seeds, s, extra) => Object.assign({ name, n, seeds, menu: false, mBorder: '#3A4257', rowBg: 'transparent' }, S[s], extra || {});
+    return {
+      steps: steps.map(([n, label, s], i) => ({ n, label, current: s === 'now' ? 'step' : 'false', mark: s === 'done' ? '✓' : '',
+        bg: s === 'now' ? '#D9FF3D' : (s === 'done' ? '#1A2030' : '#0D1018'), fg: s === 'now' ? '#0A0C11' : (s === 'done' ? '#F3F5F9' : '#8C94A6'), delay: (i * 0.06) + 's' })),
+      chips: chips.map((label, i) => ({ label, on: i === 0, bg: i === 0 ? '#F3F5F9' : 'transparent', fg: i === 0 ? '#0A0C11' : '#F3F5F9', border: i === 0 ? '#F3F5F9' : '#3A4257' })),
+      rows: [
+        r('Kadeti - Kumite -52 kg', 9, '2 nositelja', 'played', { menu: true, mBorder: '#D9FF3D', rowBg: '#151A27' }),
+        r('Kadetkinje - Kumite -47 kg', 5, '2 nositelja', 'none', { rowBg: '#1A2030' }),
+        r('Kadetkinje - Kumite +54 kg', 4, 'Dodaj', 'ready'),
+        r('Kadeti - Kata', 11, '2 nositelja', 'ready'),
+        r('Kadetkinje - Kumite +61 kg', 1, '—', 'one'),
+        r('Juniori - Kumite -68 kg', 8, 'Dodaj', 'none'),
+        r('Juniori - Kumite -61 kg', 6, 'Dodaj', 'none')
+      ],
+      seeds: [
+        { n: '1', name: 'Lucija Pavić', club: 'KK Optimist', bg: '#D9FF3D', fg: '#0A0C11', aria: 'Promijeni redoslijed: Lucija Pavić' },
+        { n: '2', name: 'Dora Klarić', club: 'KK Jadran', bg: '#F3F5F9', fg: '#0A0C11', aria: 'Promijeni redoslijed: Dora Klarić' },
+        { n: '—', name: 'Iva Perković', club: 'KK Neretva', bg: '#1A2030', fg: '#A0A8BA', aria: 'Promijeni redoslijed: Iva Perković' },
+        { n: '—', name: 'Nora Šimić', club: 'KK Sokol', bg: '#1A2030', fg: '#A0A8BA', aria: 'Promijeni redoslijed: Nora Šimić' },
+        { n: '—', name: 'Ena Rogić', club: 'KK Optimist', bg: '#1A2030', fg: '#A0A8BA', aria: 'Promijeni redoslijed: Ena Rogić' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+/*
+ * Arena — dizajn tokeni i pomoćne klase za Tailwind CSS 4
+ * ---------------------------------------------------------------
+ * Gdje: resources/css/arena.css, uvesti u resources/css/app.css ODMAH NAKON
+ *       @import "tailwindcss"; (i nakon Flux importa ako postoji):
+ *
+ *       @import "./arena.css";
+ *
+ * Tema: svijetla je :root, tamna je klasa .dark na <html> (isto kao Flux).
+ * Ako app.css već ima "@custom-variant dark ...", NEMOJ ga dodavati drugi put.
+ *
+ * Pravilo: nigdje u Bladeu ne pisati heksadecimalne boje ni red-600/blue-600
+ * za AKA/AO. Uvijek klase iz ovog fajla (bg-arena-aka, text-arena-ink …).
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- 1. Sirove vrijednosti po temi ---------- */
+:root {
+  --arena-bg: #F2F3F6;
+  --arena-bg-2: #E7E9EF;        /* dijagonalne pruge u zaglavljima */
+  --arena-surface: #FFFFFF;
+  --arena-surface-2: #E8EBF1;
+  --arena-line: #D3D8E2;
+  --arena-line-strong: #9AA2B4;
+  --arena-ink: #0A0C11;
+  --arena-muted: #4B5468;
+  --arena-aka-text: #B5121F;    /* AKA kao boja teksta na svijetloj podlozi */
+  --arena-ao-text: #1F4FD1;
+  --arena-warn: #9A4D00;
+  --arena-ok: #13753F;
+  --arena-focus: #0A0C11;       /* u svijetloj temi fokus je taman, volt se ne vidi */
+  --arena-live-ink: #0A0C11;    /* tekst/obrub na volt podlozi */
+}
+
+.dark {
+  --arena-bg: #0A0C11;
+  --arena-bg-2: #0D1018;
+  --arena-surface: #121621;
+  --arena-surface-2: #1A2030;
+  --arena-line: #262D3F;
+  --arena-line-strong: #3A4257;
+  --arena-ink: #F3F5F9;
+  --arena-muted: #A0A8BA;
+  --arena-aka-text: #FF4D57;
+  --arena-ao-text: #5B8CFF;
+  --arena-warn: #FFB15C;
+  --arena-ok: #3DDC84;
+  --arena-focus: #D9FF3D;
+  --arena-live-ink: #0A0C11;
+}
+
+/* ---------- 2. Tailwind tokeni (generiraju klase bg-arena-*, text-arena-*, border-arena-* …) ---------- */
+@theme inline {
+  --color-arena-bg: var(--arena-bg);
+  --color-arena-bg-2: var(--arena-bg-2);
+  --color-arena-surface: var(--arena-surface);
+  --color-arena-surface-2: var(--arena-surface-2);
+  --color-arena-line: var(--arena-line);
+  --color-arena-line-strong: var(--arena-line-strong);
+  --color-arena-ink: var(--arena-ink);
+  --color-arena-muted: var(--arena-muted);
+  --color-arena-aka-text: var(--arena-aka-text);
+  --color-arena-ao-text: var(--arena-ao-text);
+  --color-arena-warn: var(--arena-warn);
+  --color-arena-ok: var(--arena-ok);
+  --color-arena-focus: var(--arena-focus);
+}
+
+@theme {
+  /* Iste u obje teme */
+  --color-arena-volt: #D9FF3D;   /* samo „uživo” i primarna radnja; u svijetloj temi samo kao podloga */
+  --color-arena-aka: #E8202E;    /* AKA ploča (bijeli tekst) */
+  --color-arena-ao: #2C62F0;     /* AO ploča (bijeli tekst) */
+  --color-arena-gold: #E9B949;
+  --color-arena-silver: #C9CFDB;
+  --color-arena-bronze: #C98A55;
+
+  --font-display: "Big Shoulders", Impact, "Arial Narrow", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Animacije: klase animate-arena-in, animate-arena-pop … */
+  --animate-arena-in: arena-in 700ms cubic-bezier(.2,.8,.2,1) both;
+  --animate-arena-up: arena-up 500ms ease-out both;
+  --animate-arena-pop: arena-pop 600ms cubic-bezier(.3,1.6,.5,1) both;
+  --animate-arena-pulse: arena-pulse 1.6s infinite;
+  --animate-arena-ticker: arena-ticker 26s linear infinite;
+  --animate-arena-bar: arena-bar 1.2s cubic-bezier(.2,.8,.2,1) both;
+  --animate-arena-medal: arena-medal 500ms cubic-bezier(.3,1.5,.5,1) both;
+  --animate-arena-modal: arena-modal 400ms cubic-bezier(.2,.8,.2,1) both;
+
+  @keyframes arena-in {
+    from { opacity: 0; transform: translateX(-28px) skewX(-8deg); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes arena-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes arena-pop {
+    0%   { opacity: 0; transform: scale(.4); }
+    60%  { transform: scale(1.15); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes arena-pulse {
+    0%   { box-shadow: 0 0 0 0 rgb(217 255 61 / .7); }
+    70%  { box-shadow: 0 0 0 10px rgb(217 255 61 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(217 255 61 / 0); }
+  }
+  @keyframes arena-ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes arena-bar {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes arena-medal {
+    0%   { transform: scale(0) rotate(-90deg); }
+    70%  { transform: scale(1.2) rotate(8deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  @keyframes arena-modal {
+    from { opacity: 0; transform: translateY(24px) skewY(1.5deg) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes arena-sweep {
+    0%        { transform: translateX(-120%) skewX(-20deg); }
+    60%, 100% { transform: translateX(420%) skewX(-20deg); }
+  }
+}
+
+/* ---------- 3. Oblici Arene (Tailwind 4 @utility → koriste se kao obične klase) ---------- */
+
+/* Kosi rez za gumbe: <button class="arena-cut bg-arena-volt …"> */
+@utility arena-cut {
+  clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+}
+
+/* Nagnuti čipovi i oznake (T1, UŽIVO, filtri) */
+@utility arena-skew {
+  transform: skewX(-10deg);
+}
+
+/* Strelica koraka natjecanja (x-arena.steps) */
+@utility arena-chevron {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 12px 50%);
+}
+
+/* Lijeva i desna polovica AKA | AO ploče */
+@utility arena-plate-aka {
+  clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%);
+}
+@utility arena-plate-ao {
+  clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%);
+  margin-left: -8px;
+}
+
+/* Dijagonalne pruge u zaglavljima (hero, prijava, veliki ekran) */
+@utility arena-stripes {
+  background-image: repeating-linear-gradient(-55deg, var(--arena-bg) 0 14px, var(--arena-bg-2) 14px 15px);
+}
+
+/* Svjetlosni prelaz preko kartice „Sada” — SAMO na karticama borbi koje su u tijeku */
+@utility arena-sweep {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 30%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / .10), transparent);
+    animation: arena-sweep 3.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* Fokus prema temi (volt u tamnoj, tamni u svijetloj) */
+@utility arena-focus {
+  &:focus-visible {
+    outline: 3px solid var(--arena-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- 4. Bazni sloj ---------- */
+@layer base {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid var(--arena-focus);
+    outline-offset: 2px;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* ---------- 5. Smanjeno kretanje: sve animacije isključene ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

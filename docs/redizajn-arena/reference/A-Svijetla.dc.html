@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Svijetla tema, natjecanje uživo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#F2F3F6}
+a{color:#0A0C11;text-decoration:none}a:hover{color:#1F4FD1}
+a:focus-visible,button:focus-visible{outline:3px solid #0A0C11;outline-offset:2px}
+@keyframes ar-in{from{opacity:0;transform:translateX(-28px) skewX(-8deg)}to{opacity:1;transform:none}}
+@keyframes ar-sweep{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(10,12,17,.5)}70%{box-shadow:0 0 0 10px rgba(10,12,17,0)}100%{box-shadow:0 0 0 0 rgba(10,12,17,0)}}
+@keyframes ar-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes ar-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ar-bar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:390px;height:1480px;position:relative;overflow:hidden;background:#F2F3F6;color:#0A0C11;font-family:Inter,system-ui,sans-serif">
+
+  <header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#FFFFFF;border-bottom:1px solid #D3D8E2">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px">
+      <span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span>
+      <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;letter-spacing:.06em">NATJECANJA</span>
+    </a>
+    <button aria-label="Promijeni temu" style="width:44px;height:44px;border-radius:10px;border:1px solid #D3D8E2;background:#FFFFFF;color:#0A0C11;display:grid;place-items:center;cursor:pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+    </button>
+  </header>
+
+  <section style="position:relative;padding:18px 16px 22px;overflow:hidden;background:repeating-linear-gradient(-55deg,#F2F3F6 0 14px,#E7E9EF 14px 15px)">
+    <div aria-hidden="true" style="position:absolute;right:-40px;top:0;width:150px;height:100%;background:#E8202E;transform:skewX(-14deg)"></div>
+    <div aria-hidden="true" style="position:absolute;right:-110px;top:0;width:120px;height:100%;background:#2C62F0;transform:skewX(-14deg)"></div>
+    <div style="position:relative;display:flex;flex-direction:column;gap:12px;max-width:280px">
+      <a href="#" style="display:flex;align-items:center;gap:6px;font-size:13px;color:#4B5468;min-height:32px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>Sva natjecanja</a>
+      <span style="align-self:flex-start;display:flex;align-items:center;gap:8px;background:#D9FF3D;color:#0A0C11;border:1px solid #0A0C11;font-weight:800;font-size:12px;letter-spacing:.14em;padding:5px 12px 5px 10px;transform:skewX(-10deg)">
+        <span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#0A0C11;animation:ar-pulse 1.6s infinite"></span>UŽIVO · U TIJEKU</span>
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:54px;line-height:.88;text-transform:uppercase;animation:ar-in .8s cubic-bezier(.2,.8,.2,1) both">Zimski kup<br>Zadra 2026</h1>
+      <div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:#2E3546">
+        <span style="font-family:'JetBrains Mono',monospace">SUB 13.12. · 09:00</span><span>SD Višnjik, Zadar</span><span>Org. KK Optimist</span>
+      </div>
+    </div>
+  </section>
+
+  <nav aria-label="Odjeljci natjecanja" style="display:flex;gap:4px;overflow-x:auto;padding:0 8px;background:#FFFFFF;border-top:1px solid #D3D8E2;border-bottom:1px solid #D3D8E2">
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4B5468;white-space:nowrap">Detalji</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4B5468;white-space:nowrap">Kategorije</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4B5468;white-space:nowrap">Ždrijeb</a>
+    <a href="#" aria-current="page" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:inset 0 -4px 0 #0A0C11">Satnica</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4B5468;white-space:nowrap">Rezultati</a>
+    <a href="#" style="min-height:48px;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4B5468;white-space:nowrap">Poredak</a>
+  </nav>
+
+  <section style="padding:18px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:28px;letter-spacing:.04em">SADA NA TATAMIJIMA</h2>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4B5468">3 / 4 AKTIVNA</span>
+    </div>
+    <sc-for list="{{tiles}}" as="t" hint-placeholder-count="3">
+      <article style="position:relative;overflow:hidden;background:#FFFFFF;border:1px solid #D3D8E2;box-shadow:0 1px 0 #D3D8E2;animation:ar-in .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{t.delay}}">
+        <sc-if value="{{t.first}}" hint-placeholder-val="{{false}}"><div aria-hidden="true" style="position:absolute;top:0;left:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:ar-sweep 3.6s ease-in-out infinite;pointer-events:none;z-index:2"></div></sc-if>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px">
+          <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:30px;line-height:1;background:#0A0C11;color:#FFFFFF;padding:2px 8px;transform:skewX(-10deg)">{{t.n}}</span>
+          <div style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:14px">{{t.cat}}</span><span style="font-size:12px;color:#4B5468">{{t.round}}</span></div>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;white-space:nowrap">{{t.clock}}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));height:76px">
+          <div style="background:#E8202E;color:#FFFFFF;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 12px;gap:6px">
+            <div style="display:flex;flex-direction:column;min-width:0"><span style="font-size:11px;font-weight:800;letter-spacing:.14em">AKA</span><span style="font-weight:700;font-size:15px;line-height:1.15">{{t.aka}}</span><span style="font-size:12px">{{t.akaClub}}</span></div>
+            <sc-if value="{{t.hasScore}}" hint-placeholder-val="{{true}}"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;animation:ar-pop .6s cubic-bezier(.3,1.6,.5,1) .6s both">{{t.as}}</span></sc-if>
+          </div>
+          <div style="background:#2C62F0;color:#FFFFFF;clip-path:polygon(16px 0,100% 0,100% 100%,0 100%);margin-left:-8px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 22px;gap:6px">
+            <sc-if value="{{t.hasScore}}" hint-placeholder-val="{{true}}"><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;animation:ar-pop .6s cubic-bezier(.3,1.6,.5,1) .7s both">{{t.os}}</span></sc-if>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0;margin-left:auto"><span style="font-size:11px;font-weight:800;letter-spacing:.14em">AO</span><span style="font-weight:700;font-size:15px;line-height:1.15">{{t.ao}}</span><span style="font-size:12px">{{t.aoClub}}</span></div>
+          </div>
+        </div>
+      </article>
+    </sc-for>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px dashed #9AA2B4;color:#4B5468;font-size:13px">
+      <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;color:#0A0C11">T4</span>
+      <span>Pauza · nastavak u <span style="font-family:'JetBrains Mono',monospace;color:#0A0C11">10:40</span></span>
+    </div>
+  </section>
+
+  <section style="padding:22px 16px 0;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">UPRAVO ZAVRŠENO</h2>
+      <a href="#" style="font-size:13px;font-weight:700;min-height:44px;display:flex;align-items:center;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px">Svi rezultati</a>
+    </div>
+    <article style="background:#FFFFFF;border:1px solid #D3D8E2;padding:14px 12px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:14px">U12 · Učenice · Kata</span><span style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.12em;border:1px solid #9AA2B4;padding:3px 8px"><span aria-hidden="true" style="width:8px;height:8px;background:#4B5468"></span>ZAVRŠENO</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:6px;height:120px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">Nika Tomić<br><span style="color:#4B5468;font-weight:400;font-size:12px">KK Mladost</span></span><div style="width:100%;height:40px;background:#E8EBF1;border-top:3px solid #8C95A6;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px;transform-origin:bottom;animation:ar-bar .6s ease-out .3s both">2</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">Mia Horvat<br><span style="color:#4B5468;font-weight:400;font-size:12px">KK Optimist</span></span><div style="width:100%;height:60px;background:#E9B949;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:26px;transform-origin:bottom;animation:ar-bar .6s ease-out .15s both">1</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:13px;font-weight:600;text-align:center;line-height:1.2">Lana Babić<br><span style="color:#4B5468;font-weight:400;font-size:12px">KK Jadran</span></span><div style="width:100%;height:28px;background:#E8EBF1;border-top:3px dashed #A0612E;display:grid;place-items:center;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;transform-origin:bottom;animation:ar-bar .6s ease-out .45s both">3</div></div>
+      </div>
+    </article>
+  </section>
+
+  <section style="padding:22px 16px 0;display:flex;flex-direction:column;gap:6px">
+    <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em">PRAVILA SVIJETLE TEME</h2>
+    <p style="margin:0;font-size:13px;color:#2E3546;line-height:1.5">Volt žuta je samo podloga s tamnim tekstom i tamnim obrubom, nikad boja teksta ili tanke linije. Aktivni tab i fokus su tamni. AKA i AO ploče ostaju iste u obje teme.</p>
+  </section>
+
+  <div role="marquee" aria-label="Najnoviji rezultati" style="position:absolute;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;background:#D9FF3D;color:#0A0C11;overflow:hidden;border-top:1px solid #0A0C11">
+    <span style="flex:none;height:100%;display:flex;align-items:center;padding:0 12px;background:#0A0C11;color:#D9FF3D;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;letter-spacing:.06em;z-index:1">REZULTATI</span>
+    <div style="display:flex;gap:28px;white-space:nowrap;width:max-content;animation:ar-ticker 26s linear infinite;padding-left:16px;font-size:13px;font-weight:600">
+      <sc-for list="{{ticker}}" as="r" hint-placeholder-count="6"><span>{{r}}</span></sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1480}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const items = ['U12 Učenice Kata — 1. Mia Horvat, KK Optimist', 'Juniorke Kumite −59 kg — 1. Sara Knežević, KK Sokol', 'Kadeti Kumite −57 kg — 1. Dario Vidović, KK Jadran'];
+    return {
+      ticker: items.concat(items),
+      tiles: [
+        { first: true, n: 'T1', cat: 'Kadeti · Kumite −52 kg', round: 'Polufinale · borba 6 od 9', clock: 'do ~10:35', aka: 'Luka Marić', akaClub: 'KK Optimist', ao: 'Ivan Barić', aoClub: 'KK Jadran', hasScore: true, as: 3, os: 1, delay: '.1s' },
+        { first: false, n: 'T2', cat: 'U10 · Mlađe učenice · Kata', round: '1. kolo · borba 4 od 7 · zastavice', clock: 'do ~10:50', aka: 'Petra Šimić', akaClub: 'KK Sokol', ao: 'Ema Jurić', aoClub: 'KK Optimist', hasScore: false, as: 0, os: 0, delay: '.22s' },
+        { first: false, n: 'T3', cat: 'Veterani 35+ · Kumite +85 kg', round: 'Repasaž · borba 2 od 3', clock: 'do ~10:55', aka: 'Marko Perić', akaClub: 'KK Zrinski', ao: 'Toni Vuković', aoClub: 'KK Neretva', hasScore: true, as: 0, os: 2, delay: '.34s' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

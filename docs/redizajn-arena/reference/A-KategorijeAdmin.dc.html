@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin kategorije</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+.ar-opt:hover{background:#1A2030}
+@keyframes ar-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes ar-chev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ar-menu{from{opacity:0;transform:translateY(-8px) scaleY(.92)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:24px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;color:#A0A8BA">Natjecanja / Kup Ravnih kotara 2027</span>
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:46px;line-height:.9;text-transform:uppercase">Kup Ravnih kotara 2027</h1>
+    </div>
+
+    <nav aria-label="Koraci natjecanja" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:4px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+        <a href="#" aria-current="{{s.current}}" style="min-height:56px;padding:8px 22px 8px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:{{s.bg}};color:{{s.fg}};clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,12px 50%);animation:ar-chev .45s ease-out both;animation-delay:{{s.delay}}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85">{{s.n}} {{s.mark}}</span>
+          <span style="font-weight:700;font-size:15px">{{s.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <section style="background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .1s both">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #262D3F;position:relative">
+        <h2 style="margin:0 6px 0 0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:26px;letter-spacing:.04em">KATEGORIJE <span style="color:#8C94A6;font-size:20px">125</span></h2>
+        <label style="display:flex;align-items:center;gap:8px;min-height:44px;padding:0 10px;background:#0A0C11;border:1px solid #262D3F;flex:1 1 200px;max-width:280px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0A8BA" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+          <span style="position:absolute;left:-9999px">Pretraži kategorije</span>
+          <input placeholder="npr. -52 kg" style="flex:1;min-width:0;border:0;background:transparent;color:#F3F5F9;font:inherit;font-size:14px;outline:none">
+        </label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+            <button aria-pressed="{{c.on}}" style="min-height:40px;padding:0 12px;border:1px solid {{c.border}};background:{{c.bg}};color:{{c.fg}};font-size:13px;font-weight:700;transform:skewX(-10deg)">{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;position:relative">
+          <button aria-expanded="true" aria-haspopup="menu" style="min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:17px;letter-spacing:.05em;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)">SLUŽBENE KATEGORIJE<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+          <button style="min-height:44px;padding:0 12px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px;font-weight:600">Kopiraj s natjecanja</button>
+          <button style="min-height:44px;padding:0 12px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px;font-weight:600">Nova kategorija</button>
+          <div role="menu" aria-label="Uvezi službene kategorije" style="position:absolute;top:52px;left:0;z-index:5;width:340px;background:#1A2030;border:1px solid #3A4257;box-shadow:0 20px 50px rgba(0,0,0,.55);transform-origin:top;animation:ar-menu .3s cubic-bezier(.2,.8,.2,1) .3s both">
+            <span style="display:block;padding:10px 14px 6px;font-size:11px;letter-spacing:.12em;color:#A0A8BA">HKS 2026 · GODIŠTA PREMA 2027.</span>
+            <sc-for list="{{sets}}" as="o" hint-placeholder-count="3">
+              <button role="menuitem" class="ar-opt" style="width:100%;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border:0;border-top:1px solid #262D3F;background:transparent;color:#F3F5F9;text-align:left">
+                <span style="display:flex;flex-direction:column"><span style="font-weight:700;font-size:14px">{{o.name}}</span><span style="font-size:12px;color:#A0A8BA">{{o.note}}</span></span>
+                <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:22px">{{o.n}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:820px">
+          <thead><tr style="text-align:left;color:#A0A8BA;font-size:12px;letter-spacing:.08em">
+            <th style="padding:10px 16px;font-weight:600">KATEGORIJA</th><th style="padding:10px 8px;font-weight:600">DISCIPLINA</th><th style="padding:10px 8px;font-weight:600">SPOL</th><th style="padding:10px 8px;font-weight:600">GODIŠTA</th><th style="padding:10px 8px;font-weight:600">TEŽINA</th><th style="padding:10px 8px;font-weight:600">BORBA</th><th style="padding:10px 8px;font-weight:600">PRIJAVE</th><th style="padding:10px 16px"></th>
+          </tr></thead>
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+            <tbody>
+              <tr><td colspan="8" style="padding:0;border-top:1px solid #262D3F">
+                <button aria-expanded="{{g.open}}" style="width:100%;min-height:44px;display:flex;align-items:center;gap:10px;padding:0 16px;border:0;background:#0D1018;color:#F3F5F9;text-align:left">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true" style="transform:rotate({{g.rot}})"><path d="M9 6l6 6-6 6"></path></svg>
+                  <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;letter-spacing:.08em;color:#D9FF3D">{{g.title}}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A0A8BA">{{g.meta}}</span>
+                </button>
+              </td></tr>
+              <sc-if value="{{g.open}}" hint-placeholder-val="{{false}}">
+                <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="4">
+                  <tr class="ar-row" style="border-top:1px solid #1A2030">
+                    <td style="padding:10px 16px;font-weight:600">{{r.name}}</td>
+                    <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:12px">{{r.d}}</td>
+                    <td style="padding:10px 8px">{{r.s}}</td>
+                    <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.y}}</td>
+                    <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.w}}</td>
+                    <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.t}}</td>
+                    <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;color:{{r.nColor}}">{{r.n}}</td>
+                    <td style="padding:6px 16px;text-align:right"><button aria-label="Uredi kategoriju" style="width:40px;height:40px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:inline-grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg></button></td>
+                  </tr>
+                </sc-for>
+              </sc-if>
+            </tbody>
+          </sc-for>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [['01','Detalji','done'],['02','Tatamiji','done'],['03','Kategorije','now'],['04','Prijave','todo'],['05','Ždrijeb','todo'],['06','Satnica','todo'],['07','Dan natjecanja','todo']];
+    const chips = ['Sve','Kata','Kumite','Bez prijava','Bez tatamija'];
+    const row = (name, d, s, y, w, t, n) => ({ name, d, s, y, w, t, n, nColor: n === 0 ? '#FFB15C' : '#F3F5F9' });
+    return {
+      steps: steps.map(([n, label, s], i) => ({ n, label, current: s === 'now' ? 'step' : 'false', mark: s === 'done' ? '✓' : '',
+        bg: s === 'now' ? '#D9FF3D' : (s === 'done' ? '#1A2030' : '#0D1018'), fg: s === 'now' ? '#0A0C11' : (s === 'done' ? '#F3F5F9' : '#8C94A6'), delay: (i * 0.06) + 's' })),
+      chips: chips.map((label, i) => ({ label, on: i === 0, bg: i === 0 ? '#F3F5F9' : 'transparent', fg: i === 0 ? '#0A0C11' : '#F3F5F9', border: i === 0 ? '#F3F5F9' : '#3A4257' })),
+      sets: [
+        { name: 'Turnir', note: 'kata i kumite pojedinačno', n: '125' },
+        { name: 'Prvenstvo Hrvatske', note: 'kata i kumite pojedinačno', n: '157' },
+        { name: 'Kup Hrvatske', note: 'kata i kumite pojedinačno', n: '115' }
+      ],
+      groups: [
+        { title: 'KADETI', meta: '2012–2013 · 14 kategorija · 120 s', open: true, rot: '90deg', rows: [
+          row('Kadeti - Kumite -52 kg','KUMITE','M','2012–2013','–52 kg','120 s',9),
+          row('Kadeti - Kumite -57 kg','KUMITE','M','2012–2013','52–57 kg','120 s',7),
+          row('Kadetkinje - Kumite -47 kg','KUMITE','Ž','2012–2013','–47 kg','120 s',5),
+          row('Kadeti - Kata','KATA','M','2012–2013','—','—',11),
+          row('Kadetkinje - Kata','KATA','Ž','2012–2013','—','—',0)
+        ] },
+        { title: 'U10', meta: '2018–2019 · 12 kategorija · 60 s', open: true, rot: '90deg', rows: [
+          row('U10 - Mlađe učenice - Kata','KATA','Ž','2018–2019','—','—',7),
+          row('U10 - Mlađe učenice - Kumite -30 kg','KUMITE','Ž','2018–2019','–30 kg','60 s',6)
+        ] },
+        { title: 'SENIORI', meta: '2009 i stariji · 10 kategorija · 180 s', open: false, rot: '0deg', rows: [] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

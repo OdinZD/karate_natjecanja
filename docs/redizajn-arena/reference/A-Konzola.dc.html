@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Konzola tatamija</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#D9FF3D}a:hover{color:#F3F5F9}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+.ar-step:active{transform:scale(.92)}
+.ar-rec:active{transform:translateY(2px)}
+@keyframes ar-pop{0%{transform:scale(.4) skewX(-10deg);opacity:0}60%{transform:scale(1.12) skewX(-10deg)}100%{transform:scale(1) skewX(-10deg);opacity:1}}
+@keyframes ar-sweep{0%{transform:translateX(-120%) skewX(-20deg)}100%{transform:translateX(420%) skewX(-20deg)}}
+@keyframes ar-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width:390px;height:844px;overflow:hidden;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;box-sizing:border-box">
+
+  <header style="height:56px;flex:none;display:flex;align-items:center;gap:8px;padding:0 8px 0 4px;border-bottom:1px solid #262D3F">
+    <button aria-label="Natrag na popis tatamija" style="width:44px;height:44px;border:0;background:transparent;color:#F3F5F9;display:grid;place-items:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </button>
+    <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:28px;letter-spacing:.04em">TATAMI 1</span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#A0A8BA"><span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#3DDC84"></span>Povezano</span>
+  </header>
+
+  <div style="padding:10px 12px 0;display:flex;flex-direction:column;gap:8px;flex:none">
+    <button style="min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;background:#121621;border:1px solid #262D3F;color:#F3F5F9;text-align:left">
+      <span style="display:flex;flex-direction:column"><span style="font-size:11px;color:#A0A8BA;letter-spacing:.1em">KATEGORIJA</span><span style="font-weight:700;font-size:15px">Kadeti · Kumite −52 kg</span></span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#A0A8BA;font-family:'JetBrains Mono',monospace"><span>POLUFINALE</span><span>BORBA 6 / 9</span></div>
+  </div>
+
+  <div style="padding:8px 12px 0;display:flex;flex-direction:column;gap:0;flex:none;position:relative">
+    <div style="position:relative;overflow:hidden;height:156px;background:#E8202E;clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),0 100%);display:flex;opacity:{{akaOpacity}};transition:opacity .25s">
+      <sc-if value="{{akaWin}}" hint-placeholder-val="{{false}}"><div aria-hidden="true" style="position:absolute;top:0;left:0;width:25%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);animation:ar-sweep 1.4s ease-out infinite"></div></sc-if>
+      <button onClick="{{pickAka}}" aria-pressed="{{akaWin}}" style="flex:1;border:0;background:transparent;color:#FFFFFF;text-align:left;padding:14px 8px 14px 16px;display:flex;flex-direction:column;justify-content:center;gap:4px;position:relative">
+        <span style="font-size:12px;font-weight:800;letter-spacing:.16em">AKA · dodirni za pobjedu</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:36px;line-height:.95;text-transform:uppercase">Luka Marić</span>
+        <span style="font-size:13px;color:#FFE3E5">KK Optimist</span>
+        <sc-if value="{{akaWin}}" hint-placeholder-val="{{false}}"><span style="align-self:flex-start;margin-top:4px;background:#D9FF3D;color:#0A0C11;font-weight:800;font-size:12px;letter-spacing:.12em;padding:4px 10px;animation:ar-pop .45s cubic-bezier(.3,1.6,.5,1) both">POBJEDNIK</span></sc-if>
+      </button>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding-right:10px;position:relative">
+        <button class="ar-step" onClick="{{akaInc}}" aria-label="AKA plus bod" style="width:48px;height:44px;border:0;background:rgba(0,0,0,.22);color:#fff;font-size:22px;font-weight:700">+</button>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;line-height:1">{{aka}}</span>
+        <button class="ar-step" onClick="{{akaDec}}" aria-label="AKA minus bod" style="width:48px;height:44px;border:0;background:rgba(0,0,0,.22);color:#fff;font-size:22px;font-weight:700">−</button>
+      </div>
+    </div>
+    <span aria-hidden="true" style="position:absolute;left:50%;top:150px;transform:translateX(-50%) skewX(-10deg);z-index:2;background:#0A0C11;color:#F3F5F9;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;padding:2px 12px">VS</span>
+    <div style="position:relative;overflow:hidden;height:156px;margin-top:-6px;background:#2C62F0;clip-path:polygon(0 14px,100% 0,100% 100%,0 100%);display:flex;opacity:{{aoOpacity}};transition:opacity .25s">
+      <sc-if value="{{aoWin}}" hint-placeholder-val="{{false}}"><div aria-hidden="true" style="position:absolute;top:0;left:0;width:25%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);animation:ar-sweep 1.4s ease-out infinite"></div></sc-if>
+      <button onClick="{{pickAo}}" aria-pressed="{{aoWin}}" style="flex:1;border:0;background:transparent;color:#FFFFFF;text-align:left;padding:20px 8px 10px 16px;display:flex;flex-direction:column;justify-content:center;gap:4px;position:relative">
+        <span style="font-size:12px;font-weight:800;letter-spacing:.16em">AO · dodirni za pobjedu</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:36px;line-height:.95;text-transform:uppercase">Ivan Barić</span>
+        <span style="font-size:13px;color:#E2EAFF">KK Jadran</span>
+        <sc-if value="{{aoWin}}" hint-placeholder-val="{{false}}"><span style="align-self:flex-start;margin-top:4px;background:#D9FF3D;color:#0A0C11;font-weight:800;font-size:12px;letter-spacing:.12em;padding:4px 10px;animation:ar-pop .45s cubic-bezier(.3,1.6,.5,1) both">POBJEDNIK</span></sc-if>
+      </button>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 10px 0 0;position:relative">
+        <button class="ar-step" onClick="{{aoInc}}" aria-label="AO plus bod" style="width:48px;height:44px;border:0;background:rgba(0,0,0,.22);color:#fff;font-size:22px;font-weight:700">+</button>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;line-height:1">{{ao}}</span>
+        <button class="ar-step" onClick="{{aoDec}}" aria-label="AO minus bod" style="width:48px;height:44px;border:0;background:rgba(0,0,0,.22);color:#fff;font-size:22px;font-weight:700">−</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:14px 12px 0;display:flex;flex-direction:column;gap:8px;flex:none">
+    <span style="font-size:11px;color:#A0A8BA;letter-spacing:.12em">ODLUKA</span>
+    <div role="radiogroup" aria-label="Odluka" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
+      <sc-for list="{{decisions}}" as="d" hint-placeholder-count="5">
+        <button role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="min-height:44px;border:1px solid {{d.border}};background:{{d.bg}};color:{{d.fg}};font-size:12px;font-weight:700;padding:0 2px">{{d.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:14px 12px 0;flex:none">
+    <sc-if value="{{recorded}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 6px 0 14px;background:#121621;border:1px solid #D9FF3D;animation:ar-up .35s ease-out both">
+        <span style="display:flex;flex-direction:column"><span style="font-weight:700;font-size:15px">Zapisano · {{summary}}</span><span style="font-size:12px;color:#A0A8BA">Učitavam borbu #7…</span></span>
+        <button onClick="{{undo}}" style="min-height:44px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:700">Poništi</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{notRecorded}}" hint-placeholder-val="{{true}}">
+      <button class="ar-rec" onClick="{{record}}" aria-disabled="{{noWinner}}" style="width:100%;min-height:60px;border:0;background:{{recBg}};color:{{recFg}};font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:24px;letter-spacing:.08em;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)">{{recLabel}}</button>
+    </sc-if>
+  </div>
+
+  <div style="margin-top:auto;border-top:1px solid #262D3F;flex:none">
+    <div style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 12px;font-size:13px">
+      <span style="color:#A0A8BA;font-family:'JetBrains Mono',monospace">SLJEDEĆA #7</span>
+      <span style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:4px;height:18px;background:#FF4D57"></span>Filip Ćosić</span>
+      <span style="display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:4px;height:18px;background:#5B8CFF"></span>Jakov Grgić</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;min-height:48px;padding:0 12px;font-size:13px;border-top:1px solid #1A2030;color:#A0A8BA">
+      <span style="font-family:'JetBrains Mono',monospace">ODIGRANO 5</span>
+      <span>#5 Jakov Grgić pobj. 2:1 (bodovi)</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { winner: null, decision: 'points', aka: 3, ao: 1, recorded: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const opts = [['points','Bodovi'],['hantei','Hantei'],['flags','Zastav.'],['kiken','Kiken'],['shikkaku','Shikk.']];
+    const name = s.winner === 'aka' ? 'Luka Marić' : 'Ivan Barić';
+    return {
+      aka: s.aka, ao: s.ao,
+      akaWin: s.winner === 'aka', aoWin: s.winner === 'ao',
+      akaOpacity: s.winner === 'ao' ? 0.45 : 1,
+      aoOpacity: s.winner === 'aka' ? 0.45 : 1,
+      pickAka: () => this.setState({ winner: 'aka', recorded: false }),
+      pickAo: () => this.setState({ winner: 'ao', recorded: false }),
+      akaInc: () => this.setState({ aka: s.aka + 1 }),
+      akaDec: () => this.setState({ aka: Math.max(0, s.aka - 1) }),
+      aoInc: () => this.setState({ ao: s.ao + 1 }),
+      aoDec: () => this.setState({ ao: Math.max(0, s.ao - 1) }),
+      decisions: opts.map(([id, label]) => ({
+        label, on: s.decision === id,
+        bg: s.decision === id ? '#F3F5F9' : '#121621',
+        fg: s.decision === id ? '#0A0C11' : '#F3F5F9',
+        border: s.decision === id ? '#F3F5F9' : '#262D3F',
+        pick: () => this.setState({ decision: id })
+      })),
+      recorded: s.recorded, notRecorded: !s.recorded,
+      noWinner: !s.winner,
+      recBg: s.winner ? '#D9FF3D' : '#1A2030',
+      recFg: s.winner ? '#0A0C11' : '#8C94A6',
+      recLabel: s.winner ? 'ZAPIŠI REZULTAT' : 'ODABERI POBJEDNIKA',
+      summary: name + ' ' + s.aka + ':' + s.ao,
+      record: () => { if (s.winner) this.setState({ recorded: true }); },
+      undo: () => this.setState({ recorded: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

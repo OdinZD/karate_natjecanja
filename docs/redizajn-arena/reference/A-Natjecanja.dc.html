@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin natjecanja</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+@keyframes ar-in{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ar-modal{from{opacity:0;transform:translateY(24px) skewY(1.5deg) scale(.97)}to{opacity:1;transform:none}}
+@keyframes ar-fade{from{opacity:0}to{opacity:1}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(10,12,17,.6)}70%{box-shadow:0 0 0 7px rgba(10,12,17,0)}100%{box-shadow:0 0 0 0 rgba(10,12,17,0)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="position:relative;min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;margin-bottom:14px"><span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span><span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span></a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Dashboard</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Tatami konzola</a>
+    <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+    <a href="#" aria-current="page" style="display:flex;align-items:center;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">Natjecanja</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Klubovi</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Natjecatelji</a>
+    <a href="#" style="display:flex;align-items:center;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">Korisnici</a>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:28px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+      <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:52px;line-height:.9">NATJECANJA</h1>
+      <button onClick="{{open}}" style="min-height:48px;display:flex;align-items:center;gap:8px;padding:0 20px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>NOVO NATJECANJE</button>
+    </div>
+
+    <div role="tablist" aria-label="Status" style="display:flex;gap:6px;flex-wrap:wrap">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+        <button role="tab" aria-selected="{{t.on}}" style="min-height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid {{t.border}};background:{{t.bg}};color:{{t.fg}};font-size:13px;font-weight:700;transform:skewX(-10deg)">{{t.label}}<span style="font-family:'JetBrains Mono',monospace;font-weight:500;opacity:.8">{{t.n}}</span></button>
+      </sc-for>
+    </div>
+
+    <section style="background:#121621;border:1px solid #262D3F;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:720px">
+        <thead><tr style="text-align:left;color:#A0A8BA;font-size:12px;letter-spacing:.08em">
+          <th style="padding:12px 16px;font-weight:600">NAZIV</th><th style="padding:12px 8px;font-weight:600">DATUM</th><th style="padding:12px 8px;font-weight:600">MJESTO</th><th style="padding:12px 8px;font-weight:600">PRIJAVE</th><th style="padding:12px 8px;font-weight:600">STATUS</th><th style="padding:12px 16px"></th>
+        </tr></thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <tr class="ar-row" style="border-top:1px solid #1A2030;animation:ar-in .4s ease-out both;animation-delay:{{r.delay}}">
+              <td style="padding:14px 16px;font-weight:700">{{r.name}}</td>
+              <td style="padding:14px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.date}}</td>
+              <td style="padding:14px 8px;color:#C9CFDB">{{r.place}}</td>
+              <td style="padding:14px 8px;font-family:'JetBrains Mono',monospace">{{r.n}}</td>
+              <td style="padding:14px 8px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.08em;padding:3px 8px;background:{{r.bg}};color:{{r.fg}};border:1px solid {{r.border}}"><span aria-hidden="true" style="width:8px;height:8px;box-sizing:border-box;background:{{r.dot}};border:{{r.ring}};border-radius:{{r.radius}};clip-path:{{r.shape}}"></span>{{r.status}}</span></td>
+              <td style="padding:10px 16px;text-align:right"><a href="#" style="display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border:1px solid #3A4257;font-size:13px;font-weight:600">Otvori</a></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <sc-if value="{{modal}}" hint-placeholder-val="{{true}}">
+    <div style="position:absolute;inset:0;background:rgba(5,6,9,.78);display:flex;justify-content:center;align-items:flex-start;padding:80px 16px 16px;box-sizing:border-box;z-index:10;animation:ar-fade .25s ease-out both">
+      <div role="dialog" aria-modal="true" aria-labelledby="novo-naslov" style="width:100%;max-width:640px;background:#121621;border:1px solid #3A4257;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:ar-modal .4s cubic-bezier(.2,.8,.2,1) both">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #262D3F;position:relative">
+          <span aria-hidden="true" style="position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(#E8202E 0 50%,#2C62F0 50% 100%)"></span>
+          <h2 id="novo-naslov" style="margin:0 0 0 6px;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:28px;letter-spacing:.03em">NOVO NATJECANJE</h2>
+          <button onClick="{{close}}" aria-label="Zatvori" style="width:44px;height:44px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+        <div style="padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:14px">
+          <sc-for list="{{fields}}" as="f" hint-placeholder-count="7">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.08em;color:#A0A8BA;grid-column:{{f.span}}">{{f.label}}
+              <input type="{{f.type}}" placeholder="{{f.ph}}" style="min-height:48px;padding:0 12px;background:#0A0C11;border:1px solid #3A4257;color:#F3F5F9;font:inherit;font-size:15px;letter-spacing:0;color-scheme:dark">
+              <span style="font-size:12px;letter-spacing:0;color:#8C94A6">{{f.hint}}</span>
+            </label>
+          </sc-for>
+          <fieldset style="margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:6px;grid-column:1 / -1">
+            <legend style="font-size:12px;letter-spacing:.08em;color:#A0A8BA;padding:0 0 6px">STATUS</legend>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{statuses}}" as="s" hint-placeholder-count="5">
+                <label style="min-height:44px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid {{s.border}};background:{{s.bg}};color:{{s.fg}};font-size:13px;font-weight:700;cursor:pointer"><input type="radio" name="status" defaultChecked="{{s.on}}" style="accent-color:#D9FF3D">{{s.label}}</label>
+              </sc-for>
+            </div>
+            <span style="font-size:12px;color:#8C94A6">Nacrt nije vidljiv javnosti. Adresa (slug) se stvara iz naziva.</span>
+          </fieldset>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid #262D3F">
+          <button onClick="{{close}}" style="min-height:44px;padding:0 16px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-weight:600">Odustani</button>
+          <button style="min-height:44px;padding:0 18px;border:0;background:#D9FF3D;color:#0A0C11;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:18px;letter-spacing:.06em">SPREMI I NASTAVI</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":920}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { modal: true }; }
+  renderVals() {
+    const ST = {
+      draft: { status: 'NACRT', bg: 'transparent', fg: '#A0A8BA', border: '#3A4257', dot: 'transparent', ring: '2px dashed #A0A8BA', radius: '50%', shape: 'none' },
+      reg: { status: 'PRIJAVE', bg: 'transparent', fg: '#D9FF3D', border: '#D9FF3D', dot: 'transparent', ring: '2px solid #D9FF3D', radius: '50%', shape: 'none' },
+      drawn: { status: 'ŽDRIJEB', bg: 'transparent', fg: '#9DB8FF', border: '#3A4257', dot: '#5B8CFF', ring: '0', radius: '0', shape: 'polygon(50% 0,100% 50%,50% 100%,0 50%)' },
+      live: { status: 'U TIJEKU', bg: '#D9FF3D', fg: '#0A0C11', border: '#D9FF3D', dot: '#0A0C11', ring: '0', radius: '50%', shape: 'none' },
+      done: { status: 'ZAVRŠENO', bg: 'transparent', fg: '#C9CFDB', border: '#3A4257', dot: '#C9CFDB', ring: '0', radius: '0', shape: 'none' }
+    };
+    const rows = [
+      ['Zimski kup Zadra 2026','13.12.2026','SD Višnjik, Zadar','386','live'],
+      ['Kup Ravnih kotara 2027','24.01.2027','Benkovac','212','reg'],
+      ['Turnir Mladost 2027','07.02.2027','Split','0','reg'],
+      ['Proljetni kup Šibenik','21.02.2027','Šibenik','48','draft'],
+      ['Jesenski turnir Zadar 2026','22.11.2026','SD Jazine, Zadar','318','done'],
+      ['Kup Neretve 2026','08.11.2026','Metković','274','done']
+    ];
+    const tabs = [['Sva','6'],['Nacrt','1'],['Prijave','2'],['Ždrijeb','0'],['U tijeku','1'],['Završeno','2']];
+    const statuses = ['Nacrt','Prijave','Ždrijeb','U tijeku','Završeno'];
+    return {
+      modal: this.state.modal,
+      open: () => this.setState({ modal: true }),
+      close: () => this.setState({ modal: false }),
+      tabs: tabs.map(([label, n], i) => ({ label, n, on: i === 0, bg: i === 0 ? '#F3F5F9' : 'transparent', fg: i === 0 ? '#0A0C11' : '#F3F5F9', border: i === 0 ? '#F3F5F9' : '#3A4257' })),
+      rows: rows.map(([name, date, place, n, s], i) => Object.assign({ name, date, place, n, delay: (i * 0.05) + 's' }, ST[s])),
+      fields: [
+        { label: 'NAZIV', type: 'text', ph: 'npr. Zimski kup Zadra 2027', hint: '', span: '1 / -1' },
+        { label: 'DATUM', type: 'date', ph: '', hint: '', span: 'auto' },
+        { label: 'VRIJEME POČETKA', type: 'time', ph: '', hint: '', span: 'auto' },
+        { label: 'MJESTO', type: 'text', ph: 'Dvorana, grad', hint: '', span: 'auto' },
+        { label: 'ORGANIZATOR', type: 'text', ph: 'Klub organizator', hint: '', span: 'auto' },
+        { label: 'ROK PRIJAVE', type: 'date', ph: '', hint: 'Javna stranica prikazuje rok uz natjecanje.', span: '1 / -1' }
+      ],
+      statuses: statuses.map((label, i) => ({ label, on: i === 0, bg: i === 0 ? '#1A2030' : 'transparent', fg: '#F3F5F9', border: i === 0 ? '#D9FF3D' : '#3A4257' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

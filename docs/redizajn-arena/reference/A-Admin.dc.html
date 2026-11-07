@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Arena · Admin dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap">
+<style>
+body{margin:0;background:#0A0C11}
+a{color:#F3F5F9;text-decoration:none}a:hover{color:#D9FF3D}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #D9FF3D;outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.ar-row:hover{background:#151A27}
+@keyframes ar-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ar-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ar-pulse{0%{box-shadow:0 0 0 0 rgba(217,255,61,.7)}70%{box-shadow:0 0 0 9px rgba(217,255,61,0)}100%{box-shadow:0 0 0 0 rgba(217,255,61,0)}}
+@keyframes ar-chev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0A0C11;color:#F3F5F9;font-family:Inter,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+
+  <aside style="flex:1 1 220px;max-width:100%;background:#0D1018;border-right:1px solid #262D3F;padding:16px 12px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+    <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px">
+      <span aria-hidden="true" style="width:26px;height:26px;display:block;background:linear-gradient(135deg,#E8202E 0 50%,#2C62F0 50% 100%);clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)"></span>
+      <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:20px;letter-spacing:.05em">ORGANIZACIJA</span>
+    </a>
+    <nav aria-label="Glavni izbornik" style="display:flex;flex-direction:column;gap:2px">
+      <a href="#" aria-current="page" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;background:#1A2030;box-shadow:inset 4px 0 0 #D9FF3D;font-weight:600;font-size:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>Dashboard</a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14"></rect><path d="M3 12h18"></path></svg>Tatami konzola</a>
+      <span style="font-size:11px;letter-spacing:.14em;color:#8C94A6;padding:14px 10px 6px">ADMINISTRACIJA</span>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"></path></svg>Natjecanja</a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"></path><path d="M9 21v-6h6v6"></path></svg>Klubovi</a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="7" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Natjecatelji</a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;font-size:14px;color:#C9CFDB">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3 20a6 6 0 0 1 12 0M16 4a3 3 0 0 1 0 6M21 20a6 6 0 0 0-4-5.6"></path></svg>Korisnici</a>
+    </nav>
+  </aside>
+
+  <main style="flex:999 1 560px;min-width:0;padding:24px clamp(16px,3vw,40px) 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;animation:ar-in .5s ease-out both">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;color:#A0A8BA">Aktivno natjecanje · Sub 13. 12. 2026 · SD Višnjik</span>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <h1 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:46px;line-height:.9;text-transform:uppercase">Zimski kup Zadra 2026</h1>
+          <span style="display:flex;align-items:center;gap:8px;background:#D9FF3D;color:#0A0C11;font-weight:800;font-size:12px;letter-spacing:.14em;padding:6px 12px;transform:skewX(-10deg)"><span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#0A0C11;animation:ar-pulse 1.6s infinite"></span>U TIJEKU</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="#" style="min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid #3A4257;font-size:14px;font-weight:600">Javna stranica
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        <button style="min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid #3A4257;background:transparent;color:#F3F5F9;font-size:14px;font-weight:600">PDF ispisi
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+      </div>
+    </div>
+
+    <section aria-label="Koraci natjecanja" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:4px">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+        <a href="#" aria-current="{{s.current}}" style="position:relative;min-height:76px;padding:12px 22px 12px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:{{s.bg}};color:{{s.fg}};clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,12px 50%);animation:ar-chev .45s ease-out both;animation-delay:{{s.delay}}">
+          <span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.85">{{s.n}} <span>{{s.mark}}</span></span>
+          <span style="font-weight:700;font-size:15px">{{s.label}}</span>
+          <span style="font-size:12px;opacity:.85">{{s.sub}}</span>
+        </a>
+      </sc-for>
+    </section>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px">
+      <div style="background:#121621;border:1px solid #262D3F;padding:16px;display:flex;flex-direction:column;gap:8px;animation:ar-in .5s ease-out .1s both">
+        <span style="font-size:12px;color:#A0A8BA;letter-spacing:.1em">BORBE ODIGRANE</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;line-height:1">214<span style="font-size:24px;color:#8C94A6"> / 372</span></span>
+        <div style="height:6px;background:#1A2030"><div style="height:100%;width:58%;background:#D9FF3D;transform-origin:left;animation:ar-bar 1.2s cubic-bezier(.2,.8,.2,1) .3s both"></div></div>
+      </div>
+      <div style="background:#121621;border:1px solid #262D3F;padding:16px;display:flex;flex-direction:column;gap:8px;animation:ar-in .5s ease-out .16s both">
+        <span style="font-size:12px;color:#A0A8BA;letter-spacing:.1em">KATEGORIJE ZAVRŠENE</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;line-height:1">41<span style="font-size:24px;color:#8C94A6"> / 125</span></span>
+        <div style="height:6px;background:#1A2030"><div style="height:100%;width:33%;background:#F3F5F9;transform-origin:left;animation:ar-bar 1.2s cubic-bezier(.2,.8,.2,1) .4s both"></div></div>
+      </div>
+      <div style="background:#121621;border:1px solid #262D3F;padding:16px;display:flex;flex-direction:column;gap:8px;animation:ar-in .5s ease-out .22s both">
+        <span style="font-size:12px;color:#A0A8BA;letter-spacing:.1em">PROCJENA KRAJA</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:40px;line-height:1">16:20</span>
+        <span style="font-size:13px;color:#FFB15C">T3 kasni 12 min</span>
+      </div>
+      <div style="background:#121621;border:1px solid #262D3F;padding:16px;display:flex;flex-direction:column;gap:8px;animation:ar-in .5s ease-out .28s both">
+        <span style="font-size:12px;color:#A0A8BA;letter-spacing:.1em">PRIJAVE</span>
+        <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:44px;line-height:1">386</span>
+        <span style="font-size:13px;color:#A0A8BA">241 natjecatelj · 18 klubova</span>
+      </div>
+    </section>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px">
+      <section style="flex:2 1 520px;min-width:0;background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .3s both">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #262D3F">
+          <h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">TATAMIJI UŽIVO</h2>
+          <a href="#" style="font-size:13px;color:#D9FF3D;min-height:44px;display:flex;align-items:center">Satnica</a>
+        </div>
+        <sc-for list="{{tatamis}}" as="t" hint-placeholder-count="4">
+          <div class="ar-row" style="display:grid;grid-template-columns:56px minmax(0,1fr) 120px 104px;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #1A2030">
+            <span style="font-family:'Big Shoulders',Impact,sans-serif;font-weight:900;font-size:26px;background:#F3F5F9;color:#0A0C11;text-align:center;transform:skewX(-10deg)">{{t.n}}</span>
+            <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+              <span style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{t.cat}}</span>
+              <div style="height:4px;background:#1A2030"><div style="height:100%;width:{{t.pct}};background:#5B8CFF;transform-origin:left;animation:ar-bar 1s ease-out .5s both"></div></div>
+            </div>
+            <span style="font-size:13px;color:{{t.stateColor}};font-family:'JetBrains Mono',monospace">{{t.state}}</span>
+            <a href="#" style="min-height:40px;display:flex;align-items:center;justify-content:center;border:1px solid #3A4257;font-size:13px;font-weight:600">Konzola</a>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="flex:1 1 300px;min-width:0;background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .36s both">
+        <div style="padding:14px 16px;border-bottom:1px solid #262D3F"><h2 style="margin:0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">TREBA PAŽNJU</h2></div>
+        <sc-for list="{{alerts}}" as="a" hint-placeholder-count="4">
+          <a href="#" class="ar-row" style="display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #1A2030;min-height:44px">
+            <span style="flex:none;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:2px 6px;height:fit-content;background:{{a.tagBg}};color:#0A0C11">{{a.tag}}</span>
+            <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">{{a.title}}</span><span style="font-size:12px;color:#A0A8BA">{{a.hint}}</span></span>
+          </a>
+        </sc-for>
+      </section>
+    </div>
+
+    <section style="background:#121621;border:1px solid #262D3F;animation:ar-in .5s ease-out .42s both">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #262D3F">
+        <h2 style="margin:0 8px 0 0;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:24px;letter-spacing:.04em">KATEGORIJE</h2>
+        <label style="display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;background:#0A0C11;border:1px solid #262D3F;flex:1 1 200px;max-width:320px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0A8BA" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+          <span style="position:absolute;left:-9999px">Pretraži kategorije</span>
+          <input placeholder="Pretraži kategorije…" style="flex:1;min-width:0;border:0;background:transparent;color:#F3F5F9;font:inherit;font-size:14px;outline:none">
+        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+            <button aria-pressed="{{c.on}}" style="min-height:36px;padding:0 12px;border:1px solid {{c.border}};background:{{c.bg}};color:{{c.fg}};font-size:13px;font-weight:600">{{c.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:640px">
+          <thead><tr style="text-align:left;color:#A0A8BA;font-size:12px;letter-spacing:.08em">
+            <th style="padding:10px 16px;font-weight:600">KATEGORIJA</th><th style="padding:10px 8px;font-weight:600">GODIŠTA</th><th style="padding:10px 8px;font-weight:600">PRIJAVE</th><th style="padding:10px 8px;font-weight:600">TATAMI</th><th style="padding:10px 16px;font-weight:600">STANJE</th>
+          </tr></thead>
+          <tbody>
+            <tr><td colspan="5" style="padding:8px 16px;background:#0D1018;font-family:'Big Shoulders',Impact,sans-serif;font-weight:800;font-size:16px;letter-spacing:.08em;color:#D9FF3D">KADETI · KUMITE · 6</td></tr>
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+              <tr class="ar-row" style="border-bottom:1px solid #1A2030">
+                <td style="padding:10px 16px;font-weight:600">{{r.name}}</td>
+                <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;color:#C9CFDB">{{r.years}}</td>
+                <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace">{{r.n}}</td>
+                <td style="padding:10px 8px">{{r.tatami}}</td>
+                <td style="padding:10px 16px"><span style="display:inline-flex;align-items:center;gap:6px;font-size:13px"><span aria-hidden="true" style="width:10px;height:10px;background:{{r.dot}};clip-path:{{r.shape}}"></span>{{r.state}}</span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const steps = [
+      ['01','Detalji','Sub 13. 12.','done'],['02','Tatamiji','4 · operateri','done'],['03','Kategorije','125','done'],
+      ['04','Prijave','386','done'],['05','Ždrijeb','125 / 125','done'],['06','Satnica','4 tatamija','done'],['07','Dan natjecanja','Uživo','now']
+    ];
+    const chips = ['Sve','Kata','Kumite','Ž','M','Kadeti','Seniori'];
+    const circle = 'circle(50%)', square = 'inset(0)', diamond = 'polygon(50% 0,100% 50%,50% 100%,0 50%)';
+    return {
+      steps: steps.map(([n, label, sub, st], i) => ({
+        n, label, sub, current: st === 'now' ? 'step' : 'false',
+        mark: st === 'done' ? '✓' : '●',
+        bg: st === 'now' ? '#D9FF3D' : '#1A2030', fg: st === 'now' ? '#0A0C11' : '#F3F5F9',
+        delay: (i * 0.06) + 's'
+      })),
+      tatamis: [
+        { n: 'T1', cat: 'Kadeti · Kumite −52 kg · borba 6/9', pct: '66%', state: 'u roku', stateColor: '#3DDC84' },
+        { n: 'T2', cat: 'U10 · Mlađe učenice · Kata · 4/7', pct: '57%', state: '−3 min', stateColor: '#3DDC84' },
+        { n: 'T3', cat: 'Veterani 35+ · Kumite +85 kg · 2/3', pct: '80%', state: '+12 min', stateColor: '#FFB15C' },
+        { n: 'T4', cat: 'Pauza do 10:40', pct: '0%', state: 'pauza', stateColor: '#A0A8BA' }
+      ],
+      alerts: [
+        { tag: 'SATNICA', tagBg: '#FFB15C', title: 'T3 kasni 12 minuta', hint: 'Premjesti 2 kategorije na T4 (slobodan od 10:40)' },
+        { tag: 'ŽDRIJEB', tagBg: '#D9FF3D', title: 'U14 Kumite −40 kg: 1 prijava', hint: 'Proglasi pobjednika bez borbe' },
+        { tag: 'PRIJAVE', tagBg: '#C9CFDB', title: '3 kategorije bez prijava', hint: 'Sakrij s javne stranice ili obriši' },
+        { tag: 'OPERATER', tagBg: '#C9CFDB', title: 'T4 nema prijavljenog operatera', hint: 'Dodijeli operatera prije 10:40' }
+      ],
+      chips: chips.map((label, i) => ({ label, on: i === 2 || i === 5,
+        bg: (i === 2 || i === 5) ? '#F3F5F9' : 'transparent', fg: (i === 2 || i === 5) ? '#0A0C11' : '#C9CFDB',
+        border: (i === 2 || i === 5) ? '#F3F5F9' : '#3A4257' })),
+      rows: [
+        { name: 'Kadeti - Kumite -52 kg', years: '2011–12', n: 9, tatami: 'T1', state: 'Uživo', dot: '#D9FF3D', shape: circle },
+        { name: 'Kadeti - Kumite -57 kg', years: '2011–12', n: 7, tatami: 'T1', state: 'Završeno', dot: '#C9CFDB', shape: square },
+        { name: 'Kadetkinje - Kumite -47 kg', years: '2011–12', n: 5, tatami: 'T2', state: 'Čeka', dot: '#5B8CFF', shape: diamond },
+        { name: 'Kadetkinje - Kumite +54 kg', years: '2011–12', n: 4, tatami: 'T4', state: 'Čeka', dot: '#5B8CFF', shape: diamond }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
