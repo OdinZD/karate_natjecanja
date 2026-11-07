@@ -295,19 +295,10 @@ select:focus[data-flux-control] {
     .ps-medal-3 { border: 3px dotted var(--ps-bronze); color: var(--ps-ink); }
 }
 
-/* Unlayered on purpose: these beat the utility classes inside the shared bracket component. */
-.public-site [data-test='bout'] { font-size: 1rem; }
-.public-site [data-test='bout'] .text-xs { font-size: 0.875rem; }
-
 .public-site nav[role='navigation'] :is(a, button) {
     min-height: 2.75rem;
     min-width: 2.75rem;
     justify-content: center;
-}
-
-/* The shared bracket uses fixed zinc greys: map them to the public tokens so text keeps AA contrast. */
-.public-site [data-test='bracket'] :is([class*='text-zinc-400'], [class*='text-zinc-500'], [data-flux-text]) {
-    color: var(--ps-muted);
 }
 
 .public-site :is(input, select)[data-flux-control] { min-height: 2.75rem; }

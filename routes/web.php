@@ -11,6 +11,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('tatami.console');
 });
 
+if (app()->environment('local')) {
+    Route::view('dev/arena', 'dev.arena')->name('dev.arena');
+}
+
 require __DIR__.'/public.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
