@@ -13,11 +13,20 @@ export default defineConfig({
             ],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('Big Shoulders', {
+                    weights: [700, 800, 900],
+                    subsets: ['latin', 'latin-ext'],
+                    preload: [{ weight: 900 }],
                 }),
-                bunny('Barlow Condensed', {
-                    weights: [600, 700],
+                bunny('Inter', {
+                    weights: [400, 500, 600, 700],
+                    subsets: ['latin', 'latin-ext'],
+                    preload: [{ weight: 400 }, { weight: 700 }],
+                }),
+                bunny('JetBrains Mono', {
+                    weights: [500, 600, 700],
+                    subsets: ['latin', 'latin-ext'],
+                    preload: false,
                 }),
             ],
         }),

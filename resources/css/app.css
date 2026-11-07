@@ -1,16 +1,13 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+@import './arena.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
     --color-zinc-200: #e5e5e5;
@@ -23,16 +20,16 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
+    --color-accent: var(--arena-ink);
+    --color-accent-content: var(--arena-ink);
+    --color-accent-foreground: var(--arena-surface);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-arena-volt);
+        --color-accent-content: var(--color-arena-volt);
+        --color-accent-foreground: var(--arena-live-ink);
     }
 }
 
@@ -43,7 +40,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--arena-line);
     }
 }
 
@@ -74,47 +71,35 @@ select:focus[data-flux-control] {
 | in karate scoring. Status is never conveyed by colour alone.
 */
 .public-site {
-    --ps-bg: #f4f6f8;
-    --ps-surface: #ffffff;
-    --ps-ink: #16202b;
-    --ps-muted: #5b6877;
-    --ps-line: #d9dfe6;
-    --ps-mat: #2b6b55;
-    --ps-mat-ink: #ffffff;
-    --ps-aka: #c8202b;
-    --ps-aka-bg: #fdecee;
-    --ps-ao: #1c5bc8;
-    --ps-ao-bg: #e9f0fd;
-    --ps-gold: #c99a06;
-    --ps-silver: #66727f;
-    --ps-bronze: #9a5a24;
-    --ps-live: #a84a00;
-    --ps-font-display: 'Barlow Condensed', 'Arial Narrow', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --ps-bg: var(--arena-bg);
+    --ps-surface: var(--arena-surface);
+    --ps-ink: var(--arena-ink);
+    --ps-muted: var(--arena-muted);
+    --ps-line: var(--arena-line);
+    --ps-mat: var(--arena-ink);
+    --ps-mat-ink: var(--arena-surface);
+    --ps-aka: var(--arena-aka-text);
+    --ps-aka-bg: color-mix(in srgb, var(--color-arena-aka) 12%, var(--arena-surface));
+    --ps-ao: var(--arena-ao-text);
+    --ps-ao-bg: color-mix(in srgb, var(--color-arena-ao) 12%, var(--arena-surface));
+    --ps-gold: var(--color-arena-gold);
+    --ps-silver: var(--color-arena-silver);
+    --ps-bronze: var(--color-arena-bronze);
+    --ps-live: var(--arena-ink);
+    --ps-font-display: var(--font-display);
 
     background: var(--ps-bg);
     color: var(--ps-ink);
 }
 
 .dark .public-site {
-    --ps-bg: #0e1620;
-    --ps-surface: #16212e;
-    --ps-ink: #e7ecf1;
-    --ps-muted: #9aa7b5;
-    --ps-line: #2a3745;
-    --ps-mat: #5fb89a;
-    --ps-mat-ink: #0e1620;
-    --ps-aka: #ff7b83;
-    --ps-aka-bg: #3a1a1f;
-    --ps-ao: #7aa9ff;
-    --ps-ao-bg: #15264a;
-    --ps-gold: #e5b93c;
-    --ps-silver: #b4bec9;
-    --ps-bronze: #d1894b;
-    --ps-live: #ff9a3d;
+    --ps-mat: var(--color-arena-volt);
+    --ps-mat-ink: var(--arena-live-ink);
+    --ps-live: var(--color-arena-volt);
 }
 
 .public-site :focus-visible {
-    outline: 3px solid var(--ps-mat);
+    outline: 3px solid var(--arena-focus);
     outline-offset: 2px;
 }
 
@@ -305,7 +290,7 @@ select:focus[data-flux-control] {
         flex: none;
     }
 
-    .ps-medal-1 { background: var(--ps-gold); color: #16202b; }
+    .ps-medal-1 { background: var(--ps-gold); color: var(--arena-live-ink); }
     .ps-medal-2 { border: 3px solid var(--ps-silver); color: var(--ps-ink); }
     .ps-medal-3 { border: 3px dotted var(--ps-bronze); color: var(--ps-ink); }
 }
