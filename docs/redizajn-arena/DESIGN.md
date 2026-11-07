@@ -36,13 +36,17 @@ Implementacija je u `arena.css`: CSS varijable po temi, `@theme` za Tailwind kla
 | `arena-ink` | `#F3F5F9` | `#0A0C11` | glavni tekst |
 | `arena-muted` | `#A0A8BA` | `#4B5468` | sporedni tekst, oznake |
 | `arena-volt` | `#D9FF3D` | `#D9FF3D` (samo podloga) | uživo, primarni gumb, aktivni tab (tamna) |
-| `arena-aka` | `#E8202E` | `#E8202E` | AKA ploča s bijelim tekstom |
+| `arena-aka` | `#E11D2B` | `#E11D2B` | AKA ploča s bijelim tekstom |
 | `arena-aka-text` | `#FF4D57` | `#B5121F` | AKA kao boja teksta ili crtice |
 | `arena-ao` | `#2C62F0` | `#2C62F0` | AO ploča s bijelim tekstom |
 | `arena-ao-text` | `#5B8CFF` | `#1F4FD1` | AO kao boja teksta ili crtice |
 | `arena-warn` | `#FFB15C` | `#9A4D00` | kašnjenje, nedostaje operater, 1 prijava |
 | `arena-ok` | `#3DDC84` | `#13753F` | povezano, spremljeno |
 | `arena-gold / silver / bronze` | `#E9B949` / `#C9CFDB` / `#C98A55` | isto | medalje |
+
+**Napomena nakon provjere u pregledniku (axe-core):** AKA je u aplikaciji `#E11D2B`, a ne izvornih `#E8202E`. Bijeli tekst na izvornoj vrijednosti imao je 4,48 do 4,49:1, što je ispod AA praga 4,5:1 za mali tekst; na `#E11D2B` iznosi 4,76:1. Boja se i dalje koristi samo kroz token `arena-aka`. Referentni HTML u `reference/` zadržava izvornu vrijednost jer je to prototip.
+
+Uz Arena tokene, `resources/css/app.css` prilagođava dvije Flux/Tailwind vrijednosti radi AA kontrasta: `--color-zinc-500` je `#666666` u svijetloj temi (`#737373` u tamnoj, jer ikona za zatvaranje modala koristi `dark:text-zinc-500`), a `--color-red-500` je `#dc2626` (bijeli tekst na Flux „danger” gumbu).
 
 Kontrasti su provjereni za AA: bijeli tekst na `arena-aka` i `arena-ao`, `arena-muted` na `arena-bg`, i tekstualne inačice AKA/AO na obje pozadine. **Fokus:** 3 px obrub, volt u tamnoj temi, `arena-ink` u svijetloj.
 

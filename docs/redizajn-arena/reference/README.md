@@ -9,7 +9,7 @@ Svaka datoteka je jedan ekran iz platna s dizajnom. Otvori je u editoru i prepi�
 - `<sc-if value="{{cond}}">` znači `@if ($cond)`.
 - `{{item.name}}` je vrijednost, kao `{{ $item->name }}`.
 - Blok `<script type="text/x-dc" data-dc-script>` na dnu daje **izmišljene primjere podataka** i stanje za klikove (u konzoli, rezultatima, prijavama, natjecanjima). Logiku ne prenositi, ona postoji u Livewire komponentama.
-- Sve boje su ovdje napisane kao heksadecimalne radi pregleda. U aplikaciji ih zamijeni tokenima iz `arena.css` (vidi tablicu u `DESIGN.md` §2.1).
+- Sve boje su ovdje napisane kao heksadecimalne radi pregleda. U aplikaciji ih zamijeni tokenima iz `arena.css` (vidi tablicu u `DESIGN.md` §2.1). Iznimka: AKA je u aplikaciji `#E11D2B` (u ovim prototipovima `#E8202E`), vidi napomenu u `DESIGN.md` §2.1.
 
 | Datoteka | Ekran | Područje | Širina |
 |---|---|---|---|
