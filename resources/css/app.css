@@ -13,12 +13,14 @@
     --color-zinc-200: #e5e5e5;
     --color-zinc-300: #d4d4d4;
     --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
+    --color-zinc-500: #666666;
     --color-zinc-600: #525252;
     --color-zinc-700: #404040;
     --color-zinc-800: #262626;
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
+
+    --color-red-500: #dc2626;
 
     --color-accent: var(--arena-ink);
     --color-accent-content: var(--arena-ink);
@@ -27,6 +29,7 @@
 
 @layer theme {
     .dark {
+        --color-zinc-500: #737373;
         --color-accent: var(--color-arena-volt);
         --color-accent-content: var(--color-arena-volt);
         --color-accent-foreground: var(--arena-live-ink);

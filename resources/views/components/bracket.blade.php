@@ -27,7 +27,7 @@
     @if ($bouts->isEmpty())
         <p class="text-sm text-arena-muted">{{ __('No draw has been generated for this category yet.') }}</p>
     @else
-        <div class="relative snap-x snap-proximity overflow-x-auto pb-2">
+        <div class="relative snap-x snap-proximity overflow-x-auto pb-2" tabindex="0" role="region" aria-label="{{ __('Bracket') }}">
             <div class="flex min-w-max items-stretch gap-6">
                 @foreach ($main as $round => $roundBouts)
                     <div class="flex w-60 snap-start scroll-ms-4 flex-col">

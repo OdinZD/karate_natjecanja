@@ -22,7 +22,7 @@
             ];
         @endphp
 
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-arena-line! bg-arena-bg-2!">
+        <flux:sidebar sticky collapsible="mobile" role="complementary" aria-label="{{ config('app.name', 'Organizacija natjecanja') }}" class="border-e border-arena-line! bg-arena-bg-2!">
             <flux:sidebar.header>
                 <a href="{{ route('dashboard') }}" wire:navigate class="flex min-h-11 items-center px-2">
                     <x-arena.logo size="sm" />

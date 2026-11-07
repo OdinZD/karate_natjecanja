@@ -4,7 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-arena-bg text-arena-ink antialiased">
-        <div class="arena-stripes relative flex min-h-svh flex-col items-center justify-center overflow-hidden p-6 md:p-10">
+        <main class="arena-stripes relative flex min-h-svh flex-col items-center justify-center overflow-hidden p-6 md:p-10">
             <div aria-hidden="true" class="absolute -right-10 top-0 h-full w-[220px] -skew-x-14 bg-arena-aka opacity-90"></div>
             <div aria-hidden="true" class="absolute -right-[170px] top-0 h-full w-[180px] -skew-x-14 bg-arena-ao"></div>
 
@@ -21,7 +21,7 @@
                     <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4" wire:navigate>{{ __('Public results') }}</a>
                 </p>
             </div>
-        </div>
+        </main>
 
         @persist('toast')
             <flux:toast.group>

@@ -70,7 +70,7 @@
 @theme {
   /* Iste u obje teme */
   --color-arena-volt: #D9FF3D;   /* samo „uživo” i primarna radnja; u svijetloj temi samo kao podloga */
-  --color-arena-aka: #E8202E;    /* AKA ploča (bijeli tekst) */
+  --color-arena-aka: #E11D2B;    /* AKA ploča (bijeli tekst) */
   --color-arena-ao: #2C62F0;     /* AO ploča (bijeli tekst) */
   --color-arena-gold: #E9B949;
   --color-arena-silver: #C9CFDB;
@@ -187,7 +187,7 @@
 
 /* ---------- 4. Bazni sloj ---------- */
 @layer base {
-  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
     outline: 3px solid var(--arena-focus);
     outline-offset: 2px;
   }
