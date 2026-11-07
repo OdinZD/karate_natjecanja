@@ -28,9 +28,9 @@
                 viewable
             />
 
-            <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
+            <x-arena.button type="submit" class="w-full" data-test="confirm-password-button">
                 {{ __('Confirm') }}
-            </flux:button>
+            </x-arena.button>
         </form>
     </div>
 </x-layouts::auth>

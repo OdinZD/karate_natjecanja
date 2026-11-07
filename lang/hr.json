@@ -349,5 +349,9 @@
     "Break": "Pauza",
     "Upcoming competitions": "Nadolazeća natjecanja",
     "No active competition": "Nema aktivnog natjecanja",
-    "A competition becomes active when its status is In progress.": "Natjecanje postaje aktivno kad mu je status „U tijeku”."
+    "A competition becomes active when its status is In progress.": "Natjecanje postaje aktivno kad mu je status „U tijeku”.",
+    "Light": "Svijetla",
+    "Dark": "Tamna",
+    "System": "Prema sustavu",
+    "Public results": "Javni rezultati"
 }
