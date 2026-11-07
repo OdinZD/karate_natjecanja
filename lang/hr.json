@@ -451,5 +451,10 @@
     "To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.": "Za dovršetak uključivanja skenirajte QR kod ili unesite ključ za postavljanje u aplikaciji za autentikaciju.",
     "Back": "Natrag",
     "or, enter the code manually": "ili unesite kod ručno",
-    "Manage your profile and account settings": "Upravljajte profilom i postavkama računa"
+    "Manage your profile and account settings": "Upravljajte profilom i postavkama računa",
+    "Passkeys": "Passkeyevi",
+    "No passkeys yet": "Još nema passkeyeva",
+    "Two-factor authentication": "Dvofaktorska autentikacija",
+    "Enable 2FA": "Uključi 2FA",
+    "Update password": "Promjena lozinke"
 }
