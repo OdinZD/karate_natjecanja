@@ -43,7 +43,7 @@ new #[Title('Competitors')] class extends Component {
     #[Computed]
     public function clubs(): Collection
     {
-        return Club::orderBy('name')->get();
+        return Club::orderByName('name')->get();
     }
 
     /**
@@ -60,8 +60,8 @@ new #[Title('Competitors')] class extends Component {
                 $query->where(fn ($q) => $q->where('first_name', 'like', $term)->orWhere('last_name', 'like', $term));
             })
             ->when($this->clubFilter !== '', fn ($query) => $query->where('club_id', $this->clubFilter))
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderByName('last_name')
+            ->orderByName('first_name')
             ->paginate(15);
     }
 

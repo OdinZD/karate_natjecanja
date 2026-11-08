@@ -88,7 +88,7 @@ new #[Title('Entries')] class extends Component {
     #[Computed]
     public function clubs(): Collection
     {
-        return Club::query()->orderBy('name')->orderBy('city')->get();
+        return Club::query()->orderByName('name')->orderByName('city')->get();
     }
 
     /**
@@ -115,7 +115,7 @@ new #[Title('Entries')] class extends Component {
 
         $ids = $this->competition->clubs()->pluck('clubs.id')->merge($entryCounts->keys())->merge($lastImports->keys())->unique();
 
-        return Club::query()->whereIn('id', $ids)->orderBy('name')->orderBy('city')->get()
+        return Club::query()->whereIn('id', $ids)->orderByName('name')->orderByName('city')->get()
             ->map(function (Club $club) use ($entryCounts, $lastImports, $lastSaved, $created): array {
                 $entries = (int) ($entryCounts[$club->id] ?? 0);
                 $last = $lastImports[$club->id] ?? null;
@@ -169,8 +169,8 @@ new #[Title('Entries')] class extends Component {
             ->where(fn ($query) => $query
                 ->where('first_name', 'like', '%'.$term.'%')
                 ->orWhere('last_name', 'like', '%'.$term.'%'))
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderByName('last_name')
+            ->orderByName('first_name')
             ->limit(25)
             ->get();
     }

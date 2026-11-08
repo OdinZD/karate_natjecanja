@@ -8,6 +8,7 @@ use App\Enums\DrawProgress;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Placement;
+use App\Support\Croatian;
 use Illuminate\Support\Collection;
 
 class CategoryResults
@@ -30,13 +31,13 @@ class CategoryResults
             ->get();
 
         return $categories->map(function ($category): CategoryResultRow {
-            $entriesAt = fn (int $place): array => $category->placements
-                ->where('place', $place)
-                ->map(fn (Placement $placement) => $placement->entry)
-                ->filter()
-                ->sortBy(fn (Entry $entry) => $entry->competitor->last_name.' '.$entry->competitor->first_name)
-                ->values()
-                ->all();
+            $entriesAt = fn (int $place): array => Croatian::sortBy(
+                $category->placements
+                    ->where('place', $place)
+                    ->map(fn (Placement $placement) => $placement->entry)
+                    ->filter(),
+                fn (Entry $entry) => $entry->competitor->last_name.' '.$entry->competitor->first_name,
+            )->all();
 
             return new CategoryResultRow(
                 $category,

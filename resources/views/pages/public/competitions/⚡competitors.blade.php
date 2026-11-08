@@ -42,7 +42,7 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
     {
         return Club::query()
             ->whereHas('competitors.entries', fn ($entries) => $entries->present()->whereHas('category', fn ($query) => $query->where('competition_id', $this->competition->id)))
-            ->orderBy('name')
+            ->orderByName('name')
             ->get(['clubs.id', 'clubs.name']);
     }
 
@@ -75,8 +75,8 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
                     ->whereHas('category', fn ($inner) => $inner->where('competition_id', $competitionId))
                     ->with('category:id,name,sort_order'),
             ])
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderByName('last_name')
+            ->orderByName('first_name')
             ->paginate(50);
     }
 }; ?>

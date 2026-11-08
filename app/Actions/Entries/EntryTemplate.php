@@ -124,7 +124,7 @@ class EntryTemplate
      */
     private function knownChildren(Club $club): array
     {
-        $competitors = $club->competitors()->orderBy('last_name')->orderBy('first_name')->get();
+        $competitors = $club->competitors()->orderByName('last_name')->orderByName('first_name')->get();
 
         $lastWeights = Entry::query()
             ->whereIn('competitor_id', $competitors->pluck('id'))

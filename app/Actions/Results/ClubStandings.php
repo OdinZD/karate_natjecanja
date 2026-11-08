@@ -30,7 +30,7 @@ class ClubStandings
             ->orderByDesc('gold')
             ->orderByDesc('silver')
             ->orderByDesc('bronze')
-            ->orderBy('club_name')
+            ->orderByName('club_name')
             ->get();
 
         $rank = 0;
