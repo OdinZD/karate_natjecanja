@@ -577,6 +577,9 @@ new #[Title('Entries')] class extends Component {
                             @if ($row['undoable'] > 0)
                                 <x-arena.button variant="ghost" icon="arrow-uturn-left" wire:click="undoClubImport({{ $row['lastSaved']->id }})" wire:confirm="{{ __('Undo the last import of :club? :count entries it created will be deleted. Changes it made to existing entries are not restored.', ['club' => $row['club']->name, 'count' => $row['undoable']]) }}" :aria-label="__('Undo the last import of :club', ['club' => $row['club']->name])" data-test="club-overview-undo">{{ __('Undo') }}</x-arena.button>
                             @endif
+                            @if ($row['entries'] > 0)
+                                <x-arena.button variant="ghost" icon="document-arrow-down" :href="route('admin.competitions.entries.confirmation', [$competition, 'club' => $row['club']->id])" target="_blank" :aria-label="__('Entry confirmation for :club', ['club' => $row['club']->name]).' ('.__('Opens in a new tab').')'" data-test="club-overview-confirmation">{{ __('Confirmation') }}</x-arena.button>
+                            @endif
                             <x-arena.button variant="ghost" icon="arrow-up-tray" wire:click="openClubImport({{ $row['club']->id }})" :aria-label="__('Import entries for :club', ['club' => $row['club']->name])" data-test="club-overview-import">{{ __('Import') }}</x-arena.button>
                         </div>
                     </li>

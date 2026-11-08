@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Entries\ClubEntryList;
 use App\Actions\Timetable\TimetableBuilder;
 use App\Actions\Timetable\TimetableTatami;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Club;
 use App\Models\Competition;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -79,6 +81,27 @@ class CompetitionPdfController extends Controller
         return Pdf::loadView('pdf.timetable', ['competition' => $competition, 'blocks' => $blocks->values()])
             ->setPaper('a4', 'portrait')
             ->stream('time-table-'.Str::slug($competition->name).$suffix.'.pdf');
+    }
+
+    /**
+     * What a club has entered in the competition, for its trainer to check. The club is given as ?club=ID.
+     */
+    public function entryConfirmation(Request $request, Competition $competition, ClubEntryList $list): Response
+    {
+        $this->allowMoreMemory();
+
+        $id = $request->query('club');
+
+        abort_unless(is_string($id) && ctype_digit($id), 404);
+
+        $club = Club::findOrFail((int) $id);
+        $competitors = $list->handle($competition, $club);
+
+        abort_if($competitors->isEmpty(), 404);
+
+        return Pdf::loadView('pdf.club-entries', ['competition' => $competition, 'club' => $club, 'competitors' => $competitors])
+            ->setPaper('a4', 'portrait')
+            ->stream('potvrda-prijava-'.Str::slug($competition->name).'-'.Str::slug($club->name).'.pdf');
     }
 
     /**

@@ -10,6 +10,7 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::livewire('competitions/{competition}/categories', 'pages::admin.competitions.categories')->name('competitions.categories');
     Route::livewire('competitions/{competition}/entries', 'pages::admin.competitions.entries')->name('competitions.entries');
     Route::get('competitions/{competition}/entries/template.xlsx', EntryTemplateController::class)->name('competitions.entries.template');
+    Route::get('competitions/{competition}/entries/confirmation.pdf', [CompetitionPdfController::class, 'entryConfirmation'])->name('competitions.entries.confirmation');
     Route::livewire('competitions/{competition}/draw', 'pages::admin.competitions.draw')->name('competitions.draw');
     Route::livewire('competitions/{competition}/categories/{category}/bracket', 'pages::admin.competitions.bracket')->name('competitions.bracket');
     Route::livewire('competitions/{competition}/timetable', 'pages::admin.competitions.timetable')->name('competitions.timetable');

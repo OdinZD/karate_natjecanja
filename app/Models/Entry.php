@@ -46,6 +46,20 @@ class Entry extends Model
     }
 
     /**
+     * The weight for display ("33", "33,5" in Croatian), or null for an entry without one.
+     */
+    public function weightLabel(): ?string
+    {
+        if ($this->weight === null) {
+            return null;
+        }
+
+        $number = rtrim(rtrim(number_format((float) $this->weight, 2, '.', ''), '0'), '.');
+
+        return app()->getLocale() === 'hr' ? str_replace('.', ',', $number) : $number;
+    }
+
+    /**
      * The club import that created the entry, if it came from one.
      *
      * @return BelongsTo<ClubImport, $this>
