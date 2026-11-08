@@ -26,10 +26,10 @@ new #[Layout('layouts::public'), Title('Details')] class extends Component {
 
         return [
             'categories' => $this->competition->categories()->count(),
-            'entries' => $this->competition->entries()->count(),
-            'competitors' => $this->competition->entries()->distinct()->count('entries.competitor_id'),
+            'entries' => $this->competition->entries()->present()->count(),
+            'competitors' => $this->competition->entries()->present()->distinct()->count('entries.competitor_id'),
             'clubs' => Competitor::query()
-                ->whereHas('entries.category', fn ($query) => $query->where('competition_id', $competitionId))
+                ->whereHas('entries', fn ($entries) => $entries->present()->whereHas('category', fn ($query) => $query->where('competition_id', $competitionId)))
                 ->distinct()
                 ->count('club_id'),
             'tatamis' => $this->competition->tatamis()->count(),

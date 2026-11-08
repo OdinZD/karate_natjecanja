@@ -22,7 +22,7 @@ new #[Layout('layouts::public'), Title('Competitions')] class extends Component 
         return Competition::query()
             ->visible()
             ->where('status', '!=', CompetitionStatus::Finished->value)
-            ->withCount('entries')
+            ->withCount(['entries' => fn ($entries) => $entries->present()])
             ->orderBy('date')
             ->orderBy('name')
             ->get();
@@ -36,7 +36,7 @@ new #[Layout('layouts::public'), Title('Competitions')] class extends Component 
     {
         return Competition::query()
             ->where('status', CompetitionStatus::Finished->value)
-            ->withCount('entries')
+            ->withCount(['entries' => fn ($entries) => $entries->present()])
             ->orderByDesc('date')
             ->orderBy('name')
             ->paginate(12, pageName: 'finished');

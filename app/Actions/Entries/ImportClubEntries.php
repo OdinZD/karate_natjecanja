@@ -250,7 +250,7 @@ class ImportClubEntries
 
         $existingEntries = Entry::query()
             ->whereIn('category_id', $categories->pluck('id'))
-            ->get(['id', 'category_id', 'competitor_id', 'weight']);
+            ->get(['id', 'category_id', 'competitor_id', 'weight', 'weighed_at']);
 
         /** @var array<string, int>|null $columns */
         $columns = null;
@@ -487,14 +487,18 @@ class ImportClubEntries
                     $others = $others->reject(fn (Entry $entry) => $entry->category_id === $category->id);
 
                     if ($same !== null) {
-                        $state = isset($claimed[$same->id]) || ! $this->weightChanged($same->weight, $candidate['weight']) ? 'existing' : 'update';
+                        // A weighed entry is final: a later import with the weight the club entered must not undo the weigh-in.
+                        $state = isset($claimed[$same->id]) || $same->weighed_at !== null || ! $this->weightChanged($same->weight, $candidate['weight']) ? 'existing' : 'update';
                         $target = $state === 'update' ? $same : null;
                     } elseif ($others->count() === 1 && ! isset($claimed[$others->first()->id])) {
                         $old = $others->first();
 
-                        // A change that would touch a drawn category is a problem of the row even when changes are
-                        // switched off in the preview: the file contradicts a draw that has already been made.
-                        if (isset($drawn[$old->category_id])) {
+                        if ($old->weighed_at !== null) {
+                            // Final, like a weighed entry in the same category.
+                            $state = 'existing';
+                        } elseif (isset($drawn[$old->category_id])) {
+                            // A change that would touch a drawn category is a problem of the row even when changes are
+                            // switched off in the preview: the file contradicts a draw that has already been made.
                             $problems[] = __('Already entered in ":value", which has a draw, so that entry cannot be changed.', ['value' => $categories[$old->category_id]->name]);
                         } else {
                             $state = 'replace';

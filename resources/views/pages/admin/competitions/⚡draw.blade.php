@@ -35,7 +35,7 @@ new #[Title('Draw')] class extends Component {
     {
         return $this->competition->categories()
             ->withCount([
-                'entries',
+                'entries' => fn ($query) => $query->present(),
                 'bouts as bouts_count' => fn ($query) => $query->where(
                     fn ($inner) => $inner->whereNull('decision')->orWhere('decision', '!=', BoutDecision::Bye),
                 ),
@@ -70,7 +70,7 @@ new #[Title('Draw')] class extends Component {
         $generated = 0;
         $skipped = [];
 
-        foreach ($this->competition->categories()->withCount('entries')->orderBy('sort_order')->orderBy('name')->get() as $category) {
+        foreach ($this->competition->categories()->withCount(['entries' => fn ($entries) => $entries->present()])->orderBy('sort_order')->orderBy('name')->get() as $category) {
             if ($category->hasDraw()) {
                 continue;
             }
@@ -126,7 +126,7 @@ new #[Title('Draw')] class extends Component {
         }
 
         $this->seedCategoryId = $category->id;
-        $this->seeds = $category->entries()->get()
+        $this->seeds = $category->entries()->present()->get()
             ->mapWithKeys(fn ($entry) => [$entry->id => $entry->seed !== null ? (string) $entry->seed : ''])
             ->all();
         $this->resetValidation();
@@ -142,7 +142,7 @@ new #[Title('Draw')] class extends Component {
         }
 
         return $this->competition->categories()->findOrFail($this->seedCategoryId)
-            ->entries()->with('competitor.club')->get()
+            ->entries()->present()->with('competitor.club')->get()
             ->sortBy(fn ($entry) => $entry->competitor->last_name.' '.$entry->competitor->first_name)
             ->values();
     }
@@ -157,13 +157,13 @@ new #[Title('Draw')] class extends Component {
             return;
         }
 
-        $entryCount = $category->entries()->count();
+        $entryCount = $category->entries()->present()->count();
 
         $this->validate([
             'seeds.*' => ['nullable', 'integer', 'min:1', 'max:'.$entryCount],
         ]);
 
-        $entries = $category->entries()->get();
+        $entries = $category->entries()->present()->get();
         $seedOf = fn ($entry) => trim((string) ($this->seeds[$entry->id] ?? '')) !== ''
             ? (int) trim((string) $this->seeds[$entry->id])
             : null;

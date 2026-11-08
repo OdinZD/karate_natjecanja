@@ -43,7 +43,7 @@ new #[Title('Categories')] class extends Component {
     #[Computed]
     public function categories(): Collection
     {
-        return $this->competition->categories()->withCount('entries')->orderBy('sort_order')->orderBy('name')->get();
+        return $this->competition->categories()->withCount(['entries' => fn ($entries) => $entries->present()])->orderBy('sort_order')->orderBy('name')->get();
     }
 
     /**

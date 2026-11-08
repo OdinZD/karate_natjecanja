@@ -41,7 +41,7 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
     public function clubs(): Collection
     {
         return Club::query()
-            ->whereHas('competitors.entries.category', fn ($query) => $query->where('competition_id', $this->competition->id))
+            ->whereHas('competitors.entries', fn ($entries) => $entries->present()->whereHas('category', fn ($query) => $query->where('competition_id', $this->competition->id)))
             ->orderBy('name')
             ->get(['clubs.id', 'clubs.name']);
     }
@@ -56,7 +56,7 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
         $term = trim($this->search);
 
         return Competitor::query()
-            ->whereHas('entries.category', fn ($query) => $query->where('competition_id', $competitionId))
+            ->whereHas('entries', fn ($entries) => $entries->present()->whereHas('category', fn ($query) => $query->where('competition_id', $competitionId)))
             ->when(mb_strlen($term) >= 2, function ($query) use ($term) {
                 // Every word must match the first or the last name, so "Ana Horvat" finds Horvat Ana.
                 foreach (preg_split('/\s+/', $term, -1, PREG_SPLIT_NO_EMPTY) as $word) {
@@ -71,6 +71,7 @@ new #[Layout('layouts::public'), Title('Competitors')] class extends Component {
             ->with([
                 'club:id,name',
                 'entries' => fn ($query) => $query
+                    ->present()
                     ->whereHas('category', fn ($inner) => $inner->where('competition_id', $competitionId))
                     ->with('category:id,name,sort_order'),
             ])

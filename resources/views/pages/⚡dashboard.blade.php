@@ -101,10 +101,10 @@ new #[Title('Dashboard')] class extends Component {
         $builder = app(TimetableBuilder::class);
 
         return [
-            'entries' => $competition->entries()->count(),
-            'competitors' => $competition->entries()->distinct()->count('entries.competitor_id'),
+            'entries' => $competition->entries()->present()->count(),
+            'competitors' => $competition->entries()->present()->distinct()->count('entries.competitor_id'),
             'clubs' => Competitor::query()
-                ->whereHas('entries.category', fn ($query) => $query->where('competition_id', $competition->id))
+                ->whereHas('entries', fn ($entries) => $entries->present()->whereHas('category', fn ($query) => $query->where('competition_id', $competition->id)))
                 ->distinct()
                 ->count('club_id'),
             'bouts' => (int) $this->categories->sum('played_bouts_count') + (int) $this->categories->sum('open_bouts_count'),

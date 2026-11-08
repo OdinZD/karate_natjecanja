@@ -112,7 +112,7 @@ class TimetableBuilder
     public function withProgressCounts(HasMany $query): HasMany
     {
         return $query->withCount([
-            'entries',
+            'entries' => fn (Builder $entries) => $entries->present(),
             'bouts as any_bouts_count',
             'bouts as open_bouts_count' => fn (Builder $bouts) => $bouts->whereIn('status', [BoutStatus::Pending, BoutStatus::Ready]),
             'bouts as played_bouts_count' => fn (Builder $bouts) => $bouts
@@ -123,6 +123,6 @@ class TimetableBuilder
 
     private function entryCount(Category $category): int
     {
-        return (int) ($category->entries_count ?? $category->entries()->count());
+        return (int) ($category->entries_count ?? $category->entries()->present()->count());
     }
 }
