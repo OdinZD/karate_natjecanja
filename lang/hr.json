@@ -566,5 +566,9 @@
     "The two competitors have a different gender, so they are not merged.": "Natjecatelji su različitog spola, pa se ne spajaju.",
     "Both are entered in categories that already have a draw (:names), so they cannot be merged.": "Oba su prijavljena u kategorijama koje već imaju ždrijeb (:names), pa se ne mogu spojiti.",
     ":count competitors": "Natjecatelja: :count",
-    "The entries and medals move to the club of the record you keep.": "Prijave i medalje prelaze u klub zapisa koji zadržavate."
+    "The entries and medals move to the club of the record you keep.": "Prijave i medalje prelaze u klub zapisa koji zadržavate.",
+    "Hall screen": "Veliki ekran",
+    ":category: :winner beat :loser": ":category: :winner – :loser",
+    "Nothing is being fought here right now.": "Ovdje se trenutno ne bori.",
+    "Getting ready": "Priprema se"
 }

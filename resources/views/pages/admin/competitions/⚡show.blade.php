@@ -192,10 +192,13 @@ new #[Title('Competition')] class extends Component {
                     @if ($hasTimetable)
                         <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.timetable.pdf', $competition)" target="_blank">{{ __('Time table (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
                     @endif
+                    @if ($competition->status !== CompetitionStatus::Draft)
+                        <flux:menu.item icon="tv" :href="route('public.competitions.hall', $competition)" target="_blank" data-test="open-hall-screen">{{ __('Hall screen') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
+                    @endif
                     @if ($hasResults)
                         <flux:menu.item icon="table-cells" :href="route('admin.competitions.results.export', $competition)" data-test="download-results-button">{{ __('Results (Excel)') }}</flux:menu.item>
                     @endif
-                    @if ($hasDraws || $hasTimetable || $hasResults)
+                    @if ($hasDraws || $hasTimetable || $hasResults || $competition->status !== CompetitionStatus::Draft)
                         <flux:menu.separator />
                     @endif
                     <flux:modal.trigger name="competition-delete">

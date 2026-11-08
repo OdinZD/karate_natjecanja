@@ -96,7 +96,7 @@ class PublicAccessTest extends TestCase
         $routes = collect(app('router')->getRoutes()->getRoutes())
             ->filter(fn ($route) => $route->getName() === 'home' || str_starts_with((string) $route->getName(), 'public.competitions.'));
 
-        $this->assertCount(9, $routes);
+        $this->assertCount(10, $routes);
 
         foreach ($routes as $route) {
             $middleware = implode(',', app('router')->gatherRouteMiddleware($route));
