@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CompetitionPdfController;
 use App\Http\Controllers\Admin\EntryTemplateController;
+use App\Http\Controllers\Admin\ResultsExportController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -9,6 +10,7 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::livewire('competitions/{competition}', 'pages::admin.competitions.show')->name('competitions.show');
     Route::livewire('competitions/{competition}/categories', 'pages::admin.competitions.categories')->name('competitions.categories');
     Route::livewire('competitions/{competition}/entries', 'pages::admin.competitions.entries')->name('competitions.entries');
+    Route::get('competitions/{competition}/results.xlsx', ResultsExportController::class)->name('competitions.results.export');
     Route::get('competitions/{competition}/entries/template.xlsx', EntryTemplateController::class)->name('competitions.entries.template');
     Route::get('competitions/{competition}/entries/confirmation.pdf', [CompetitionPdfController::class, 'entryConfirmation'])->name('competitions.entries.confirmation');
     Route::livewire('competitions/{competition}/weigh-in', 'pages::admin.competitions.weigh-in')->name('competitions.weigh-in');
@@ -20,5 +22,6 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::get('competitions/{competition}/timetable.pdf', [CompetitionPdfController::class, 'timetable'])->name('competitions.timetable.pdf');
     Route::livewire('clubs', 'pages::admin.clubs.index')->name('clubs.index');
     Route::livewire('competitors', 'pages::admin.competitors.index')->name('competitors.index');
+    Route::livewire('duplicates', 'pages::admin.duplicates.index')->name('duplicates');
     Route::livewire('users', 'pages::admin.users.index')->name('users.index');
 });

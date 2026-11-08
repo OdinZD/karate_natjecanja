@@ -86,6 +86,7 @@
   --animate-arena-pop: arena-pop 600ms cubic-bezier(.3,1.6,.5,1) both;
   --animate-arena-pulse: arena-pulse 1.6s infinite;
   --animate-arena-ticker: arena-ticker 26s linear infinite;
+  --animate-arena-ticker-hall: arena-ticker 40s linear infinite;
   --animate-arena-bar: arena-bar 1.2s cubic-bezier(.2,.8,.2,1) both;
   --animate-arena-medal: arena-medal 500ms cubic-bezier(.3,1.5,.5,1) both;
   --animate-arena-modal: arena-modal 400ms cubic-bezier(.2,.8,.2,1) both;
@@ -155,6 +156,15 @@
 @utility arena-plate-ao {
   clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%);
   margin-left: -8px;
+}
+
+/* Isto za veliki ekran u dvorani: dijagonala 3,5 jedinice (--u, ovisi o veličini pločice), oko 34 px na 1920 */
+@utility arena-plate-aka-hall {
+  clip-path: polygon(0 0, 100% 0, calc(100% - var(--u, .52vw) * 3.5) 100%, 0 100%);
+}
+@utility arena-plate-ao-hall {
+  clip-path: polygon(calc(var(--u, .52vw) * 3.5) 0, 100% 0, 100% 100%, 0 100%);
+  margin-left: calc(var(--u, .52vw) * -1.75);
 }
 
 /* Dijagonalne pruge u zaglavljima (hero, prijava, veliki ekran) */

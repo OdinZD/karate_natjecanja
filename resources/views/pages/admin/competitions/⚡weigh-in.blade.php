@@ -60,8 +60,8 @@ new #[Title('Weigh-in')] class extends Component {
     {
         return Club::query()
             ->whereHas('competitors.entries.category', fn ($query) => $query->where('competition_id', $this->competition->id))
-            ->orderBy('name')
-            ->orderBy('city')
+            ->orderByName('name')
+            ->orderByName('city')
             ->get();
     }
 
@@ -128,8 +128,8 @@ new #[Title('Weigh-in')] class extends Component {
                     ->with(['category', 'movedFrom'])
                     ->orderBy('id'),
             ])
-            ->orderBy('last_name')
-            ->orderBy('first_name');
+            ->orderByName('last_name')
+            ->orderByName('first_name');
 
         if ($this->statusFilter === '') {
             return $query->paginate(25);

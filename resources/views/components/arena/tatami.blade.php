@@ -4,7 +4,7 @@
     $sizing = match ($size) {
         'sm' => 'px-1.5 text-[22px]',
         'lg' => 'px-3 text-5xl',
-        'hall' => 'px-4 text-7xl',
+        'hall' => 'px-[calc(var(--u,.52vw)*1.6)] text-[calc(var(--u,.52vw)*7)]',
         default => 'px-2.5 text-[30px]',
     };
 @endphp

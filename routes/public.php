@@ -14,6 +14,7 @@ Route::prefix('competitions/{publicCompetition:slug}')->name('public.competition
     Route::livewire('draw', 'pages::public.competitions.draw')->name('draw');
     Route::livewire('draw/{category}', 'pages::public.competitions.bracket')->name('bracket');
     Route::livewire('timetable', 'pages::public.competitions.timetable')->name('timetable');
+    Route::livewire('hall', 'pages::public.competitions.hall')->name('hall');
     Route::livewire('results', 'pages::public.competitions.results')->name('results');
     Route::livewire('standings', 'pages::public.competitions.standings')->name('standings');
 });

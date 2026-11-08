@@ -7,6 +7,7 @@ use App\Enums\BoutDecision;
 use App\Enums\BoutStatus;
 use App\Models\Category;
 use App\Models\Competition;
+use App\Support\Croatian;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
@@ -141,10 +142,10 @@ new #[Title('Draw')] class extends Component {
             return new Collection;
         }
 
-        return $this->competition->categories()->findOrFail($this->seedCategoryId)
-            ->entries()->present()->with('competitor.club')->get()
-            ->sortBy(fn ($entry) => $entry->competitor->last_name.' '.$entry->competitor->first_name)
-            ->values();
+        return Croatian::sortBy(
+            $this->competition->categories()->findOrFail($this->seedCategoryId)->entries()->present()->with('competitor.club')->get(),
+            fn ($entry) => $entry->competitor->last_name.' '.$entry->competitor->first_name,
+        );
     }
 
     public function saveSeeds(): void

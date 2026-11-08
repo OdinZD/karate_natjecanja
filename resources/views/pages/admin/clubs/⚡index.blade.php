@@ -35,7 +35,7 @@ new #[Title('Clubs')] class extends Component {
         return Club::query()
             ->withCount('competitors')
             ->when($this->search !== '', fn ($query) => $query->where('name', 'like', '%'.$this->search.'%'))
-            ->orderBy('name')
+            ->orderByName('name')
             ->paginate(15);
     }
 

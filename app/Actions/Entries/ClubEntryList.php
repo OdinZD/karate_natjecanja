@@ -25,8 +25,8 @@ class ClubEntryList
             ->where('club_id', $club->id)
             ->whereHas('entries.category', $inCompetition)
             ->with(['entries' => fn ($query) => $query->whereHas('category', $inCompetition)->with('category')])
-            ->orderBy('last_name')
-            ->orderBy('first_name')
+            ->orderByName('last_name')
+            ->orderByName('first_name')
             ->orderBy('id')
             ->get()
             ->each(fn (Competitor $competitor) => $competitor->setRelation(
