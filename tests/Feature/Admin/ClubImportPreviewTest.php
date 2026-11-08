@@ -388,7 +388,7 @@ class ClubImportPreviewTest extends TestCase
             ->set('clubFile', $this->upload($this->xlsx($this->mixedRows())));
 
         $page->assertSet('clubImportErrors', []);
-        $this->assertSame(['rows' => 3, 'ready' => 2, 'skipped' => 0, 'errors' => 1, 'new' => 3, 'existing' => 0], $page->get('clubPreviewSummary'));
+        $this->assertSame(['rows' => 3, 'changed' => 0, 'ready' => 2, 'skipped' => 0, 'errors' => 1, 'new' => 3, 'existing' => 0], $page->get('clubPreviewSummary'));
         $this->assertSame(['Mali Mališan', 'Marko Horvat', 'Ana Babić'], array_column($page->get('clubPreview'), 'name'));
         $this->assertSame('error', $page->get('clubPreview')[0]['status']);
         $this->assertSame(0, Entry::count());

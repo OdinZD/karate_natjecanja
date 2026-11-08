@@ -7,6 +7,7 @@ use App\Enums\Gender;
 use App\Models\Bout;
 use App\Models\Category;
 use App\Models\Club;
+use App\Models\ClubImport;
 use App\Models\Competition;
 use App\Models\Competitor;
 use App\Models\Entry;
@@ -89,24 +90,30 @@ class ImportClubEntries
 
     /**
      * Save a preview: every row in "all" mode (refused while any row has a problem), only the rows
-     * without problems in "valid" mode.
+     * without problems in "valid" mode. With $replace off, entries the club changed (a new weight or a
+     * new category) are left as they are. A given $log is filled in and saved, whatever the outcome.
      */
-    public function commit(Club $club, ClubImportPreview $preview, string $mode = self::MODE_ALL): ImportEntriesResult
+    public function commit(Club $club, ClubImportPreview $preview, string $mode = self::MODE_ALL, bool $replace = true, ?ClubImport $log = null): ImportEntriesResult
     {
         if (! in_array($mode, [self::MODE_ALL, self::MODE_VALID], true)) {
             throw new InvalidArgumentException('Unknown import mode "'.$mode.'".');
         }
 
-        if ($preview->fileErrors !== []) {
-            return new ImportEntriesResult(errors: $preview->fileErrors);
+        $refusal = match (true) {
+            $preview->fileErrors !== [] => new ImportEntriesResult(errors: $preview->fileErrors),
+            $mode === self::MODE_ALL && $preview->errorCount() > 0 => new ImportEntriesResult(entriesSkipped: $preview->existingEntryCount(), errors: $preview->errors()),
+            default => null,
+        };
+
+        if ($refusal !== null) {
+            $this->record($log, $club, $preview, $mode, $refusal);
+
+            return $refusal;
         }
 
-        if ($mode === self::MODE_ALL && $preview->errorCount() > 0) {
-            return new ImportEntriesResult(entriesSkipped: $preview->existingEntryCount(), errors: $preview->errors());
-        }
-
-        return DB::transaction(function () use ($club, $preview): ImportEntriesResult {
+        return DB::transaction(function () use ($club, $preview, $mode, $replace, $log): ImportEntriesResult {
             $created = 0;
+            $replaced = 0;
             $skipped = $preview->existingEntryCount();
             $competitorsCreated = 0;
 
@@ -116,6 +123,22 @@ class ImportClubEntries
                 }
 
                 foreach ($row->planned as $item) {
+                    if ($item['entry'] !== null) {
+                        if ($replace) {
+                            // A move starts the entry afresh in its new category, so the old seed number is dropped.
+                            $item['entry']->update([
+                                'category_id' => $item['category']->id,
+                                'weight' => $item['weight'],
+                                ...($item['state'] === 'replace' ? ['seed' => null] : []),
+                            ]);
+                            $replaced++;
+                        } else {
+                            $skipped++;
+                        }
+
+                        continue;
+                    }
+
                     if (! $row->competitor->exists) {
                         $row->competitor->club_id = $club->id;
                         $row->competitor->save();
@@ -131,8 +154,40 @@ class ImportClubEntries
                 }
             }
 
-            return new ImportEntriesResult($created, $skipped, $competitorsCreated, 0);
+            $result = new ImportEntriesResult($created, $skipped, $competitorsCreated, 0, entriesReplaced: $replaced);
+            $this->record($log, $club, $preview, $mode, $result);
+
+            return $result;
         });
+    }
+
+    /**
+     * Write the import log and make sure the club is listed for the competition.
+     */
+    private function record(?ClubImport $log, Club $club, ClubImportPreview $preview, string $mode, ImportEntriesResult $result): void
+    {
+        if ($log === null) {
+            return;
+        }
+
+        $errors = $result->failed() ? $result->errors : $preview->errors();
+
+        $log->fill([
+            'club_id' => $club->id,
+            'mode' => $mode,
+            'status' => $result->failed() ? ClubImport::REJECTED : ClubImport::IMPORTED,
+            'rows_total' => count($preview->rows),
+            'rows_valid' => $preview->validCount(),
+            'rows_failed' => $preview->errorCount(),
+            'entries_created' => $result->entriesCreated,
+            'entries_replaced' => $result->entriesReplaced,
+            'entries_skipped' => $result->entriesSkipped,
+            'competitors_created' => $result->competitorsCreated,
+            'error_count' => count($errors),
+            'errors' => array_slice($errors, 0, 50),
+        ])->save();
+
+        $log->competition->clubs()->syncWithoutDetaching([$club->id]);
     }
 
     /**
@@ -170,8 +225,7 @@ class ImportClubEntries
 
         $existingEntries = Entry::query()
             ->whereIn('category_id', $categories->pluck('id'))
-            ->get(['category_id', 'competitor_id'])
-            ->mapWithKeys(fn (Entry $entry) => [$entry->category_id.'|'.$entry->competitor_id => true]);
+            ->get(['id', 'category_id', 'competitor_id', 'weight']);
 
         /** @var array<string, int>|null $columns */
         $columns = null;
@@ -325,47 +379,104 @@ class ImportClubEntries
             return new ClubImportPreview(fileErrors: [__('The file is empty.')], meta: $meta);
         }
 
-        return new ClubImportPreview($this->buildRows($parsed, $existingEntries), meta: $meta);
+        return new ClubImportPreview($this->buildRows($parsed, $existingEntries, $categories, $drawn), meta: $meta);
     }
 
     /**
-     * Decide per row what is new and what is already entered. Rows with problems never take a spot, so
-     * leaving them out later does not change what the other rows do.
+     * Decide per row what is new, what is already entered and what the club changed. Rows with problems
+     * never take a spot, so leaving them out later does not change what the other rows do.
+     *
+     * An entry the competitor already has in the same category only gets its weight updated. One in
+     * another category of the same discipline is moved to the new category, provided it is the only one
+     * and its category has no draw.
      *
      * @param  array<int, array<string, mixed>>  $parsed
-     * @param  Collection<string, bool>  $existingEntries
+     * @param  Collection<int, Entry>  $existingEntries
+     * @param  Collection<int, Category>  $categories
+     * @param  Collection<int, int>  $drawn  Category ids with a draw, as keys.
      * @return array<int, ClubImportRow>
      */
-    private function buildRows(array $parsed, Collection $existingEntries): array
+    private function buildRows(array $parsed, Collection $existingEntries, Collection $categories, Collection $drawn): array
     {
+        $categories = $categories->keyBy('id');
+        $byKey = $existingEntries->keyBy(fn (Entry $entry) => $entry->category_id.'|'.$entry->competitor_id);
+        $byDiscipline = $existingEntries->groupBy(fn (Entry $entry) => $entry->competitor_id.'|'.$categories[$entry->category_id]->discipline->value);
+
         $seen = [];
+        $claimed = [];
         $rows = [];
 
         foreach ($parsed as $item) {
-            $failed = $item['messages'] !== [];
-            $entries = [];
-            $planned = [];
+            $problems = $item['messages'];
+            $notes = [];
+            $resolved = [];
 
             foreach ($item['candidates'] as $candidate) {
                 /** @var Category $category */
                 $category = $candidate['category'];
+                $competitor = $item['competitor'];
                 $key = $category->id.'|'.$item['key'];
-                $existing = isset($seen[$key]) || ($item['competitor']->exists && isset($existingEntries[$category->id.'|'.$item['competitor']->id]));
+                $state = 'new';
+                $target = null;
+
+                if (isset($seen[$key])) {
+                    $state = 'existing';
+                } elseif ($competitor->exists) {
+                    $same = $byKey[$category->id.'|'.$competitor->id] ?? null;
+                    $others = $byDiscipline[$competitor->id.'|'.$candidate['discipline']->value] ?? collect();
+                    $others = $others->reject(fn (Entry $entry) => $entry->category_id === $category->id);
+
+                    if ($same !== null) {
+                        $state = isset($claimed[$same->id]) || ! $this->weightChanged($same->weight, $candidate['weight']) ? 'existing' : 'update';
+                        $target = $state === 'update' ? $same : null;
+                    } elseif ($others->count() === 1 && ! isset($claimed[$others->first()->id])) {
+                        $old = $others->first();
+
+                        // A change that would touch a drawn category is a problem of the row even when changes are
+                        // switched off in the preview: the file contradicts a draw that has already been made.
+                        if (isset($drawn[$old->category_id])) {
+                            $problems[] = __('Already entered in ":value", which has a draw, so that entry cannot be changed.', ['value' => $categories[$old->category_id]->name]);
+                        } else {
+                            $state = 'replace';
+                            $target = $old;
+                        }
+                    } elseif ($others->count() > 1) {
+                        $notes[] = __('Already entered in several :discipline categories, so the new entry is added next to them.', ['discipline' => __(Str::headline($candidate['discipline']->value))]);
+                    }
+                }
+
+                $resolved[] = ['candidate' => $candidate, 'key' => $key, 'state' => $state, 'target' => $target];
+            }
+
+            $failed = $problems !== [];
+            $messages = [...$problems, ...$notes];
+            $entries = [];
+            $planned = [];
+
+            foreach ($resolved as $entry) {
+                /** @var Category $category */
+                $category = $entry['candidate']['category'];
+                $target = $entry['target'];
 
                 $entries[] = [
                     'category' => $category->name,
-                    'discipline' => $candidate['discipline']->value,
-                    'weight' => $candidate['weight'],
-                    'state' => $existing ? 'existing' : 'new',
+                    'discipline' => $entry['candidate']['discipline']->value,
+                    'weight' => $entry['candidate']['weight'],
+                    'state' => $entry['state'],
+                    'replaces' => $entry['state'] === 'replace' ? $categories[$target->category_id]->name : null,
+                    'previous_weight' => $entry['state'] === 'update' && $target->weight !== null ? (string) (float) $target->weight : null,
                 ];
 
-                if (! $existing && ! $failed) {
-                    $seen[$key] = true;
-                    $planned[] = ['category' => $category, 'weight' => $candidate['weight']];
+                if ($entry['state'] !== 'existing' && ! $failed) {
+                    $seen[$entry['key']] = true;
+
+                    if ($target !== null) {
+                        $claimed[$target->id] = true;
+                    }
+
+                    $planned[] = ['category' => $category, 'weight' => $entry['candidate']['weight'], 'entry' => $target, 'state' => $entry['state']];
                 }
             }
-
-            $messages = $item['messages'];
 
             if ($failed) {
                 $status = ClubImportRow::ERROR;
@@ -392,6 +503,20 @@ class ImportClubEntries
         }
 
         return $rows;
+    }
+
+    private function weightChanged(?string $stored, ?string $entered): bool
+    {
+        // Only Kumite carries a weight in the file, so an entry without one never changes a stored weight.
+        if ($entered === null) {
+            return false;
+        }
+
+        if ($stored === null) {
+            return true;
+        }
+
+        return abs((float) $stored - (float) $entered) > 0.001;
     }
 
     /**

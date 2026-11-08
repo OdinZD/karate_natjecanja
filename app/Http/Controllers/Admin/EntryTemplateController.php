@@ -25,6 +25,8 @@ class EntryTemplateController extends Controller
             abort_unless(is_string($id) && ctype_digit($id), 404);
 
             $club = Club::findOrFail((int) $id);
+
+            $competition->clubs()->syncWithoutDetaching([$club->id]);
         }
 
         return response()

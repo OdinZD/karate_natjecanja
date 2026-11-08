@@ -5,6 +5,7 @@ namespace App\Actions\Entries;
 use App\Enums\Gender;
 use App\Models\Category;
 use App\Models\Competitor;
+use App\Models\Entry;
 
 /**
  * One row of a club's entry file as understood by ImportClubEntries::analyze().
@@ -20,8 +21,8 @@ final readonly class ClubImportRow
     /**
      * @param  array<string, string>  $raw  The cell values by field, as they were in the file.
      * @param  array<int, string>  $messages  One text per reported problem or note.
-     * @param  array<int, array{category: string, discipline: string, weight: ?string, state: string}>  $entries  What the row enters, state is "new" or "existing".
-     * @param  array<int, array{category: Category, weight: ?string}>  $planned  The entries a commit creates for this row.
+     * @param  array<int, array{category: string, discipline: string, weight: ?string, state: string, replaces: ?string, previous_weight: ?string}>  $entries  What the row enters, state is "new", "existing", "update" (new weight) or "replace" (moved from another category).
+     * @param  array<int, array{category: Category, weight: ?string, entry: ?Entry, state: string}>  $planned  What a commit does for this row: create an entry, or change the given one.
      */
     public function __construct(
         public int $number,
@@ -45,7 +46,7 @@ final readonly class ClubImportRow
     /**
      * The row without the models, small enough to keep in a Livewire property.
      *
-     * @return array{number: int, name: string, gender: ?string, birth_year: ?int, weight: ?string, status: string, messages: array<int, string>, entries: array<int, array{category: string, discipline: string, weight: ?string, state: string}>}
+     * @return array{number: int, name: string, gender: ?string, birth_year: ?int, weight: ?string, status: string, messages: array<int, string>, entries: array<int, array{category: string, discipline: string, weight: ?string, state: string, replaces: ?string, previous_weight: ?string}>}
      */
     public function toArray(): array
     {

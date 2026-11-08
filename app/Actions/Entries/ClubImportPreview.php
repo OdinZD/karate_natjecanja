@@ -48,12 +48,20 @@ final readonly class ClubImportPreview
 
     public function newEntryCount(): int
     {
-        return $this->countEntries(false);
+        return $this->countEntries(['new']);
     }
 
     public function existingEntryCount(): int
     {
-        return $this->countEntries(true);
+        return $this->countEntries(['existing']);
+    }
+
+    /**
+     * Entries the club changed: a new weight or a move to another category.
+     */
+    public function changedEntryCount(): int
+    {
+        return $this->countEntries(['update', 'replace']);
     }
 
     /**
@@ -78,7 +86,10 @@ final readonly class ClubImportPreview
         return $errors;
     }
 
-    private function countEntries(bool $existing): int
+    /**
+     * @param  array<int, string>  $states
+     */
+    private function countEntries(array $states): int
     {
         $count = 0;
 
@@ -88,7 +99,7 @@ final readonly class ClubImportPreview
             }
 
             foreach ($row->entries as $entry) {
-                $count += ($entry['state'] === 'existing') === $existing ? 1 : 0;
+                $count += in_array($entry['state'], $states, true) ? 1 : 0;
             }
         }
 
