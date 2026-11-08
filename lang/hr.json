@@ -549,5 +549,6 @@
     "Mark present": "Označi kao prisutnog",
     "Mark absent": "Označi kao odsutnog",
     "Mark :name absent? They will be left out of the draw.": "Označiti :name kao odsutnog? Neće ući u ždrijeb.",
-    "Category \":value\" already has a draw. Delete the draw first to change its entries.": "Kategorija \":value\" već ima ždrijeb. Prvo obrišite ždrijeb da biste mijenjali njezine prijave."
+    "Category \":value\" already has a draw. Delete the draw first to change its entries.": "Kategorija \":value\" već ima ždrijeb. Prvo obrišite ždrijeb da biste mijenjali njezine prijave.",
+    "Results (Excel)": "Rezultati (Excel)"
 }

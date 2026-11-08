@@ -163,6 +163,7 @@ new #[Title('Competition')] class extends Component {
 
         $hasDraws = $competition->categories()->whereHas('bouts')->exists();
         $hasTimetable = $competition->categories()->whereNotNull('tatami_id')->exists();
+        $hasResults = $competition->categories()->whereHas('placements')->exists();
     @endphp
 
     <div class="flex flex-wrap items-start justify-between gap-4">
@@ -191,7 +192,10 @@ new #[Title('Competition')] class extends Component {
                     @if ($hasTimetable)
                         <flux:menu.item icon="document-arrow-down" :href="route('admin.competitions.timetable.pdf', $competition)" target="_blank">{{ __('Time table (PDF)') }}<span class="sr-only"> ({{ __('Opens in a new tab') }})</span></flux:menu.item>
                     @endif
-                    @if ($hasDraws || $hasTimetable)
+                    @if ($hasResults)
+                        <flux:menu.item icon="table-cells" :href="route('admin.competitions.results.export', $competition)" data-test="download-results-button">{{ __('Results (Excel)') }}</flux:menu.item>
+                    @endif
+                    @if ($hasDraws || $hasTimetable || $hasResults)
                         <flux:menu.separator />
                     @endif
                     <flux:modal.trigger name="competition-delete">
