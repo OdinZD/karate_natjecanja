@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<title>Upute za administratora: unos prijava za natjecanje</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-left { content: "Upute za administratora: unos prijava za natjecanje"; font: 8.5pt Arial, sans-serif; color: #666; }
+    @bottom-right { content: "Stranica " counter(page); font: 8.5pt Arial, sans-serif; color: #666; }
+  }
+  @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif; font-size: 10.6pt; line-height: 1.5; color: #111; margin: 0; }
+  h1 { font-size: 21pt; line-height: 1.15; margin: 9mm 0 4mm; padding-bottom: 2.5mm; border-bottom: 3px solid #d9ff3d; break-after: avoid; }
+  h1.nova { break-before: page; margin-top: 0; }
+  h1 .num { display: inline-block; min-width: 11mm; margin-right: 2mm; padding: 0 2.5mm; background: #111; color: #d9ff3d; border-radius: 2mm; text-align: center; }
+  h2 { font-size: 13.5pt; margin: 7mm 0 2mm; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 5mm 0 1.5mm; break-after: avoid; }
+  p { margin: 0 0 2.6mm; orphans: 3; widows: 3; }
+  ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1.2mm; }
+  .ui { font-weight: 700; background: #eef1f6; border: 1px solid #cfd6e2; border-radius: 1.5mm; padding: 0 1.4mm; white-space: nowrap; }
+  .ui.long { white-space: normal; }
+  .muted { color: #555; }
+
+  /* Naslovnica */
+  .cover { height: 297mm; padding: 38mm 24mm 24mm; background: #0a0c11; color: #fff; break-after: page; position: relative; overflow: hidden; }
+  .cover .stripe { position: absolute; right: -30mm; top: 0; width: 95mm; height: 100%; background: #e11d2b; transform: skewX(-10deg); }
+  .cover .stripe2 { position: absolute; right: -55mm; top: 0; width: 55mm; height: 100%; background: #2c62f0; transform: skewX(-10deg); }
+  .cover .tag { display: inline-block; background: #d9ff3d; color: #0a0c11; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: 10pt; padding: 1.5mm 4mm; transform: skewX(-10deg); }
+  .cover h1 { all: unset; display: block; font-size: 38pt; line-height: 1.05; font-weight: 900; margin: 12mm 0 6mm; max-width: 120mm; text-transform: uppercase; letter-spacing: .01em; position: relative; }
+  .cover p { font-size: 14pt; max-width: 112mm; color: #d6dbe6; position: relative; }
+  .cover .meta { position: absolute; left: 24mm; bottom: 24mm; font-size: 10pt; color: #9aa3b5; }
+
+  /* Sadržaj */
+  .toc { break-after: page; }
+  .toc h1 { break-before: auto; margin-top: 0; }
+  .toc ol { list-style: none; padding: 0; counter-reset: poglavlje; }
+  .toc li { counter-increment: poglavlje; display: flex; gap: 3mm; padding: 2mm 0; border-bottom: 1px solid #e3e6ee; font-size: 11.5pt; }
+  .toc li::before { content: counter(poglavlje); min-width: 8mm; font-weight: 800; color: #111; background: #d9ff3d; text-align: center; border-radius: 1.5mm; }
+  .toc li span { margin-left: auto; color: #777; font-size: 9.5pt; align-self: center; }
+
+  /* Okviri */
+  .box { border-left: 4px solid; padding: 2.5mm 4mm; margin: 3mm 0 4mm; border-radius: 0 2mm 2mm 0; break-inside: avoid; }
+  .box p:last-child, .box ul:last-child { margin-bottom: 0; }
+  .box b.t { display: block; margin-bottom: 1mm; font-size: 9.5pt; text-transform: uppercase; letter-spacing: .08em; }
+  .tip { background: #f1fbd9; border-color: #8bbf00; }
+  .warn { background: #fff1e6; border-color: #e07a00; }
+  .stop { background: #ffe9ea; border-color: #e11d2b; }
+  .info { background: #eaf1ff; border-color: #2c62f0; }
+
+  /* Koraci */
+  ol.koraci { list-style: none; counter-reset: korak; padding: 0; }
+  ol.koraci > li { counter-increment: korak; position: relative; padding: 0 0 0 11mm; margin-bottom: 3mm; break-inside: avoid; min-height: 8mm; }
+  ol.koraci > li::before { content: counter(korak); position: absolute; left: 0; top: 0; width: 7.5mm; height: 7.5mm; line-height: 7.5mm; text-align: center; background: #e11d2b; color: #fff; font-weight: 800; border-radius: 50%; font-size: 10pt; }
+
+  /* Slike */
+  figure { margin: 3mm 0 4mm; break-inside: avoid; }
+  figcaption { text-align: center; }
+  figure img { display: block; width: 84%; margin: 0 auto; border: 1px solid #c5ccd9; border-radius: 1.5mm; }
+  figcaption { font-size: 9pt; color: #555; margin-top: 1.2mm; }
+  body { counter-reset: fig; }
+  figcaption::before { counter-increment: fig; content: "Slika " counter(fig) ": "; font-weight: 700; color: #111; }
+  figure.manja img { width: 72%; margin: 0 auto; }
+  figure.uska img { width: 50%; margin: 0 auto; }
+
+  /* Tablice */
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.6pt; break-inside: auto; }
+  th { text-align: left; background: #111; color: #fff; padding: 1.8mm 2.4mm; font-weight: 700; }
+  td { padding: 1.8mm 2.4mm; border-bottom: 1px solid #dde1ea; vertical-align: top; }
+  tr { break-inside: avoid; }
+  tbody tr:nth-child(even) td { background: #f6f8fb; }
+  td.k { white-space: nowrap; font-weight: 700; }
+
+  .excel { font-family: "Menlo", "Consolas", monospace; font-size: 8.8pt; }
+  .excel th { background: #ddebf7; color: #111; border: 1px solid #b7c9de; }
+  .excel td { border: 1px solid #c9d3e0; }
+  .excel tbody tr:nth-child(even) td { background: #fff; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .proces { counter-reset: p; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 4mm 0; }
+  .proces div { counter-increment: p; border: 1px solid #c5ccd9; border-top: 4px solid #e11d2b; border-radius: 2mm; padding: 2.5mm 3mm; font-size: 9.6pt; break-inside: avoid; }
+  .proces div::before { content: counter(p); display: block; font-size: 16pt; font-weight: 900; color: #e11d2b; line-height: 1; margin-bottom: 1mm; }
+  .check li { list-style: none; position: relative; padding-left: 7mm; }
+  .check li::before { content: ""; position: absolute; left: 0; top: .6mm; width: 4mm; height: 4mm; border: 1.5px solid #111; border-radius: 1mm; }
+  .check { padding-left: 0; }
+</style>
+</head>
+<body>
+
+<!-- ===================== NASLOVNICA ===================== -->
+<section class="cover">
+  <div class="stripe"></div><div class="stripe2"></div>
+  <span class="tag">Priručnik</span>
+  <h1>Upute za administratora</h1>
+  <p>Kako primiti popise djece od klubova i unijeti ih na natjecanje, korak po korak.</p>
+  <p>Primjer kroz cijeli dokument: <strong>Županijsko prvenstvo u karateu</strong>.</p>
+  <div class="meta">Aplikacija „Organizacija natjecanja”<br>Verzija uputa: studeni 2026.<br>Slike prikazuju izmišljene demo podatke.</div>
+</section>
+
+<!-- ===================== SADRŽAJ ===================== -->
+<section class="toc">
+  <h1>Sadržaj</h1>
+  <ol>
+    <li>Prije nego počnete: što vam treba i osnovni pojmovi</li>
+    <li>Prijava u aplikaciju</li>
+    <li>Stvaranje natjecanja</li>
+    <li>Tatamiji i kategorije</li>
+    <li>Klubovi i predlošci za klubove</li>
+    <li>Primanje popisa: uvoz prijava kluba</li>
+    <li>Provjera prijava i potvrda klubovima</li>
+    <li>Duplikati: spajanje dvaput upisanih</li>
+    <li>Vaganje i odsutni (na dan natjecanja)</li>
+    <li>Što slijedi: ždrijeb, time table, natjecanje, rezultati</li>
+    <li>Najčešće greške, kontrolni popis i dodaci</li>
+  </ol>
+  <div class="box info">
+    <b class="t">Kako čitati upute</b>
+    <p>Nazivi gumba i polja pišu se <span class="ui">ovakvim podebljanim slovima</span> i točno su onakvi kakvi stoje u aplikaciji. Crveni brojevi na slikama pokazuju što treba kliknuti ili provjeriti, redom kojim se spominju u tekstu. Zeleni okviri su savjeti, narančasti upozorenja, a crveni opasnosti (stvari koje se ne mogu poništiti).</p>
+  </div>
+</section>
+
+<!-- ===================== 1. PRIJE NEGO POČNETE ===================== -->
+<h1 class="nova"><span class="num">1</span>Prije nego počnete</h1>
+
+<h2>Što vam treba</h2>
+<ul>
+  <li><strong>Administratorski račun</strong>: e-adresu i lozinku dobivate od osobe koja održava aplikaciju. Nitko se ne može sam registrirati.</li>
+  <li><strong>Pravila natjecanja</strong>: po njima birate skup kategorija (dobne skupine i težinski razredi).</li>
+  <li><strong>Popise djece od klubova</strong>: najbolje u Excelu, u obliku koji aplikacija sama pripremi (predložak). Poglavlje 5 objašnjava kako se šalje klubovima.</li>
+  <li><strong>Excel ili LibreOffice</strong> na računalu, za otvaranje i ispravljanje datoteka.</li>
+</ul>
+
+<h2>Osnovni pojmovi</h2>
+<table>
+  <thead><tr><th style="width:30%">Pojam</th><th>Što znači</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Natjecanje</td><td>Jedan turnir, npr. Županijsko prvenstvo 2026. Sve ostalo (kategorije, prijave, ždrijeb) pripada jednom natjecanju.</td></tr>
+    <tr><td class="k">Klub</td><td>Karate klub koji šalje djecu.</td></tr>
+    <tr><td class="k">Natjecatelj</td><td>Dijete. Aplikacija pamti ime, prezime, spol i datum rođenja, pa se isto dijete ne mora ponovno upisivati svake godine.</td></tr>
+    <tr><td class="k">Kata</td><td>Disciplina u kojoj se izvodi niz pokreta (ocjenjuje se nastup). Težina se ne računa.</td></tr>
+    <tr><td class="k">Kumite</td><td>Disciplina borbi. Natjecatelji se dijele po težinskim razredima, pa je <strong>težina obavezna</strong>.</td></tr>
+    <tr><td class="k">Kategorija</td><td>Skupina u kojoj se djeca natječu: dobna skupina + spol + disciplina (+ težinski razred u Kumiteu). Primjer: <em>U14 - Mlađi kadeti - Kumite -40 kg</em>.</td></tr>
+    <tr><td class="k">Prijava</td><td>Jedno dijete u jednoj kategoriji. Dijete koje nastupa u Kati i Kumiteu ima <strong>dvije prijave</strong>.</td></tr>
+    <tr><td class="k">AKA / AO</td><td>Dva borca u meču: AKA (crveni) i AO (plavi).</td></tr>
+    <tr><td class="k">Tatami</td><td>Borilište (strunjača). Na natjecanju može biti više tatamija odjednom.</td></tr>
+    <tr><td class="k">Ždrijeb</td><td>Raspored borbi u kategoriji. Radi se kad su prijave gotove i izvagane.</td></tr>
+    <tr><td class="k">Vaganje</td><td>Mjerenje težine na dan natjecanja. Dijete čija težina ne odgovara razredu prelazi u pravi razred.</td></tr>
+  </tbody>
+</table>
+
+<h2>Cijeli postupak na jednom mjestu</h2>
+<div class="proces">
+  <div><strong>Natjecanje</strong><br>Stvorite ga i postavite status <em>Prijave</em>.</div>
+  <div><strong>Tatamiji i kategorije</strong><br>Dodajte tatamije i uvezite kategorije.</div>
+  <div><strong>Klubovi</strong><br>Dodajte klubove i pošaljite im predloške.</div>
+  <div><strong>Uvoz</strong><br>Uvezite popise koje klubovi vrate.</div>
+  <div><strong>Provjera</strong><br>Pregledajte prijave, pošaljite potvrde, spojite duplikate.</div>
+  <div><strong>Vaganje</strong><br>Na dan natjecanja unesite težine i odsutne.</div>
+  <div><strong>Ždrijeb</strong><br>Generirajte ždrijeb i složite time table.</div>
+  <div><strong>Natjecanje</strong><br>Rezultati se unose na tatamijima.</div>
+</div>
+
+<div class="box tip">
+  <b class="t">Savjet</b>
+  <p>Aplikacija sve prije spremanja pokazuje u pregledu i gotovo sve se može ispraviti ili poništiti. Jedina velika zapreka je <strong>ždrijeb</strong>: kad kategorija dobije ždrijeb, njezine se prijave više ne mijenjaju. Zato prvo dovršite prijave i vaganje, pa tek onda radite ždrijeb.</p>
+</div>
+
+<!-- ===================== 2. PRIJAVA U APLIKACIJU ===================== -->
+<h1><span class="num">2</span>Prijava u aplikaciju</h1>
+
+<ol class="koraci">
+  <li>Otvorite adresu aplikacije u pregledniku (Chrome, Firefox, Edge ili Safari). Adresu vam daje osoba koja održava aplikaciju.</li>
+  <li>U polje <span class="ui">E-adresa</span> upišite svoju e-adresu.</li>
+  <li>U polje <span class="ui">Lozinka</span> upišite lozinku.</li>
+  <li>Kliknite <span class="ui">Prijava</span>.</li>
+</ol>
+
+<figure class="manja">
+  <img src="slike/01-prijava.png" alt="Stranica za prijavu">
+  <figcaption>Stranica <span class="ui">Prijava u račun</span>. Redom: e-adresa (1), lozinka (2), gumb za prijavu (3).</figcaption>
+</figure>
+
+<div class="box warn">
+  <b class="t">Ako ne uspije</b>
+  <p>Kliknite <span class="ui">Zaboravili ste lozinku?</span> i slijedite upute iz e-pošte. Račune stvara samo administrator, na stranici <span class="ui">Korisnici</span> (gumb <span class="ui">Novi korisnik</span>).</p>
+</div>
+
+<h2>Gdje što pronaći</h2>
+<p>Nakon prijave vidite <span class="ui">Dashboard</span>. S lijeve strane je izbornik, a vama su važne stavke pod naslovom <em>Administracija</em>:</p>
+<table>
+  <thead><tr><th style="width:26%">Stavka izbornika</th><th>Za što služi</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Natjecanja</td><td>Popis natjecanja i sve što se radi unutar jednog natjecanja (koraci 1 do 8).</td></tr>
+    <tr><td class="k">Klubovi</td><td>Popis svih klubova (dodavanje, uređivanje).</td></tr>
+    <tr><td class="k">Natjecatelji</td><td>Popis sve djece (traženje, uređivanje, ručni unos).</td></tr>
+    <tr><td class="k">Duplikati</td><td>Dvaput upisana djeca i klubovi, i njihovo spajanje.</td></tr>
+    <tr><td class="k">Korisnici</td><td>Računi za rad u aplikaciji (administratori i operateri tatamija).</td></tr>
+  </tbody>
+</table>
+
+<figure>
+  <img src="slike/02-izbornik.png" alt="Izbornik aplikacije">
+  <figcaption>Izbornik s lijeve strane. Najčešće ćete koristiti <span class="ui">Natjecanja</span> (1), <span class="ui">Klubovi</span> (2) i <span class="ui">Duplikati</span> (3).</figcaption>
+</figure>
+
+<div class="box tip">
+  <b class="t">Savjet: promijenite lozinku</b>
+  <p>Kad se prvi put prijavite, otvorite <span class="ui">Postavke</span> (dolje lijevo, kod vašeg imena), pa karticu <span class="ui">Sigurnost</span> i postavite vlastitu lozinku.</p>
+</div>
+
+<!-- ===================== 3. STVARANJE NATJECANJA ===================== -->
+<h1><span class="num">3</span>Stvaranje natjecanja</h1>
+
+<ol class="koraci">
+  <li>U izborniku kliknite <span class="ui">Natjecanja</span>.</li>
+  <li>Kliknite <span class="ui">Novo natjecanje</span>.</li>
+  <li>Ispunite obrazac (tablica ispod).</li>
+  <li>Kliknite <span class="ui">Kreiraj</span>. Aplikacija otvara stranicu novog natjecanja.</li>
+</ol>
+
+<figure>
+  <img src="slike/03-natjecanja.png" alt="Popis natjecanja">
+  <figcaption>Popis natjecanja. Gumb <span class="ui">Novo natjecanje</span> (1).</figcaption>
+</figure>
+
+<table>
+  <thead><tr><th style="width:26%">Polje</th><th>Što upisati</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Ime</td><td>Naziv natjecanja, npr. <em>Županijsko prvenstvo 2026</em>. Obavezno.</td></tr>
+    <tr><td class="k">Datum</td><td>Dan natjecanja. Obavezno. Dobne skupine kategorija računaju se prema <strong>godini ovog datuma</strong>.</td></tr>
+    <tr><td class="k">Vrijeme početka</td><td>Kad počinje prvi meč. Obavezno. Po njemu se računa time table.</td></tr>
+    <tr><td class="k">Mjesto održavanja</td><td>Dvorana ili grad. Obavezno.</td></tr>
+    <tr><td class="k">Organizator</td><td>Savez ili klub organizator. Nije obavezno.</td></tr>
+    <tr><td class="k">Rok za prijave</td><td>Do kad klubovi šalju popise. Nije obavezno. Aplikacija samo upozori kad se uvozi nakon roka, <strong>ne blokira</strong> uvoz.</td></tr>
+  </tbody>
+</table>
+
+<figure class="manja">
+  <img src="slike/04-novo-natjecanje.png" alt="Obrazac za novo natjecanje">
+  <figcaption>Obrazac <span class="ui">Novo natjecanje</span>. Naziv (1), datum (2), mjesto (3) i gumb <span class="ui">Kreiraj</span> (4).</figcaption>
+</figure>
+
+<h2>Postavite status natjecanja</h2>
+<p>Novo natjecanje počinje kao <span class="ui">Nacrt</span> i nitko izvan aplikacije ga ne vidi. Dok primate popise od klubova, postavite status <span class="ui">Prijave</span>.</p>
+<ol class="koraci">
+  <li>Na stranici natjecanja, u dijelu <span class="ui">Detalji</span>, kod polja <span class="ui">Status</span> kliknite <span class="ui">Prijave</span>.</li>
+  <li>Kliknite <span class="ui">Spremi</span>.</li>
+</ol>
+
+<figure>
+  <img src="slike/05-detalji.png" alt="Detalji natjecanja i status">
+  <figcaption>Dio <span class="ui">Detalji</span>. Status <span class="ui">Prijave</span> (2) i gumb <span class="ui">Spremi</span> (3).</figcaption>
+</figure>
+
+<table>
+  <thead><tr><th style="width:24%">Status</th><th>Kad ga koristiti</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Nacrt</td><td>Dok pripremate. Natjecanje je skriveno za javnost.</td></tr>
+    <tr><td class="k">Prijave</td><td>Dok klubovi šalju popise. Uvoz radi bez upozorenja.</td></tr>
+    <tr><td class="k">Ždrijeb gotov</td><td>Kad je ždrijeb napravljen (informativno).</td></tr>
+    <tr><td class="k">U tijeku</td><td>Na dan natjecanja. Tek tada natjecanje postaje „aktivno” na Dashboardu i javnim stranicama piše <em>Uživo</em>.</td></tr>
+    <tr><td class="k">Završeno</td><td>Kad je sve gotovo.</td></tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <b class="t">Važno</b>
+  <p>Status se <strong>nikad ne mijenja sam</strong>. Vi ga postavljate, kao gore. Ako uvozite popis, a status nije <span class="ui">Prijave</span>, aplikacija prikaže upozorenje „Natjecanje nije u fazi prijava”, ali uvoz svejedno radi.</p>
+</div>
+
+<h2>Traka koraka</h2>
+<p>Na vrhu svake stranice natjecanja je traka s osam koraka. Njome se krećete kroz posao, redom slijeva nadesno. Zeleni je korak u kojem se trenutno nalazite.</p>
+<figure>
+  <img src="slike/08-koraci.png" alt="Traka koraka natjecanja">
+  <figcaption>Traka koraka: <span class="ui">Detalji</span> (1), <span class="ui">Tatamiji</span> (2), <span class="ui">Kategorije</span> (3), <span class="ui">Prijave</span> (4), <span class="ui">Vaganje</span> (5), <span class="ui">Ždrijeb</span> (6), <span class="ui">Time Table</span> (7), <span class="ui">Dan natjecanja</span> (8).</figcaption>
+</figure>
+
+<!-- ===================== 4. TATAMIJI I KATEGORIJE ===================== -->
+<h1><span class="num">4</span>Tatamiji i kategorije</h1>
+
+<h2>Tatamiji</h2>
+<p>Tatami je borilište. Dodajte onoliko tatamija koliko će ih biti u dvorani.</p>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Tatamiji</span> (ili se pomaknite na dio <span class="ui">Tatamiji</span> na stranici natjecanja).</li>
+  <li>U polju <span class="ui">Br.</span> je već upisan idući broj. Po želji upišite <span class="ui">Ime</span> (npr. „Glavni tatami”).</li>
+  <li>Kliknite <span class="ui">Dodaj tatami</span>. Ponovite za svaki tatami.</li>
+</ol>
+<figure>
+  <img src="slike/07-tatamiji.png" alt="Dodavanje tatamija">
+  <figcaption>Broj tatamija (1), gumb <span class="ui">Dodaj tatami</span> (2) i gumb <span class="ui">Operateri</span> (3) uz svaki tatami.</figcaption>
+</figure>
+<div class="box info">
+  <b class="t">Operateri</b>
+  <p>Operater je osoba koja na tatamiju unosi rezultate. Gumb <span class="ui">Operateri</span> otvara popis korisnika s ulogom <em>Operater tatamija</em>. Takve račune prvo napravite na stranici <span class="ui">Korisnici</span>. Operatere možete dodijeliti i kasnije, prije dana natjecanja.</p>
+</div>
+<div class="box warn">
+  <b class="t">Ograničenje</b>
+  <p>Tatami se ne može preimenovati. Ako ste pogriješili u imenu ili broju, obrišite ga ikonom koša (<span class="ui">Obriši tatami</span>) i dodajte ponovno. Kategorije koje su bile na njemu vraćaju se u „bez tatamija”.</p>
+</div>
+
+<h2>Kategorije</h2>
+<p>Kategorije određuju tko se s kim bori. Ne morate ih upisivati ručno: aplikacija ima službene popise.</p>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Kategorije</span> i kliknite <span class="ui">Uvezi službene kategorije</span>.</li>
+  <li>U polju <span class="ui">Skup kategorija</span> odaberite skup: <span class="ui">Turnir</span>, <span class="ui">Prvenstvo Hrvatske</span> ili <span class="ui">Kup Hrvatske</span>.</li>
+  <li>Kliknite <span class="ui">Uvezi</span>. Pojavi se poruka, npr. „Uvezeno: 125, preskočeno: 0.”</li>
+</ol>
+<figure class="manja">
+  <img src="slike/10-uvoz-kategorija.png" alt="Uvoz službenih kategorija">
+  <figcaption>Odabir skupa (1) i gumb <span class="ui">Uvezi</span> (2).</figcaption>
+</figure>
+<div class="box info">
+  <b class="t">Koji skup odabrati?</b>
+  <p>Ne postoji skup pod imenom „Županijsko prvenstvo”. Skup odabire organizator <strong>prema pravilima svog natjecanja</strong>: <em>Turnir</em> (dobne skupine U8 do Veterani, kao na većini turnira), <em>Prvenstvo Hrvatske</em> (po jedna dobna skupina za svako godište) ili <em>Kup Hrvatske</em> (djeca po godištu rođenja). U ovim uputama kao primjer koristimo <em>Turnir</em>. Ako niste sigurni, pitajte tehničkog voditelja natjecanja.</p>
+</div>
+<figure>
+  <img src="slike/11-kategorije.png" alt="Popis uvezenih kategorija">
+  <figcaption>Uvezene kategorije, grupirane po dobnim skupinama. Stupac <span class="ui">Prijave</span> pokazuje koliko je djece prijavljeno (za sada 0).</figcaption>
+</figure>
+
+<h3>Kako se čitaju nazivi kategorija</h3>
+<ul>
+  <li><em>U10 - Mlađi učenici - Kata</em>: dobna skupina U10, dječaci, disciplina Kata.</li>
+  <li><em>Kadeti - Kumite -70 kg</em>: kadeti, Kumite, težina do <strong>uključivo 70 kg</strong>.</li>
+  <li><em>Kadeti - Kumite +70 kg</em>: kadeti, Kumite, težina <strong>preko 70 kg</strong>. Dijete koje je točno 70 kg ide u razred „-70”, u lakši.</li>
+</ul>
+<div class="box warn">
+  <b class="t">Kata B</b>
+  <p>Neki skupovi imaju i kategorije <em>Kata B</em> (za početnike). Aplikacija ih <strong>nikad ne bira sama</strong>. Dijete u Kati B upisujete ručno (poglavlje 7).</p>
+</div>
+<p>Ako vam treba kategorija koje nema, kliknite <span class="ui">Nova kategorija</span>. Ako je slično natjecanje već bilo, <span class="ui">Kopiraj s natjecanja</span> prenosi sve njegove kategorije (bez prijava).</p>
+
+<!-- ===================== 5. KLUBOVI I PREDLOŠCI ===================== -->
+<h1><span class="num">5</span>Klubovi i predlošci za klubove</h1>
+
+<p>Klubovi vam popise šalju u Excelu. Da ne bi svaki klub izmislio svoj oblik tablice, aplikacija sama priprema <strong>predložak</strong>: datoteku s točno određenim stupcima. Predložak za klub koji je već nastupao dolazi <strong>već popunjen</strong> imenima djece koja su prije bila prijavljena.</p>
+
+<h2>Dodavanje klubova na natjecanje</h2>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Prijave</span>. U kartici <span class="ui">Uvoz po klubovima</span> kliknite <span class="ui">Dodaj klub</span>.</li>
+  <li>Odaberite klub s popisa. Ako kluba nema, u dijelu <em>Ili dodajte klub kojeg nema na popisu</em> upišite <span class="ui">Naziv kluba</span> i <span class="ui">Grad</span>.</li>
+  <li>Kliknite <span class="ui">Dodaj</span>. Ponovite za svaki klub.</li>
+</ol>
+<figure class="manja">
+  <img src="slike/13-dodaj-klub.png" alt="Dodavanje kluba natjecanju">
+  <figcaption>Novi klub: naziv (1), grad (2), gumb <span class="ui">Dodaj</span> (3).</figcaption>
+</figure>
+<div class="box tip">
+  <b class="t">Savjet: jednako pišite nazive klubova</b>
+  <p>Klub „KK Tigar” i „Karate klub Tigar” za aplikaciju su dva različita kluba. Prije dodavanja pogledajte popis i koristite klub koji već postoji.</p>
+</div>
+
+<h2>Slanje predložaka klubovima</h2>
+<figure>
+  <img src="slike/14-panel-klubova.png" alt="Kartica Uvoz po klubovima">
+  <figcaption>Kartica <span class="ui">Uvoz po klubovima</span> (1). Uz svaki klub: <span class="ui">Predložak</span> (2) i <span class="ui">Uvezi</span> (3). Status <span class="ui">Nije poslano</span> znači da od kluba još ništa nije stiglo.</figcaption>
+</figure>
+<ol class="koraci">
+  <li>Uz svaki klub kliknite <span class="ui">Predložak</span>. Preuzima se Excel datoteka za taj klub.</li>
+  <li>Datoteku pošaljite treneru kluba e-poštom, uz rok i upute iz okvira ispod.</li>
+  <li>Za klubove koje nemate na popisu možete koristiti opći <span class="ui">Predložak za klubove</span> (gumb iznad kartice).</li>
+</ol>
+
+<figure>
+  <img src="slike/12-prijave-prazno.png" alt="Alatna traka koraka Prijave">
+  <figcaption>Alatna traka koraka <span class="ui">Prijave</span>: <span class="ui">Predložak za klubove</span> (1), izbornik <span class="ui">Uvezi</span> (2), <span class="ui">Nova prijava</span> (3) i <span class="ui">Dodaj klub</span> (4).</figcaption>
+</figure>
+
+<h2>Što klub mora ispuniti</h2>
+<p>Ovo prepišite u e-poštu klubu. Klub ispunjava <strong>samo list „Prijave”</strong>, jedan red za jedno dijete.</p>
+<table class="excel">
+  <thead><tr><th>Ime</th><th>Prezime</th><th>Spol</th><th>Datum rođenja</th><th>Težina</th><th>Kata</th><th>Kumite</th></tr></thead>
+  <tbody>
+    <tr><td>Marko</td><td>Horvat</td><td>M</td><td>14.03.2014.</td><td>33</td><td>DA</td><td>DA</td></tr>
+    <tr><td>Ana</td><td>Babić</td><td>Ž</td><td>21.06.2010.</td><td></td><td>DA</td><td></td></tr>
+    <tr><td>Ivan</td><td>Kovač</td><td>M</td><td>02.09.2007.</td><td>70</td><td></td><td>DA</td></tr>
+  </tbody>
+</table>
+<table>
+  <thead><tr><th style="width:22%">Stupac</th><th>Pravilo</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Ime, Prezime</td><td>Kako piše u dokumentima, s hrvatskim slovima.</td></tr>
+    <tr><td class="k">Spol</td><td><strong>M</strong> ili <strong>Ž</strong>.</td></tr>
+    <tr><td class="k">Datum rođenja</td><td>Npr. <strong>14.03.2015.</strong> Mora biti stvarni datum u prošlosti. Po godini rođenja bira se dobna skupina.</td></tr>
+    <tr><td class="k">Težina</td><td>U kilogramima, npr. <strong>33,5</strong>. <strong>Obavezna samo ako je Kumite = DA.</strong> Za samu Katu ostaviti prazno.</td></tr>
+    <tr><td class="k">Kata, Kumite</td><td>Upišite <strong>DA</strong> za disciplinu u kojoj dijete nastupa, inače ostavite prazno. Dijete smije nastupiti u obje.</td></tr>
+  </tbody>
+</table>
+<div class="box warn">
+  <b class="t">Klub nikad ne upisuje kategoriju</b>
+  <p>Kategoriju određuje aplikacija, prema spolu, godini rođenja i težini. Klub ne smije brisati list <em>Prijave</em> ni mijenjati nazive stupaca. U predlošku koji je već popunjen, djecu koja ne nastupaju samo ostavite bez DA: bit će preskočena. Novo dijete dodajte u novi red.</p>
+</div>
+
+<!-- ===================== 6. UVOZ ===================== -->
+<h1 class="nova"><span class="num">6</span>Primanje popisa: uvoz prijava kluba</h1>
+
+<p>Kad klub vrati ispunjenu datoteku, spremite je na računalo. Uvoz ima tri koraka, a <strong>prije nego se išta spremi, vidite što će aplikacija napraviti</strong>.</p>
+
+<h2>Korak po korak</h2>
+<ol class="koraci">
+  <li>U koraku <span class="ui">Prijave</span>, u kartici <span class="ui">Uvoz po klubovima</span>, kliknite <span class="ui">Uvezi</span> uz klub čiju datoteku imate. Otvara se prozor <span class="ui">Uvoz prijava kluba</span> s već odabranim klubom.</li>
+  <li><strong>Korak 1:</strong> provjerite da je u polju <span class="ui">Klub</span> pravi klub. Ako je potrebno, odaberite drugi.</li>
+  <li><strong>Korak 2:</strong> u polju <span class="ui">Datoteka</span> odaberite datoteku koju je klub vratio (Excel .xlsx ili .csv, najviše 5 MB i 1000 redaka).</li>
+  <li><strong>Korak 3:</strong> pročitajte pregled. Još ništa nije spremljeno.</li>
+  <li>Ako je sve u redu, kliknite <span class="ui">Uvezi</span>. Pojavi se poruka, npr. „Uvezeno prijava: 9 (novih natjecatelja: 7)…”.</li>
+</ol>
+
+<figure class="manja">
+  <img src="slike/15-uvoz-korak1.png" alt="Prozor za uvoz, koraci 1 i 2">
+  <figcaption>Prozor za uvoz. Klub (1), poveznica <span class="ui">Predložak za ovaj klub</span> (2) i odabir datoteke (3). Gumb za odabir datoteke u vašem pregledniku može se zvati i „Odaberi datoteku” ili „Choose file”.</figcaption>
+</figure>
+
+<h2>Kako čitati pregled</h2>
+<p>Pregled počinje jednom rečenicom, npr. <em>„Redaka: 8. Spremno: 7, preskočeno: 0, s problemom: 1. Novih prijava: 9…”</em>. Ispod je popis redaka, a svaki redak ima oznaku:</p>
+<table>
+  <thead><tr><th style="width:22%">Oznaka</th><th>Što znači</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><span class="ui">Spremno</span></td><td>Redak je ispravan. Piše u koju će se kategoriju (ili kategorije) dijete upisati.</td></tr>
+    <tr><td class="k"><span class="ui">Preskočeno</span></td><td>Ništa se ne događa: dijete je već prijavljeno ili u predlošku nije označena nijedna disciplina.</td></tr>
+    <tr><td class="k"><span class="ui">Problem</span></td><td>Redak ima grešku. Crveni tekst ispod imena kaže što je krivo. Takvi redci su na vrhu popisa.</td></tr>
+  </tbody>
+</table>
+
+<figure>
+  <img src="slike/16-uvoz-pregled-problem.png" alt="Pregled uvoza s jednim problemom">
+  <figcaption>Pregled. Sažetak (1), redak s problemom (2), <span class="ui">Preuzmi retke s problemom</span> (3), <span class="ui">Uvezi samo ispravne retke</span> (4). Gumb <span class="ui">Uvezi</span> (5) je siv dok postoji problem.</figcaption>
+</figure>
+
+<h2>Što kad ima problema</h2>
+<p>Dok barem jedan redak ima <span class="ui">Problem</span>, gumb <span class="ui">Uvezi</span> je siv: aplikacija ne dopušta da se uveze samo „pola” datoteke slučajno. Imate dva puta:</p>
+<ol class="koraci">
+  <li><strong>Pošaljite klubu samo pogrešne retke.</strong> Kliknite <span class="ui">Preuzmi retke s problemom</span>. Dobivate Excel s retcima koji nisu prošli i dodatnim stupcem <em>Greška</em> koji objašnjava razlog. Pošaljite ga klubu na ispravak.</li>
+  <li><strong>Uvezite ono što je ispravno.</strong> Kliknite <span class="ui">Uvezi samo ispravne retke</span> (u zagradi je broj redaka). Retci s problemom ostaju neuvezeni dok klub ne pošalje ispravak.</li>
+</ol>
+<p>Kad klub vrati ispravljene retke, uvezite ih na isti način. Dovoljno je poslati samo ispravljene retke: ostalo je već upisano.</p>
+<figure class="manja">
+  <img src="slike/18-ispravljeni-uvoz.png" alt="Uvoz ispravljenog retka">
+  <figcaption>Ispravljeni redak je <span class="ui">Spremno</span> i gumb <span class="ui">Uvezi</span> (2) je aktivan.</figcaption>
+</figure>
+
+<h2>Najčešći problemi i kako ih riješiti</h2>
+<table>
+  <thead><tr><th style="width:42%">Poruka u pregledu</th><th>Što je krivo i što učiniti</th></tr></thead>
+  <tbody>
+    <tr><td>Za Kumite upišite težinu.</td><td>Kumite je označen, a težina je prazna. Klub mora upisati težinu.</td></tr>
+    <tr><td>Neispravan datum rođenja „…”.</td><td>Datum nije stvarni datum ili je u budućnosti. Treba oblik 14.03.2015.</td></tr>
+    <tr><td>Nepoznat spol „…”.</td><td>U stupcu <em>Spol</em> mora biti M ili Ž.</td></tr>
+    <tr><td>Nije označena ni Kata ni Kumite.</td><td>Redak nema nijedno DA. U običnom predlošku svaki red mora imati bar jedno DA.</td></tr>
+    <tr><td>Neispravna vrijednost „…” u stupcu Kata/Kumite.</td><td>U tim stupcima smije biti samo DA ili prazno.</td></tr>
+    <tr><td>Nijedna kategorija ne odgovara: …</td><td>Za to godište, spol i težinu nema kategorije u odabranom skupu. Provjerite podatke i skup kategorija (poglavlje 4). Dijete možete upisati ručno (poglavlje 7).</td></tr>
+    <tr><td>Kategorija „…” već ima ždrijeb.</td><td>Za tu je kategoriju ždrijeb već napravljen i prijave se ne mijenjaju.</td></tr>
+  </tbody>
+</table>
+
+<div class="box info">
+  <b class="t">Kako aplikacija bira kategoriju (jednostavno)</b>
+  <ul>
+    <li>Gleda <strong>godinu rođenja</strong>, spol i disciplinu. Za Kumite gleda i težinu; za Katu težina ne igra ulogu.</li>
+    <li>Ako se djetetu može dodijeliti više kategorija, bira se <strong>najuža dobna skupina</strong> (npr. 16-godišnjak ide u Juniore, a ne u opće Seniore).</li>
+    <li>Na samoj granici težine (npr. točno 36 kg) dijete ide u <strong>lakši razred</strong> („-36”).</li>
+  </ul>
+</div>
+
+<div class="box tip">
+  <b class="t">Napomena o dječjim istim imenima</b>
+  <p>Ako u datoteci jednog kluba stoji dijete koje već postoji u drugom klubu (isto ime, isti datum rođenja), uz taj redak piše napomena, npr. „Natjecatelj s istim imenom i datumom rođenja već postoji u klubu KK Sokol. Je li dijete promijenilo klub?”. To nije greška i uvoz se može nastaviti. Poslije takvo dijete možete spojiti na stranici <span class="ui">Duplikati</span> (poglavlje 8).</p>
+</div>
+<figure>
+  <img src="slike/19-uvoz-napomena.png" alt="Pregled s napomenom o istom djetetu u drugom klubu">
+  <figcaption>Redak s napomenom (1) i gumb <span class="ui">Uvezi</span> (2). Napomena je upozorenje, ne greška.</figcaption>
+</figure>
+
+<h2>Dvaput ista datoteka i ispravci poslije</h2>
+<ul>
+  <li><strong>Isti popis dvaput:</strong> ne šteti. Već upisana djeca dobiju oznaku „već prijavljen”, nitko se ne udvostruči.</li>
+  <li><strong>Promijenjena težina ili kategorija:</strong> kad klub pošalje isto dijete s novom težinom, aplikacija ga u pregledu označi kao promjenu i nudi <span class="ui">Ažuriraj promijenjene težine i kategorije</span> (uključeno je zadano). Kvačicu možete maknuti ako ne želite promjene.</li>
+  <li><strong>Uvoz nikad ništa ne briše.</strong> Ako je klub izbacio dijete s popisa, ono ostaje prijavljeno dok ga sami ne obrišete (poglavlje 7).</li>
+  <li><strong>Već izvagana djeca</strong> ostaju kakva jesu: uvoz im ne mijenja ni težinu ni kategoriju.</li>
+</ul>
+
+<h2>Uvoz iz Excela (opći oblik)</h2>
+<p>Pored uvoza po klubu postoji i opći <span class="ui">Uvoz iz Excela</span> (izbornik <span class="ui">Uvezi</span> iznad kartice). Koristi se rijetko: kad imate <strong>jednu tablicu za sve klubove</strong> sa stupcima <em>Klub, Grad, Ime, Prezime, Spol, Datum rođenja, Kategorija, Težina</em>.</p>
+<div class="box warn">
+  <b class="t">Pazite</b>
+  <ul>
+    <li>Naziv u stupcu <em>Kategorija</em> mora biti <strong>točno</strong> kao naziv kategorije u aplikaciji.</li>
+    <li>Ako se klub i grad ne podudaraju točno s postojećima, aplikacija <strong>napravi novi klub</strong>. Tako nastaju duplikati.</li>
+    <li>Sve ili ništa: jedan loš redak znači da se ne uveze ništa.</li>
+  </ul>
+  <p>Preporuka: koristite uvoz po klubu s predloškom.</p>
+</div>
+
+<!-- ===================== 7. PROVJERA ===================== -->
+<h1><span class="num">7</span>Provjera prijava i potvrda klubovima</h1>
+
+<h2>Tko je što poslao</h2>
+<p>Kartica <span class="ui">Uvoz po klubovima</span> je vaš pregled po klubovima. Gore desno piše „Prijave poslalo klubova: X od Y”.</p>
+<table>
+  <thead><tr><th style="width:24%">Status kluba</th><th>Što znači</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Poslano</td><td>Klub ima prijave (uz broj prijava i datum zadnjeg uvoza).</td></tr>
+    <tr><td class="k">Problemi</td><td>Zadnja datoteka kluba nije prihvaćena. Piše koliko je problema.</td></tr>
+    <tr><td class="k">Nije poslano</td><td>Od kluba još ništa nije stiglo.</td></tr>
+  </tbody>
+</table>
+<figure>
+  <img src="slike/20-prijave-popis.png" alt="Popis prijava">
+  <figcaption>Kartica po klubovima (1), gumb <span class="ui">Potvrda</span> (2) i popis svih prijava (3): natjecatelj, klub, kategorija, težina.</figcaption>
+</figure>
+<p>Ispod kartice je popis svih prijava. Filtrirajte ga poljem <span class="ui">Sve kategorije</span> da vidite jednu kategoriju. Stupac <span class="ui">Težina (kg)</span> je težina koju je klub prijavio (ne izvagana).</p>
+
+<h2>Potvrda prijava za klub</h2>
+<p>Najlakši način da klub provjeri što ste upisali jest da mu pošaljete potvrdu.</p>
+<ol class="koraci">
+  <li>U kartici <span class="ui">Uvoz po klubovima</span> kliknite <span class="ui">Potvrda</span> uz klub. Gumb se vidi samo klubovima koji imaju prijave.</li>
+  <li>U novoj kartici otvara se PDF <em>Potvrda prijava</em> sa svom djecom kluba: prezime i ime, godina rođenja, kategorija i prijavljena težina.</li>
+  <li>Spremite ili ispišite PDF i pošaljite ga treneru. Na dnu piše do kad treba javiti ispravke.</li>
+</ol>
+<figure class="manja">
+  <img src="slike/21-potvrda.png" alt="Potvrda prijava">
+  <figcaption>Potvrda prijava za jedan klub (gornji dio).</figcaption>
+</figure>
+<div class="box info">
+  <b class="t">Napomena</b>
+  <p>Potvrda je „fotografija stanja” u trenutku otvaranja (piše „Stanje na dan”). Ako poslije uvezete nove prijave, preuzmite potvrdu ponovno. Potvrda ne sadrži puni datum rođenja ni spol, samo godinu.</p>
+</div>
+
+<h2>Ručni unos, brisanje i ispravci</h2>
+<h3>Jedno dijete ručno (<span class="ui">Nova prijava</span>)</h3>
+<ol class="koraci">
+  <li>Natjecatelj mora već postojati. Ako ne postoji, u izborniku <span class="ui">Natjecatelji</span> kliknite <span class="ui">Novi natjecatelj</span> i upišite klub, ime, prezime, spol i datum rođenja.</li>
+  <li>U koraku <span class="ui">Prijave</span> kliknite <span class="ui">Nova prijava</span>.</li>
+  <li>U polju <span class="ui">Kategorija</span> odaberite kategoriju, u polju <span class="ui">Pronađi natjecatelja</span> upišite barem dva slova imena i odaberite dijete u polju <span class="ui">Natjecatelj</span>.</li>
+  <li>Za Kumite upišite <span class="ui">Težina (kg)</span>. Kliknite <span class="ui">Spremi</span>.</li>
+</ol>
+<p>Ovako se upisuje i dijete u Kata B ili u kategoriju koju aplikacija ne bi sama odabrala. Ručni unos provjerava spol, godište i težinu prema kategoriji.</p>
+<h3>Brisanje prijave</h3>
+<p>U popisu prijava kliknite ikonu koša na kraju retka i potvrdite pitanje <em>Obrisati ovu prijavu?</em>. Dijete ostaje u popisu natjecatelja, briše se samo ta prijava.</p>
+<h3>Greška u imenu ili datumu rođenja</h3>
+<p>Ispravite je na stranici <span class="ui">Natjecatelji</span> (traženje po imenu, pa ikona olovke). Ispravak se vidi na svim prijavama tog djeteta. Ako je krivi datum rođenja promijenio dobnu skupinu, dijete treba prebaciti u pravu kategoriju: obrišite krivu prijavu i uvezite ispravljenu datoteku.</p>
+
+<h2>Poništavanje cijelog uvoza (<span class="ui">Poništi</span>)</h2>
+<p>Ako ste uvezli krivu datoteku ili u krivi klub, uz klub kliknite <span class="ui">Poništi</span>. Aplikacija pita „Poništiti zadnji uvoz kluba…? Obrisat će se prijave koje je stvorio…”. Potvrdom se brišu prijave koje je taj uvoz napravio i djeca koja su nastala tim uvozom (a nemaju drugih prijava).</p>
+<figure>
+  <img src="slike/17-nakon-uvoza.png" alt="Kartica po klubovima nakon uvoza">
+  <figcaption>Kartica nakon uvoza: pregled po klubovima (1), <span class="ui">Poništi</span> (2) i <span class="ui">Potvrda</span> (3). Uz klub piše broj prijava, datum uvoza i koliko je problema bilo u zadnjoj datoteci.</figcaption>
+</figure>
+<div class="box warn">
+  <b class="t">Granice poništavanja</b>
+  <ul>
+    <li>Poništava se samo <strong>zadnji</strong> uvoz kluba.</li>
+    <li>Promjene težine ili kategorije koje je uvoz napravio na već postojećim prijavama <strong>ne vraćaju se</strong>.</li>
+    <li>Ne radi ako je neka od tih prijava u kategoriji koja već ima ždrijeb.</li>
+  </ul>
+</div>
+
+<!-- ===================== 8. DUPLIKATI ===================== -->
+<h1><span class="num">8</span>Duplikati: spajanje dvaput upisanih</h1>
+
+<p>Duplikat je isto dijete (ili isti klub) upisano dvaput, npr. zato što je jednom upisano s „Jurić”, a drugi put s „Juric”, ili zato što je dijete prešlo u drugi klub. Aplikacija sama traži takve parove: isto ime (ne gleda velika slova, kvačice i razmake), isti datum rođenja i isti spol za djecu, odnosno isto ime i grad za klubove.</p>
+
+<ol class="koraci">
+  <li>U izborniku kliknite <span class="ui">Duplikati</span>.</li>
+  <li>U dijelu <span class="ui">Natjecatelji</span> (ili <span class="ui">Klubovi</span>) vidite grupe zapisa koji su vjerojatno isti.</li>
+  <li>Pod <span class="ui">Zadrži ovaj zapis</span> odaberite zapis koji ostaje. Zadano je onaj s najviše prijava.</li>
+  <li>Kliknite <span class="ui">Spoji</span> i potvrdite. Prijave se prenose na zapis koji ste zadržali, a ostali se brišu.</li>
+</ol>
+<figure>
+  <img src="slike/22-duplikati.png" alt="Stranica Duplikati">
+  <figcaption>Zapis koji se zadržava (1) i gumb <span class="ui">Spoji</span> (2). Uz grupu u različitim klubovima piše da prijave i medalje prelaze u klub zapisa koji zadržavate.</figcaption>
+</figure>
+<div class="box warn">
+  <b class="t">Kad se spajanje odbija</b>
+  <ul>
+    <li>Djeca su <strong>različitog spola</strong> (to nije isto dijete).</li>
+    <li>Oba su prijavljena u kategoriji koja <strong>već ima ždrijeb</strong>.</li>
+  </ul>
+  <p>Aplikacija tada ništa ne mijenja i objasni razlog.</p>
+</div>
+<div class="box info">
+  <b class="t">Čega aplikacija ne prepoznaje</b>
+  <p>Klubove koji se zovu bitno različito (npr. „KK Tigar” i „Karate klub Tigar”) ne smatra istima. Ako ih želite spojiti, prvo ispravite naziv jednog od njih na stranici <span class="ui">Klubovi</span> tako da bude jednak, pa ih spojite ovdje.</p>
+</div>
+
+<!-- ===================== 9. VAGANJE ===================== -->
+<h1><span class="num">9</span>Vaganje i odsutni</h1>
+
+<p>Vaganje radite <strong>na dan natjecanja, prije ždrijeba</strong>. Važu se samo prijave u Kumiteu. Ako izmjerena težina ne odgovara razredu u koji je dijete prijavljeno, aplikacija ga sama prebaci u pravi razred (iste dobne skupine i spola). Tko se nije pojavio, označava se kao odsutan i ne ulazi u ždrijeb.</p>
+
+<figure>
+  <img src="slike/22b-vaganje-popis.png" alt="Stranica Vaganje">
+  <figcaption>Korak <span class="ui">Vaganje</span>. Sažetak (1) i filtar statusa (2). Filtri su i pretraga po imenu i po klubu.</figcaption>
+</figure>
+
+<h2>Unos težine</h2>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Vaganje</span>. Djecu možete tražiti po imenu (<span class="ui">Traži po imenu</span>), po klubu (<span class="ui">Svi klubovi</span>) ili po statusu (<span class="ui">Svi statusi</span>).</li>
+  <li>Kod djeteta u polje <span class="ui">Težina (kg)</span> upišite izmjerenu težinu (može sa zarezom, npr. 41,5).</li>
+  <li>Kliknite <span class="ui">Spremi težinu</span> (ili tipku Enter).</li>
+</ol>
+<figure>
+  <img src="slike/23-vaganje.png" alt="Unos težine">
+  <figcaption>Polje za težinu (1), <span class="ui">Spremi težinu</span> (2) i <span class="ui">Označi kao odsutnog</span> (3). Uz Kumite piše „prijavljeno s … kg”: težina koju je klub javio.</figcaption>
+</figure>
+<p>Aplikacija odmah javlja ishod:</p>
+<table>
+  <thead><tr><th style="width:30%">Poruka / oznaka</th><th>Što znači</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><span class="ui">Izvagan</span></td><td>Težina odgovara razredu u koji je dijete prijavljeno. Ništa se ne mijenja.</td></tr>
+    <tr><td class="k"><span class="ui">Premješten</span></td><td>Težina ne odgovara, pa je dijete prebačeno u pravi razred. Piše „Premješten iz …”.</td></tr>
+    <tr><td class="k"><span class="ui">Problem</span></td><td>Težina ne odgovara ni jednom razredu ili je dijete u pravom razredu već prijavljeno. Prijava ostaje gdje jest, a poruka objašnjava razlog. Riješite ručno (poglavlje 7).</td></tr>
+    <tr><td class="k"><span class="ui">Čeka vaganje</span></td><td>Još nije izvagan.</td></tr>
+    <tr><td class="k"><span class="ui">Nema vaganja</span></td><td>Dijete je prijavljeno samo u Kati, pa se ne važe.</td></tr>
+  </tbody>
+</table>
+<figure>
+  <img src="slike/24-vaganje-premjesten.png" alt="Dijete premješteno u drugi razred">
+  <figcaption>Marko je izvagan 41,5 kg i premješten iz razreda „-40” u „-45” (1). Gumb <span class="ui">Poništi</span> (2) vraća ga natrag i briše izmjerenu težinu.</figcaption>
+</figure>
+
+<h2>Odsutni</h2>
+<p>Kliknite <span class="ui">Označi kao odsutnog</span> i potvrdite. Odsutno dijete ostaje u bazi, ali se <strong>ne broji i ne ulazi u ždrijeb</strong> (to vrijedi za sve njegove prijave, i Kata i Kumite). Greškom označeno dijete vratite gumbom <span class="ui">Označi kao prisutnog</span>.</p>
+<figure class="manja">
+  <img src="slike/25-vaganje-odsutan.png" alt="Odsutno dijete">
+  <figcaption>Odsutno dijete (1) i gumb <span class="ui">Označi kao prisutnog</span> (2).</figcaption>
+</figure>
+<div class="box stop">
+  <b class="t">Ždrijeb zaključava vaganje</b>
+  <p>Kad kategorija ima ždrijeb, u njoj se više ne može ni vagati ni mijenjati prisutnost. Piše „Za ovu kategoriju već postoji ždrijeb”. Zato prvo vaganje i odsutni, pa onda ždrijeb. Ako ipak treba promjena, ždrijeb se može obrisati (dok nijedan meč nije odigran) pa napraviti ponovno.</p>
+</div>
+
+<!-- ===================== 10. ŠTO SLIJEDI ===================== -->
+<h1><span class="num">10</span>Što slijedi: ždrijeb, time table, natjecanje, rezultati</h1>
+
+<h2>Ždrijeb</h2>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Ždrijeb</span>.</li>
+  <li>Kliknite <span class="ui">Generiraj sve</span> i potvrdite. Ždrijeb se radi za svaku kategoriju koja ima <strong>najmanje 2 prisutna djeteta</strong>. Kategorije s jednim djetetom preskaču se i to piše u poruci.</li>
+  <li>Uz svaku kategoriju kliknite <span class="ui">Prikaži bracket</span> za prikaz parova ili ikonu <span class="ui">Ispiši PDF</span>. Za sve odjednom: <span class="ui">Svi ždrijebovi (PDF)</span>.</li>
+</ol>
+<figure>
+  <img src="slike/27-zdrijeb-gotov.png" alt="Ždrijeb generiran">
+  <figcaption><span class="ui">Generiraj sve</span> (1) i <span class="ui">Prikaži bracket</span> (2) uz kategoriju koja ima ždrijeb.</figcaption>
+</figure>
+<div class="box info">
+  <b class="t">Nositelji i ponovni ždrijeb</b>
+  <p>Uz kategoriju bez ždrijeba je ikona <span class="ui">Nositelji</span>: upisom brojeva 1, 2, 3… odredite najbolje djece koja dobivaju najpovoljnije pozicije. Ždrijeb se može <span class="ui">Ponovno generiraj ždrijeb</span> ili <span class="ui">Obriši ždrijeb</span> samo dok nijedan meč nije odigran. Aplikacija pazi da djeca iz istog kluba po mogućnosti ne budu u istom paru prvog kola.</p>
+</div>
+
+<h2>Time Table</h2>
+<p>Time table raspoređuje kategorije po tatamijima i računa procijenjena vremena.</p>
+<figure>
+  <img src="slike/28-timetable-prazno.png" alt="Kategorije bez tatamija">
+  <figcaption>Okvir <span class="ui">Kategorije bez tatamija</span> (1): uz svaku kategoriju gumbi s tatamijima (2).</figcaption>
+</figure>
+<ol class="koraci">
+  <li>Otvorite korak <span class="ui">Time Table</span>. U okviru <span class="ui">Kategorije bez tatamija</span> uz svaku kategoriju kliknite na tatami na koji ide (<span class="ui">Tatami 1</span>, <span class="ui">Tatami 2</span>…).</li>
+  <li>Redoslijed na tatamiju mijenjate strelicama <span class="ui">Pomakni gore</span> i <span class="ui">Pomakni dolje</span>, a kategoriju s tatamija uklanjate s <span class="ui">Ukloni s tatamija</span>.</li>
+  <li>Cijeli raspored ispisujete s <span class="ui">Time Table (PDF)</span>, a jedan tatami s <span class="ui">PDF tatamija</span>.</li>
+</ol>
+<figure>
+  <img src="slike/29-timetable.png" alt="Time table po tatamijima">
+  <figcaption>Kategorije raspoređene po tatamijima s procijenjenim vremenima. <span class="ui">PDF tatamija</span> (1), <span class="ui">Otvori konzolu</span> (2) i strelice za redoslijed (3).</figcaption>
+</figure>
+<p>Vremena su procjene (na temelju broja borbi i trajanja meča) i ne pomiču se sama ako se kasni.</p>
+
+<h2>Na dan natjecanja</h2>
+<ul>
+  <li>Postavite status natjecanja na <span class="ui">U tijeku</span> (poglavlje 3).</li>
+  <li><strong>Rezultate unose operateri</strong> na svom tatamiju: korak <span class="ui">Dan natjecanja</span> (izbornik <span class="ui">Tatami</span>) pa <span class="ui">Otvori konzolu</span>. Biraju kategoriju, upisuju bodove za AKA i AO, odabiru <span class="ui">Odluka</span> (<em>Bodovi, Hantei, Zastavice, Kiken, Shikkaku</em>) i kliknu <span class="ui">Upiši rezultat</span>. Pogrešan unos poništava gumb <span class="ui">Poništi</span>.</li>
+  <li><strong>Javne stranice</strong> za gledatelje i trenere (natjecatelji, ždrijeb, time table, rezultati, poredak klubova) postoje čim natjecanje nije u statusu <em>Nacrt</em>. Gumb <span class="ui">Javna stranica</span> je na stranici natjecanja.</li>
+  <li><strong>Veliki ekran</strong> za dvoranu: u izborniku <span class="ui">⋯</span> (<span class="ui">Više radnji</span>) na stranici natjecanja kliknite <span class="ui">Veliki ekran</span>. Otvara se stranica za TV ili projektor koja sama pokazuje što se događa na svakom tatamiju.</li>
+  <li><strong>Rezultati u Excelu:</strong> kad postoje rezultati, u istom izborniku <span class="ui">⋯</span> pojavi se <span class="ui">Rezultati (Excel)</span>. Datoteka ima popis medalja po kategorijama i poredak klubova.</li>
+</ul>
+
+<!-- ===================== 11. GREŠKE, POPIS, DODACI ===================== -->
+<h1 class="nova"><span class="num">11</span>Najčešće greške, kontrolni popis i dodaci</h1>
+
+<h2>Najčešće greške i rješenja</h2>
+<table>
+  <thead><tr><th style="width:36%">Problem</th><th>Rješenje</th></tr></thead>
+  <tbody>
+    <tr><td>Gumb <span class="ui">Uvezi</span> je siv.</td><td>U pregledu postoji redak s oznakom <span class="ui">Problem</span>. Ispravite ga (preuzmite <span class="ui">Preuzmi retke s problemom</span>) ili kliknite <span class="ui">Uvezi samo ispravne retke</span>.</td></tr>
+    <tr><td>Dijete je u krivoj kategoriji.</td><td>Najčešće je kriv datum rođenja, spol ili težina u klupskoj datoteci. Ispravite podatke i ponovno uvezite: aplikacija će prijavu premjestiti (piše „zamjenjuje prijavu u kategoriji…”). Za Katu B ili posebne slučajeve koristite <span class="ui">Nova prijava</span>.</td></tr>
+    <tr><td>Ne mogu mijenjati ni brisati prijave.</td><td>Kategorija ima ždrijeb. Prvo <span class="ui">Obriši ždrijeb</span> (moguće samo dok nijedan meč nije odigran).</td></tr>
+    <tr><td>Isto dijete se pojavljuje dvaput.</td><td>Stranica <span class="ui">Duplikati</span> (poglavlje 8).</td></tr>
+    <tr><td>Klub se pojavljuje dvaput s malo drukčijim imenom.</td><td>Ujednačite naziv na stranici <span class="ui">Klubovi</span>, pa spojite na stranici <span class="ui">Duplikati</span>.</td></tr>
+    <tr><td>Klub je maknuo dijete s popisa, a ono je još prijavljeno.</td><td>Uvoz nikad ne briše. Obrišite prijavu ručno (poglavlje 7).</td></tr>
+    <tr><td>Odsutno dijete je ušlo u ždrijeb.</td><td>Odsutne treba označiti <strong>prije</strong> ždrijeba (poglavlje 9). Obrišite ždrijeb kategorije, označite dijete i generirajte ponovno.</td></tr>
+    <tr><td>Natjecanje se ne vidi javnosti.</td><td>Status je <span class="ui">Nacrt</span>. Promijenite ga (poglavlje 3).</td></tr>
+    <tr><td>Kategorija ne postoji za dijete.</td><td>Provjerite je li odabran pravi skup kategorija i je li datum natjecanja ispravan: dobne skupine računaju se po godini datuma natjecanja.</td></tr>
+    <tr><td>Brisanje kategorije ili natjecanja.</td><td><strong>Briše i sve prijave i rezultate</strong>. Koristite samo kad ste sigurni.</td></tr>
+  </tbody>
+</table>
+
+<h2>Kontrolni popis</h2>
+<div class="grid2">
+<div>
+<h3>Prije slanja predložaka</h3>
+<ul class="check">
+  <li>Natjecanje je stvoreno, datum je točan</li>
+  <li>Status je <em>Prijave</em></li>
+  <li>Kategorije su uvezene (pravi skup)</li>
+  <li>Svi klubovi su dodani (bez duplikata imena)</li>
+  <li>Svakom klubu poslan predložak i rok</li>
+</ul>
+<h3>Pri svakom uvozu</h3>
+<ul class="check">
+  <li>Odabran je pravi klub</li>
+  <li>Pregledane su napomene i upozorenja</li>
+  <li>Svi retci imaju <em>Spremno</em> (ili je problem riješen)</li>
+  <li>Klub je dobio potvrdu prijava</li>
+</ul>
+</div>
+<div>
+<h3>Prije ždrijeba</h3>
+<ul class="check">
+  <li>Svi klubovi su <em>Poslano</em></li>
+  <li>Duplikati su spojeni</li>
+  <li>Izvagana su sva djeca u Kumiteu</li>
+  <li>Odsutni su označeni</li>
+  <li>Nema redaka s oznakom <em>Problem</em></li>
+</ul>
+<h3>Prije dana natjecanja</h3>
+<ul class="check">
+  <li>Ždrijeb je generiran za sve kategorije</li>
+  <li>Kategorije su raspoređene po tatamijima</li>
+  <li>Operateri su dodijeljeni tatamijima</li>
+  <li>Time table i ždrijebovi su ispisani (PDF)</li>
+  <li>Status je <em>U tijeku</em></li>
+</ul>
+</div>
+</div>
+
+<h2>Dodatak A: stupci predloška</h2>
+<table>
+  <thead><tr><th style="width:20%">Stupac</th><th style="width:26%">Dopušteni zapisi</th><th>Obavezno?</th></tr></thead>
+  <tbody>
+    <tr><td class="k">Ime</td><td>Tekst</td><td>Da</td></tr>
+    <tr><td class="k">Prezime</td><td>Tekst</td><td>Da</td></tr>
+    <tr><td class="k">Spol</td><td>M, Ž (prihvaća se i Z, Muški, Ženski)</td><td>Da</td></tr>
+    <tr><td class="k">Datum rođenja</td><td>14.03.2015. ili 14.3.2015. ili 2015-03-14</td><td>Da</td></tr>
+    <tr><td class="k">Težina</td><td>Broj, do dvije decimale, zarez ili točka (33,5)</td><td>Samo za Kumite</td></tr>
+    <tr><td class="k">Kata</td><td>DA ili prazno (prihvaća se i D, X, 1; za „ne”: NE, N, 0)</td><td>Barem jedno od Kata/Kumite</td></tr>
+    <tr><td class="k">Kumite</td><td>DA ili prazno</td><td>Barem jedno od Kata/Kumite</td></tr>
+    <tr><td class="k">Prošla težina (info)</td><td>Samo u predlošku za klub: podsjetnik s prošle prijave</td><td>Ne, ne uvozi se</td></tr>
+  </tbody>
+</table>
+<p class="muted">Datoteka smije biti Excel (.xlsx) ili .csv, do 5 MB i 1000 redaka. List se mora zvati <em>Prijave</em>, a nazivi stupaca ostaju kakvi jesu (velika slova i kvačice nisu bitni).</p>
+
+<h2>Dodatak B: poruke koje aplikacija može prikazati</h2>
+<table>
+  <thead><tr><th style="width:44%">Poruka</th><th>Značenje</th></tr></thead>
+  <tbody>
+    <tr><td>Nedostaju obavezni stupci: …</td><td>U datoteci nedostaje neki stupac. Koristite predložak.</td></tr>
+    <tr><td>Datoteka je prazna.</td><td>Nema nijednog retka s podacima.</td></tr>
+    <tr><td>Datoteku nije moguće pročitati. Je li ispravna XLSX ili CSV datoteka?</td><td>Datoteka je oštećena ili je druge vrste.</td></tr>
+    <tr><td>Datoteka ima više od 1000 redaka. Podijelite je na manje datoteke.</td><td>Podijelite popis na dva dijela.</td></tr>
+    <tr><td>Polje Ime/Prezime je prazno.</td><td>U retku nema imena ili prezimena.</td></tr>
+    <tr><td>Spol „…” razlikuje se od spola već zabilježenog za ovog natjecatelja.</td><td>Isto ime i datum rođenja već postoje s drugim spolom. Provjerite je li to isto dijete.</td></tr>
+    <tr><td>Natjecanje nije u fazi prijava.</td><td>Upozorenje: status nije <em>Prijave</em>. Uvoz svejedno radi.</td></tr>
+    <tr><td>Rok za prijave istekao je …</td><td>Upozorenje: rok je prošao. Uvoz svejedno radi.</td></tr>
+    <tr><td>Datoteka je pripremljena za … / za drugo natjecanje.</td><td>Upozorenje: predložak je napravljen za drugi klub ili natjecanje. Provjerite jeste li odabrali pravi klub.</td></tr>
+    <tr><td>Već prijavljen u kategoriji „…” koja ima ždrijeb, pa se ta prijava ne može mijenjati.</td><td>Dijete ima prijavu u kategoriji s ždrijebom. Mijenjanje nije moguće dok se ždrijeb ne obriše.</td></tr>
+    <tr><td>Oba su prijavljena u kategorijama koje već imaju ždrijeb, pa se ne mogu spojiti.</td><td>Poruka na stranici <span class="ui">Duplikati</span>.</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
