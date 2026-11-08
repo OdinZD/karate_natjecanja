@@ -13,6 +13,7 @@ final readonly class ImportEntriesResult
         public int $competitorsCreated = 0,
         public int $clubsCreated = 0,
         public array $errors = [],
+        public int $entriesReplaced = 0,
     ) {}
 
     public function failed(): bool

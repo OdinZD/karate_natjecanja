@@ -24,6 +24,14 @@ class Club extends Model
     use HasFactory;
 
     /**
+     * @return HasMany<ClubImport, $this>
+     */
+    public function clubImports(): HasMany
+    {
+        return $this->hasMany(ClubImport::class);
+    }
+
+    /**
      * @return HasMany<Competitor, $this>
      */
     public function competitors(): HasMany

@@ -15,10 +15,11 @@ use Illuminate\Support\Carbon;
  * @property int $competitor_id
  * @property string|null $weight
  * @property int|null $seed
+ * @property int|null $club_import_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['category_id', 'competitor_id', 'weight', 'seed'])]
+#[Fillable(['category_id', 'competitor_id', 'weight', 'seed', 'club_import_id'])]
 class Entry extends Model
 {
     /** @use HasFactory<EntryFactory> */
@@ -42,6 +43,16 @@ class Entry extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * The club import that created the entry, if it came from one.
+     *
+     * @return BelongsTo<ClubImport, $this>
+     */
+    public function clubImport(): BelongsTo
+    {
+        return $this->belongsTo(ClubImport::class);
     }
 
     /**

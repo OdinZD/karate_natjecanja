@@ -160,7 +160,7 @@ class ImportEntries
 
             $club = $clubs[$clubKey = $row['club'].'|'.$row['city']] ??= $this->findOrBuildClub($row['club'], $row['city']);
 
-            $competitorKey = implode('|', [$clubKey, $row['first_name'], $row['last_name'], $birthDate->format('Y-m-d')]);
+            $competitorKey = implode('|', [$clubKey, $this->sheet->normalizeName($row['first_name']), $this->sheet->normalizeName($row['last_name']), $birthDate->format('Y-m-d')]);
             $competitor = $competitors[$competitorKey] ??= $this->sheet->findOrBuildCompetitor($club, $row['first_name'], $row['last_name'], $gender, $birthDate);
 
             if ($competitor->gender !== $gender) {

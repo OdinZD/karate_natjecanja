@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
@@ -52,6 +53,24 @@ class Competition extends Model
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
+    }
+
+    /**
+     * The clubs invited to or taking part in the competition.
+     *
+     * @return BelongsToMany<Club, $this>
+     */
+    public function clubs(): BelongsToMany
+    {
+        return $this->belongsToMany(Club::class, 'competition_club')->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<ClubImport, $this>
+     */
+    public function clubImports(): HasMany
+    {
+        return $this->hasMany(ClubImport::class);
     }
 
     /**

@@ -1,10 +1,13 @@
 <?php
 
+use App\Actions\Entries\ClubImportErrorSheet;
 use App\Actions\Entries\EntryEligibility;
 use App\Actions\Entries\ImportClubEntries;
 use App\Actions\Entries\ImportEntries;
+use App\Actions\Entries\UndoClubImport;
 use App\Models\Category;
 use App\Models\Club;
+use App\Models\ClubImport;
 use App\Models\Competition;
 use App\Models\Competitor;
 use App\Models\Entry;
@@ -45,6 +48,21 @@ new #[Title('Entries')] class extends Component {
     public array $clubImportErrors = [];
     public int $clubImportErrorCount = 0;
 
+    /** @var array<int, array<string, mixed>> */
+    public array $clubPreview = [];
+
+    /** @var array<string, int> */
+    public array $clubPreviewSummary = [];
+
+    /** @var array<int, string> */
+    public array $clubFileWarnings = [];
+
+    public bool $clubReplace = true;
+
+    public string $addClubId = '';
+    public string $newClubName = '';
+    public string $newClubCity = '';
+
     public function mount(Competition $competition): void
     {
         $this->competition = $competition;
@@ -71,6 +89,52 @@ new #[Title('Entries')] class extends Component {
     public function clubs(): Collection
     {
         return Club::query()->orderBy('name')->orderBy('city')->get();
+    }
+
+    /**
+     * The clubs of this competition with what they have sent: clubs added to it, clubs that have entries
+     * and clubs that sent a file.
+     *
+     * @return array<int, array{club: Club, entries: int, last: ClubImport|null, lastSaved: ClubImport|null, undoable: int, state: string}>
+     */
+    #[Computed]
+    public function clubOverview(): array
+    {
+        $entryCounts = Entry::query()
+            ->join('categories', 'categories.id', '=', 'entries.category_id')
+            ->join('competitors', 'competitors.id', '=', 'entries.competitor_id')
+            ->where('categories.competition_id', $this->competition->id)
+            ->groupBy('competitors.club_id')
+            ->selectRaw('competitors.club_id as club_id, count(*) as total')
+            ->pluck('total', 'club_id');
+
+        $imports = $this->competition->clubImports()->latest('id')->get()->groupBy('club_id');
+        $lastImports = $imports->map->first();
+        $lastSaved = $imports->map(fn ($group) => $group->first(fn (ClubImport $import) => $import->isActive()))->filter();
+        $created = Entry::query()->whereIn('club_import_id', $lastSaved->pluck('id'))->groupBy('club_import_id')->selectRaw('club_import_id, count(*) as total')->pluck('total', 'club_import_id');
+
+        $ids = $this->competition->clubs()->pluck('clubs.id')->merge($entryCounts->keys())->merge($lastImports->keys())->unique();
+
+        return Club::query()->whereIn('id', $ids)->orderBy('name')->orderBy('city')->get()
+            ->map(function (Club $club) use ($entryCounts, $lastImports, $lastSaved, $created): array {
+                $entries = (int) ($entryCounts[$club->id] ?? 0);
+                $last = $lastImports[$club->id] ?? null;
+
+                return [
+                    'club' => $club,
+                    'entries' => $entries,
+                    'last' => $last,
+                    'lastSaved' => $lastSaved[$club->id] ?? null,
+                    'undoable' => isset($lastSaved[$club->id]) ? (int) ($created[$lastSaved[$club->id]->id] ?? 0) : 0,
+                    'state' => match (true) {
+                        $entries > 0 => 'sent',
+                        $last?->status === ClubImport::REJECTED => 'problem',
+                        isset($lastSaved[$club->id]) => 'sent',
+                        default => 'waiting',
+                    },
+                ];
+            })
+            ->all();
     }
 
     /**
@@ -224,29 +288,126 @@ new #[Title('Entries')] class extends Component {
         );
     }
 
-    public function openClubImport(): void
+    public function openClubImport(?int $club = null): void
     {
-        $this->reset(['clubId', 'clubFile', 'clubImportErrors', 'clubImportErrorCount']);
+        $this->reset(['clubId', 'clubFile', 'clubImportErrors', 'clubImportErrorCount', 'clubPreview', 'clubPreviewSummary', 'clubFileWarnings', 'clubReplace']);
         $this->resetValidation();
+
+        if ($club !== null && Club::whereKey($club)->exists()) {
+            $this->clubId = (string) $club;
+        }
 
         Flux::modal('club-entries-import')->show();
     }
 
+    public function updatedClubFile(): void
+    {
+        $this->resetClubPreview();
+
+        if ($this->clubFile === null) {
+            return;
+        }
+
+        $this->validateOnly('clubFile', ['clubFile' => ['required', 'file', 'extensions:xlsx,csv', 'max:5120']]);
+
+        $meta = app(ImportClubEntries::class)->meta($this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
+
+        if ($this->clubId === '' && $meta['club_id'] !== null && Club::whereKey($meta['club_id'])->exists()) {
+            $this->clubId = (string) $meta['club_id'];
+        }
+
+        $this->analyzeClubFile();
+    }
+
+    public function updatedClubId(): void
+    {
+        $this->analyzeClubFile();
+    }
+
+    /**
+     * Read the chosen file for the chosen club and keep what it would do, without saving anything.
+     */
+    public function analyzeClubFile(): void
+    {
+        $this->resetClubPreview();
+
+        $club = $this->clubId !== '' ? Club::find($this->clubId) : null;
+
+        if ($club === null || $this->clubFile === null) {
+            return;
+        }
+
+        $this->validateOnly('clubFile', ['clubFile' => ['required', 'file', 'extensions:xlsx,csv', 'max:5120']]);
+
+        $preview = app(ImportClubEntries::class)->analyze($this->competition, $club, $this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
+
+        if ($preview->fileErrors !== []) {
+            $this->clubImportErrorCount = count($preview->fileErrors);
+            $this->clubImportErrors = array_slice($preview->fileErrors, 0, 50);
+
+            return;
+        }
+
+        // Rows with problems come first so they are not hidden below the fold of the preview.
+        $rows = array_map(fn ($row) => $row->toArray(), $preview->rows);
+        usort($rows, fn (array $a, array $b) => ($b['status'] === 'error') <=> ($a['status'] === 'error'));
+        $this->clubPreview = $rows;
+        $this->clubPreviewSummary = [
+            'rows' => count($preview->rows),
+            'changed' => $preview->changedEntryCount(),
+            'ready' => $preview->readyCount(),
+            'skipped' => $preview->validCount() - $preview->readyCount(),
+            'errors' => $preview->errorCount(),
+            'new' => $preview->newEntryCount(),
+            'existing' => $preview->existingEntryCount(),
+        ];
+
+        $this->clubFileWarnings = $preview->warnings;
+
+        $named = $preview->meta['club_id'] !== null ? Club::find($preview->meta['club_id']) : null;
+
+        if ($named !== null && $named->id !== $club->id) {
+            $this->clubFileWarnings[] = __('The file was prepared for :club.', ['club' => $named->name.($named->city ? ' ('.$named->city.')' : '')]);
+        }
+
+        if ($preview->meta['competition_id'] !== null && $preview->meta['competition_id'] !== $this->competition->id) {
+            $this->clubFileWarnings[] = __('The file was prepared for a different competition.');
+        }
+    }
+
+    private function resetClubPreview(): void
+    {
+        $this->reset(['clubImportErrors', 'clubImportErrorCount', 'clubPreview', 'clubPreviewSummary', 'clubFileWarnings']);
+    }
+
     public function importClub(ImportClubEntries $importer): void
+    {
+        $this->runClubImport($importer, ImportClubEntries::MODE_ALL);
+    }
+
+    public function confirmClubImport(string $mode, ImportClubEntries $importer): void
+    {
+        $this->runClubImport($importer, $mode);
+    }
+
+    private function runClubImport(ImportClubEntries $importer, string $mode): void
     {
         $this->validate([
             'clubId' => ['required', 'integer', Rule::exists('clubs', 'id')],
             'clubFile' => ['required', 'file', 'extensions:xlsx,csv', 'max:5120'],
         ]);
 
-        $club = Club::findOrFail($this->clubId);
+        abort_unless(in_array($mode, [ImportClubEntries::MODE_ALL, ImportClubEntries::MODE_VALID], true), 422);
 
-        try {
-            $result = $importer->handle($this->competition, $club, $this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
-        } finally {
-            $this->clubFile->delete();
-            $this->reset('clubFile');
-        }
+        $club = Club::findOrFail($this->clubId);
+        $preview = $importer->analyze($this->competition, $club, $this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
+        $result = $importer->commit($club, $preview, $mode, $this->clubReplace, new ClubImport([
+            'competition_id' => $this->competition->id,
+            'user_id' => auth()->id(),
+            'file_name' => mb_substr($this->clubFile->getClientOriginalName(), 0, 255),
+        ]));
+
+        unset($this->clubOverview);
 
         if ($result->failed()) {
             $this->clubImportErrorCount = count($result->errors);
@@ -255,8 +416,9 @@ new #[Title('Entries')] class extends Component {
             return;
         }
 
-        $this->reset(['clubImportErrors', 'clubImportErrorCount']);
-        unset($this->entries, $this->categories);
+        $this->clubFile->delete();
+        $this->reset(['clubFile', 'clubImportErrors', 'clubImportErrorCount', 'clubPreview', 'clubPreviewSummary', 'clubFileWarnings']);
+        unset($this->entries, $this->categories, $this->clubOverview);
         Flux::modal('club-entries-import')->close();
         Flux::toast(
             variant: 'success',
@@ -264,8 +426,80 @@ new #[Title('Entries')] class extends Component {
                 'entries' => $result->entriesCreated,
                 'competitors' => $result->competitorsCreated,
                 'skipped' => $result->entriesSkipped,
-            ]),
+            ]).($result->entriesReplaced > 0 ? ' '.__(':count entries changed.', ['count' => $result->entriesReplaced]) : '').($preview->errorCount() > 0 ? ' '.__(':rows rows with problems were left out.', ['rows' => $preview->errorCount()]) : ''),
         );
+    }
+
+    public function undoClubImport(int $import, UndoClubImport $undo): void
+    {
+        $clubImport = $this->competition->clubImports()->findOrFail($import);
+
+        $latest = $this->competition->clubImports()->where('club_id', $clubImport->club_id)->latest('id')->get()->first(fn (ClubImport $row) => $row->isActive());
+
+        if ($latest?->id !== $clubImport->id) {
+            Flux::toast(variant: 'danger', text: __('This import cannot be undone.'));
+            unset($this->clubOverview);
+
+            return;
+        }
+
+        $result = $undo->handle($clubImport);
+
+        unset($this->entries, $this->categories, $this->clubOverview);
+
+        if ($result->failed()) {
+            Flux::toast(variant: 'danger', text: $result->error);
+
+            return;
+        }
+
+        Flux::toast(variant: 'success', text: __('Import undone: :entries entries and :competitors new competitors removed.', [
+            'entries' => $result->entriesRemoved,
+            'competitors' => $result->competitorsRemoved,
+        ]));
+    }
+
+    public function openAddClub(): void
+    {
+        $this->reset(['addClubId', 'newClubName', 'newClubCity']);
+        $this->resetValidation();
+
+        Flux::modal('competition-club-add')->show();
+    }
+
+    public function addClub(): void
+    {
+        $this->validate([
+            'addClubId' => ['nullable', 'integer', Rule::exists('clubs', 'id'), Rule::requiredIf(trim($this->newClubName) === '')],
+            'newClubName' => ['nullable', 'string', 'max:255'],
+            'newClubCity' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $club = trim($this->newClubName) !== ''
+            ? Club::firstOrCreate(['name' => trim($this->newClubName), 'city' => trim($this->newClubCity) ?: null], ['country' => 'HR'])
+            : Club::findOrFail($this->addClubId);
+
+        $this->competition->clubs()->syncWithoutDetaching([$club->id]);
+
+        unset($this->clubOverview);
+        Flux::modal('competition-club-add')->close();
+        Flux::toast(variant: 'success', text: __('Club added to the competition.'));
+    }
+
+    public function downloadClubErrors(ImportClubEntries $importer, ClubImportErrorSheet $sheet)
+    {
+        $this->validate([
+            'clubId' => ['required', 'integer', Rule::exists('clubs', 'id')],
+            'clubFile' => ['required', 'file', 'extensions:xlsx,csv', 'max:5120'],
+        ]);
+
+        $preview = $importer->analyze($this->competition, Club::findOrFail($this->clubId), $this->clubFile->getRealPath(), $this->clubFile->getClientOriginalExtension());
+
+        if ($preview->errorCount() === 0) {
+            return null;
+        }
+
+        return response()->download($sheet->build($preview), 'greske-uvoza.xlsx')->deleteFileAfterSend();
     }
 }; ?>
 
@@ -300,6 +534,60 @@ new #[Title('Entries')] class extends Component {
 
         <x-arena.button icon="plus" wire:click="create" data-test="create-entry-button">{{ __('New entry') }}</x-arena.button>
     </div>
+
+    @php($sentClubs = count(array_filter($this->clubOverview, fn (array $row) => $row['state'] === 'sent')))
+
+    <x-arena.card class="space-y-1 p-4" data-test="club-overview">
+        <x-arena.section-title :meta="__(':sent of :total clubs sent entries', ['sent' => $sentClubs, 'total' => count($this->clubOverview)])" data-test="club-overview-counter">{{ __('Import by clubs') }}</x-arena.section-title>
+
+        @if ($this->clubOverview === [])
+            <p class="py-3 text-sm text-arena-muted">{{ __('No clubs yet. Add a club to send it a template, or download the general template above.') }}</p>
+        @else
+            <ul class="divide-y divide-arena-line">
+                @foreach ($this->clubOverview as $row)
+                    <li class="flex flex-wrap items-center gap-x-4 gap-y-2 py-2" wire:key="club-overview-{{ $row['club']->id }}" data-test="club-overview-row" data-state="{{ $row['state'] }}">
+                        <div class="min-w-0 grow basis-48">
+                            <p class="font-bold text-arena-ink">{{ $row['club']->name }}@if ($row['club']->city)<span class="font-normal text-arena-muted"> ({{ $row['club']->city }})</span>@endif</p>
+                            <p class="font-mono text-xs tabular-nums text-arena-muted">
+                                @if ($row['state'] === 'problem')
+                                    {{ __(':count problems in the last file', ['count' => $row['last']->error_count]) }}
+                                @elseif ($row['lastSaved'] !== null)
+                                    {{ __(':count entries', ['count' => $row['entries']]) }} · {{ $row['lastSaved']->created_at->format('d.m.Y. H:i') }}
+                                    @if ($row['last']->error_count > 0)
+                                        · {{ __(':count problems in the last file', ['count' => $row['last']->error_count]) }}
+                                    @endif
+                                @elseif ($row['entries'] > 0)
+                                    {{ __(':count entries', ['count' => $row['entries']]) }}
+                                @else
+                                    {{ __('Nothing received yet') }}
+                                @endif
+                            </p>
+                        </div>
+
+                        @if ($row['state'] === 'sent')
+                            <x-arena.status state="done" :label="__('Sent')" />
+                        @elseif ($row['state'] === 'problem')
+                            <x-arena.status state="error" :label="__('Problems')" />
+                        @else
+                            <x-arena.status state="warn" :label="__('Not sent')" />
+                        @endif
+
+                        <div class="flex gap-1">
+                            <x-arena.button variant="ghost" icon="arrow-down-tray" :href="route('admin.competitions.entries.template', [$competition, 'club' => $row['club']->id])" :aria-label="__('Template for :club', ['club' => $row['club']->name])" data-test="club-overview-template">{{ __('Template') }}</x-arena.button>
+                            @if ($row['undoable'] > 0)
+                                <x-arena.button variant="ghost" icon="arrow-uturn-left" wire:click="undoClubImport({{ $row['lastSaved']->id }})" wire:confirm="{{ __('Undo the last import of :club? :count entries it created will be deleted. Changes it made to existing entries are not restored.', ['club' => $row['club']->name, 'count' => $row['undoable']]) }}" :aria-label="__('Undo the last import of :club', ['club' => $row['club']->name])" data-test="club-overview-undo">{{ __('Undo') }}</x-arena.button>
+                            @endif
+                            <x-arena.button variant="ghost" icon="arrow-up-tray" wire:click="openClubImport({{ $row['club']->id }})" :aria-label="__('Import entries for :club', ['club' => $row['club']->name])" data-test="club-overview-import">{{ __('Import') }}</x-arena.button>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        <div class="pt-2">
+            <x-arena.button variant="secondary" icon="plus" wire:click="openAddClub" data-test="add-competition-club-button">{{ __('Add club') }}</x-arena.button>
+        </div>
+    </x-arena.card>
 
     <x-arena.card class="overflow-x-auto">
         <table class="w-full text-start text-sm">
@@ -394,22 +682,76 @@ new #[Title('Entries')] class extends Component {
         </form>
     </flux:modal>
 
-    <flux:modal name="club-entries-import" class="md:w-[32rem]">
-        <form wire:submit="importClub" class="space-y-6">
+    <flux:modal name="competition-club-add" class="md:w-96">
+        <form wire:submit="addClub" class="space-y-6">
             <div>
-                <flux:heading size="lg">{{ __('Import club entries') }}</flux:heading>
-                <flux:text class="mt-2">
-                    {{ __('Upload the template filled in by the club. Categories are assigned automatically from gender, birth year and weight. If any row is invalid, nothing is imported.') }}
-                </flux:text>
+                <flux:heading size="lg">{{ __('Add club') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('Add a club to this competition to track its entries and download its template.') }}</flux:text>
             </div>
 
-            <flux:select wire:model="clubId" :label="__('Club')" :placeholder="__('Choose a club')">
+            <flux:select wire:model="addClubId" :label="__('Club')" :placeholder="__('Choose a club')">
                 @foreach ($this->clubs as $club)
                     <flux:select.option :value="$club->id">{{ $club->name }}{{ $club->city ? ' ('.$club->city.')' : '' }}</flux:select.option>
                 @endforeach
             </flux:select>
 
-            <flux:input wire:model="clubFile" type="file" accept=".xlsx,.csv" :label="__('File')" />
+            <flux:text>{{ __('Or add a club that is not in the list:') }}</flux:text>
+
+            <flux:input wire:model="newClubName" :label="__('Club name')" />
+            <flux:input wire:model="newClubCity" :label="__('City')" />
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:button type="submit" variant="primary" data-test="save-competition-club-button">{{ __('Add') }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <flux:modal name="club-entries-import" class="md:w-[44rem]">
+        @php($previewErrors = ($clubPreviewSummary['errors'] ?? 0) + count($clubImportErrors))
+
+        <form wire:submit="importClub" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Import club entries') }}</flux:heading>
+                <flux:text class="mt-2">
+                    {{ __('Choose the club and upload the template it filled in. You see what will be imported before anything is saved. Categories are assigned automatically from gender, birth year and weight.') }}
+                </flux:text>
+            </div>
+
+            <div class="space-y-2">
+                <p class="font-mono text-xs font-bold uppercase tracking-[.1em] text-arena-muted">{{ __('Step :number', ['number' => 1]) }}</p>
+                <flux:select wire:model.live="clubId" :label="__('Club')" :placeholder="__('Choose a club')">
+                    @foreach ($this->clubs as $club)
+                        <flux:select.option :value="$club->id">{{ $club->name }}{{ $club->city ? ' ('.$club->city.')' : '' }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+
+                @if ($clubId !== '')
+                    <x-arena.button variant="ghost" icon="arrow-down-tray" :href="route('admin.competitions.entries.template', [$competition, 'club' => $clubId])" data-test="download-club-template-button">{{ __('Template for this club') }}</x-arena.button>
+                @endif
+            </div>
+
+            <div class="space-y-2">
+                <p class="font-mono text-xs font-bold uppercase tracking-[.1em] text-arena-muted">{{ __('Step :number', ['number' => 2]) }}</p>
+                <flux:input wire:model="clubFile" type="file" accept=".xlsx,.csv" :label="__('File')" />
+            </div>
+
+            @if ($clubFile !== null && $clubId === '')
+                <flux:text>{{ __('Choose a club to see what the file would import.') }}</flux:text>
+            @endif
+
+            @if ($clubFileWarnings !== [])
+                <flux:callout variant="warning" icon="exclamation-triangle" data-test="club-file-warnings">
+                    <flux:callout.heading>{{ __('Check before importing') }}</flux:callout.heading>
+                    <flux:callout.text>
+                        <ul class="list-disc ps-5">
+                            @foreach ($clubFileWarnings as $warning)
+                                <li>{{ $warning }}</li>
+                            @endforeach
+                        </ul>
+                    </flux:callout.text>
+                </flux:callout>
+            @endif
 
             @if ($clubImportErrors !== [])
                 <flux:callout variant="danger" icon="exclamation-triangle" data-test="club-import-errors">
@@ -427,9 +769,82 @@ new #[Title('Entries')] class extends Component {
                 </flux:callout>
             @endif
 
-            <div class="flex">
-                <flux:spacer />
-                <flux:button type="submit" variant="primary" data-test="run-club-import-button">{{ __('Import') }}</flux:button>
+            @if ($clubPreviewSummary !== [])
+                <div class="space-y-3" data-test="club-import-preview">
+                    <p class="font-mono text-xs font-bold uppercase tracking-[.1em] text-arena-muted">{{ __('Step :number', ['number' => 3]) }}</p>
+                    <p class="text-sm text-arena-ink" data-test="club-import-summary">
+                        {{ __(':rows rows: :ready ready, :skipped skipped, :errors with problems. New entries: :new, changed: :changed, already entered: :existing.', [
+                            'rows' => $clubPreviewSummary['rows'],
+                            'ready' => $clubPreviewSummary['ready'],
+                            'skipped' => $clubPreviewSummary['skipped'],
+                            'errors' => $clubPreviewSummary['errors'],
+                            'new' => $clubPreviewSummary['new'],
+                            'changed' => $clubPreviewSummary['changed'],
+                            'existing' => $clubPreviewSummary['existing'],
+                        ]) }}
+                    </p>
+
+                    @if ($clubPreviewSummary['changed'] > 0)
+                        <flux:checkbox wire:model="clubReplace" :label="__('Update changed weights and categories (:count)', ['count' => $clubPreviewSummary['changed']])" data-test="club-replace-toggle" />
+                    @endif
+
+                    <div class="relative max-h-80 overflow-y-auto border border-arena-line" tabindex="0" role="region" aria-label="{{ __('Preview of the file') }}">
+                        <ol class="divide-y divide-arena-line">
+                            @foreach ($clubPreview as $row)
+                                <li class="space-y-1.5 px-4 py-3" wire:key="club-preview-{{ $row['number'] }}" data-test="club-preview-row" data-status="{{ $row['status'] }}">
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                        <span class="font-mono text-xs tabular-nums text-arena-muted">{{ __('Row :row', ['row' => $row['number']]) }}</span>
+                                        <span class="font-bold text-arena-ink">{{ $row['name'] !== '' ? $row['name'] : '—' }}</span>
+                                        <span class="font-mono text-xs tabular-nums text-arena-muted">
+                                            {{ collect([$row['birth_year'], $row['gender'] ? __(\Illuminate\Support\Str::headline($row['gender'])) : null, $row['weight'] !== null ? $row['weight'].' kg' : null])->filter()->implode(' · ') }}
+                                        </span>
+                                        @if ($row['status'] === 'error')
+                                            <x-arena.status state="error" :label="__('Problem')" />
+                                        @elseif ($row['status'] === 'skipped')
+                                            <x-arena.status state="done" :label="__('Skipped')" />
+                                        @else
+                                            <x-arena.status state="drawn" :label="__('Ready')" />
+                                        @endif
+                                    </div>
+
+                                    @foreach ($row['entries'] as $entry)
+                                        <p class="text-sm text-arena-ink">
+                                            {{ $entry['category'] }}
+                                            @if ($entry['state'] === 'existing')
+                                                <span class="text-arena-muted">({{ __('already entered') }})</span>
+                                            @elseif ($entry['state'] === 'replace')
+                                                <span class="text-arena-muted">({{ __('replaces :category', ['category' => $entry['replaces']]) }})</span>
+                                            @elseif ($entry['state'] === 'update')
+                                                <span class="text-arena-muted">({{ $entry['previous_weight'] !== null ? __('weight :old to :new kg', ['old' => $entry['previous_weight'], 'new' => (float) $entry['weight']]) : __('weight set to :new kg', ['new' => (float) $entry['weight']]) }})</span>
+                                            @endif
+                                        </p>
+                                    @endforeach
+
+                                    @foreach ($row['messages'] as $message)
+                                        <p @class(['text-sm', 'text-arena-aka-text' => $row['status'] === 'error', 'text-arena-muted' => $row['status'] !== 'error'])>{{ $message }}</p>
+                                    @endforeach
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex flex-wrap items-center justify-end gap-2">
+                @if ($previewErrors > 0)
+                    @if (($clubPreviewSummary['errors'] ?? 0) > 0)
+                        <x-arena.button variant="secondary" icon="arrow-down-tray" wire:click="downloadClubErrors" data-test="download-club-errors-button">{{ __('Download rows with problems') }}</x-arena.button>
+
+                        @if (($clubPreviewSummary['ready'] ?? 0) > 0)
+                            <x-arena.button variant="secondary" wire:click="confirmClubImport('valid')" data-test="run-club-valid-import-button">{{ __('Import only valid rows (:count)', ['count' => $clubPreviewSummary['ready']]) }}</x-arena.button>
+                        @endif
+                    @endif
+
+                    <p class="w-full text-end text-sm text-arena-muted" id="club-import-blocked">{{ ($clubPreviewSummary['errors'] ?? 0) > 0 ? __('Fix the rows with problems to import everything at once.') : __('Fix the file and upload it again.') }}</p>
+                    <x-arena.button type="button" aria-disabled="true" aria-describedby="club-import-blocked" class="cursor-not-allowed aria-disabled:bg-arena-surface-2! aria-disabled:text-arena-muted!" data-test="run-club-import-button">{{ __('Import') }}</x-arena.button>
+                @else
+                    <flux:button type="submit" variant="primary" data-test="run-club-import-button">{{ __('Import') }}</flux:button>
+                @endif
             </div>
         </form>
     </flux:modal>
