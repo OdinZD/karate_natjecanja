@@ -18,6 +18,7 @@
                 ['label' => __('Competitions'), 'href' => route('admin.competitions.index'), 'current' => request()->routeIs('admin.competitions.*'), 'icon' => 'trophy'],
                 ['label' => __('Clubs'), 'href' => route('admin.clubs.index'), 'current' => request()->routeIs('admin.clubs.*'), 'icon' => 'building-office'],
                 ['label' => __('Competitors'), 'href' => route('admin.competitors.index'), 'current' => request()->routeIs('admin.competitors.*'), 'icon' => 'user-group'],
+                ['label' => __('Duplicates'), 'href' => route('admin.duplicates'), 'current' => request()->routeIs('admin.duplicates'), 'icon' => 'document-duplicate'],
                 ['label' => __('Users'), 'href' => route('admin.users.index'), 'current' => request()->routeIs('admin.users.*'), 'icon' => 'users'],
             ];
         @endphp

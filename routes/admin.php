@@ -22,5 +22,6 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::get('competitions/{competition}/timetable.pdf', [CompetitionPdfController::class, 'timetable'])->name('competitions.timetable.pdf');
     Route::livewire('clubs', 'pages::admin.clubs.index')->name('clubs.index');
     Route::livewire('competitors', 'pages::admin.competitors.index')->name('competitors.index');
+    Route::livewire('duplicates', 'pages::admin.duplicates.index')->name('duplicates');
     Route::livewire('users', 'pages::admin.users.index')->name('users.index');
 });
