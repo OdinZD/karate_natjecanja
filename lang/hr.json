@@ -508,5 +508,13 @@
     "Import undone: :entries entries and :competitors new competitors removed.": "Uvoz je poništen: uklonjeno prijava: :entries, novih natjecatelja: :competitors.",
     "Undo the last import of :club? :count entries it created will be deleted. Changes it made to existing entries are not restored.": "Poništiti zadnji uvoz kluba :club? Obrisat će se prijave koje je stvorio (:count). Izmjene postojećih prijava se ne vraćaju.",
     "Undo the last import of :club": "Poništi zadnji uvoz kluba :club",
-    "A competitor with this name and date of birth already exists in :club. Has the child changed clubs?": "Natjecatelj s istim imenom i datumom rođenja već postoji u klubu :club. Je li dijete promijenilo klub?"
+    "A competitor with this name and date of birth already exists in :club. Has the child changed clubs?": "Natjecatelj s istim imenom i datumom rođenja već postoji u klubu :club. Je li dijete promijenilo klub?",
+    "Entry confirmation": "Potvrda prijava",
+    "As of :date": "Stanje na dan :date",
+    "Check the details and report any corrections to the organiser by :date.": "Provjerite podatke i javite organizatoru sve ispravke do :date.",
+    "Check the details and report any corrections to the organiser.": "Provjerite podatke i javite organizatoru sve ispravke.",
+    "Year of birth": "Godina rođenja",
+    "Total: :competitors competitors, :entries entries": "Ukupno: natjecatelja :competitors, prijava :entries",
+    "Confirmation": "Potvrda",
+    "Entry confirmation for :club": "Potvrda prijava za :club"
 }
