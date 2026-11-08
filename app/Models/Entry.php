@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\EntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,12 +15,16 @@ use Illuminate\Support\Carbon;
  * @property int $category_id
  * @property int $competitor_id
  * @property string|null $weight
+ * @property string|null $weighed_weight
+ * @property Carbon|null $weighed_at
+ * @property Carbon|null $absent_at
+ * @property int|null $moved_from_category_id
  * @property int|null $seed
  * @property int|null $club_import_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['category_id', 'competitor_id', 'weight', 'seed', 'club_import_id'])]
+#[Fillable(['category_id', 'competitor_id', 'weight', 'weighed_weight', 'weighed_at', 'absent_at', 'moved_from_category_id', 'seed', 'club_import_id'])]
 class Entry extends Model
 {
     /** @use HasFactory<EntryFactory> */
@@ -34,7 +39,30 @@ class Entry extends Model
     {
         return [
             'weight' => 'decimal:2',
+            'weighed_weight' => 'decimal:2',
+            'weighed_at' => 'datetime',
+            'absent_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Entries of competitors who showed up: everything except those marked absent at the weigh-in.
+     *
+     * @param  Builder<Entry>  $query
+     */
+    public function scopePresent(Builder $query): void
+    {
+        $query->whereNull('absent_at');
+    }
+
+    /**
+     * The category the entry was moved out of at the weigh-in.
+     *
+     * @return BelongsTo<Category, $this>
+     */
+    public function movedFrom(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'moved_from_category_id');
     }
 
     /**

@@ -607,7 +607,12 @@ new #[Title('Entries')] class extends Component {
             <tbody>
                 @foreach ($this->entries as $entry)
                     <tr class="border-b border-arena-line last:border-b-0" wire:key="entry-row-{{ $entry->id }}">
-                        <td class="px-4 py-2 font-bold">{{ $entry->competitor->last_name }} {{ $entry->competitor->first_name }}</td>
+                        <td class="px-4 py-2 font-bold">
+                            {{ $entry->competitor->last_name }} {{ $entry->competitor->first_name }}
+                            @if ($entry->absent_at !== null)
+                                <x-arena.status state="none" :label="__('Absent')" class="ms-2" data-test="entry-absent" />
+                            @endif
+                        </td>
                         <td class="px-4 py-2">{{ $entry->competitor->club->name }}</td>
                         <td class="px-4 py-2">{{ $entry->category->name }}</td>
                         <td class="px-4 py-2 text-end font-mono tabular-nums">{{ $entry->weight !== null ? (float) $entry->weight : '—' }}</td>

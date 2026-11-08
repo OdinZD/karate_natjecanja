@@ -6,6 +6,7 @@
         'tatami' => [__('Tatamis'), route('admin.competitions.show', $competition).'#tatami'],
         'categories' => [__('Categories'), route('admin.competitions.categories', $competition)],
         'entries' => [__('Entries'), route('admin.competitions.entries', $competition)],
+        'weigh-in' => [__('Weigh-in'), route('admin.competitions.weigh-in', $competition)],
         'draw' => [__('Draw'), route('admin.competitions.draw', $competition)],
         'timetable' => [__('Time table'), route('admin.competitions.timetable', $competition)],
         'day' => [__('Competition day'), route('tatami.index')],

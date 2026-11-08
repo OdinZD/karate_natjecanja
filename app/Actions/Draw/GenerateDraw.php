@@ -31,7 +31,7 @@ class GenerateDraw
                 throw new DrawException(__('The draw cannot be changed because bouts have already been played.'));
             }
 
-            $entries = $category->entries()->with('competitor')->get();
+            $entries = $category->entries()->present()->with('competitor')->get();
 
             if ($entries->count() < 2) {
                 throw new DrawException(__('A draw needs at least 2 entries.'));
