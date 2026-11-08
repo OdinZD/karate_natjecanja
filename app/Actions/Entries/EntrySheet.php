@@ -22,24 +22,32 @@ class EntrySheet
     private const DATE_FORMATS = ['Y-m-d', 'd.m.Y.', 'd.m.Y', 'j.n.Y.', 'j.n.Y'];
 
     /**
-     * The rows of the first sheet of an XLSX or CSV file, keyed by row number.
+     * The rows of the sheet named after the entry template, or of the first sheet when there is none,
+     * keyed by row number.
      *
      * @return Generator<int, array<int, mixed>>
      */
     public function rows(string $path, string $extension): Generator
     {
-        if (strtolower($extension) === 'xlsx') {
-            $options = new XlsxOptions;
-            $options->SHOULD_PRESERVE_EMPTY_ROWS = true;
-            $reader = new XlsxReader($options);
-        } else {
-            $reader = new CsvReader($this->csvOptions($path));
-        }
-
+        $reader = $this->reader($path, $extension);
         $reader->open($path);
 
         try {
-            foreach ($reader->getSheetIterator() as $sheet) {
+            $target = 0;
+
+            foreach ($reader->getSheetIterator() as $position => $sheet) {
+                if ($sheet->getName() === EntryTemplate::SHEET) {
+                    $target = $position - 1;
+
+                    break;
+                }
+            }
+
+            foreach ($reader->getSheetIterator() as $position => $sheet) {
+                if ($position - 1 !== $target) {
+                    continue;
+                }
+
                 foreach ($sheet->getRowIterator() as $index => $row) {
                     yield $index => $row->toArray();
                 }
@@ -49,6 +57,57 @@ class EntrySheet
         } finally {
             $reader->close();
         }
+    }
+
+    /**
+     * The key and value cells of the named sheet of an XLSX file, or nothing when it is not there.
+     *
+     * @return array<string, string>
+     */
+    public function keyValues(string $path, string $extension, string $sheetName): array
+    {
+        if (strtolower($extension) !== 'xlsx') {
+            return [];
+        }
+
+        $reader = $this->reader($path, $extension);
+        $reader->open($path);
+
+        try {
+            $values = [];
+
+            foreach ($reader->getSheetIterator() as $sheet) {
+                if ($sheet->getName() !== $sheetName) {
+                    continue;
+                }
+
+                foreach ($sheet->getRowIterator() as $row) {
+                    $cells = $this->values($row->toArray());
+
+                    if (($cells[0] ?? '') !== '') {
+                        $values[$cells[0]] = $cells[1] ?? '';
+                    }
+                }
+
+                break;
+            }
+
+            return $values;
+        } finally {
+            $reader->close();
+        }
+    }
+
+    private function reader(string $path, string $extension): XlsxReader|CsvReader
+    {
+        if (strtolower($extension) === 'xlsx') {
+            $options = new XlsxOptions;
+            $options->SHOULD_PRESERVE_EMPTY_ROWS = true;
+
+            return new XlsxReader($options);
+        }
+
+        return new CsvReader($this->csvOptions($path));
     }
 
     private function csvOptions(string $path): CsvOptions

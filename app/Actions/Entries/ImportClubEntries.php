@@ -10,8 +10,10 @@ use App\Models\Club;
 use App\Models\Competition;
 use App\Models\Competitor;
 use App\Models\Entry;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use OpenSpout\Common\Exception\OpenSpoutException;
 
 /**
@@ -31,8 +33,8 @@ class ImportClubEntries
         'gender' => ['spol', 'gender'],
         'birth_date' => ['datum rodenja', 'date of birth'],
         'weight' => ['tezina', 'weight'],
-        'kata' => ['kata'],
-        'kumite' => ['kumite'],
+        'kata' => ['kata', 'kata da'],
+        'kumite' => ['kumite', 'kumite da'],
     ];
 
     /**
@@ -52,6 +54,12 @@ class ImportClubEntries
 
     private const REQUIRED = ['first_name', 'last_name', 'gender', 'birth_date', 'kata', 'kumite'];
 
+    public const MODE_ALL = 'all';
+
+    public const MODE_VALID = 'valid';
+
+    private const MAX_ROWS = 1000;
+
     public function __construct(
         private readonly EntrySheet $sheet,
         private readonly CategoryMatcher $matcher,
@@ -62,17 +70,96 @@ class ImportClubEntries
      */
     public function handle(Competition $competition, Club $club, string $path, string $extension): ImportEntriesResult
     {
+        return $this->commit($club, $this->analyze($competition, $club, $path, $extension));
+    }
+
+    /**
+     * Work out what the file would do without saving anything.
+     */
+    public function analyze(Competition $competition, Club $club, string $path, string $extension): ClubImportPreview
+    {
         try {
-            return $this->import($competition, $club, $path, $extension);
+            return $this->read($competition, $club, $path, $extension);
         } catch (OpenSpoutException $exception) {
             report($exception);
 
-            return new ImportEntriesResult(errors: [__('The file could not be read. Is it a valid XLSX or CSV file?')]);
+            return new ClubImportPreview(fileErrors: [__('The file could not be read. Is it a valid XLSX or CSV file?')]);
         }
     }
 
-    private function import(Competition $competition, Club $club, string $path, string $extension): ImportEntriesResult
+    /**
+     * Save a preview: every row in "all" mode (refused while any row has a problem), only the rows
+     * without problems in "valid" mode.
+     */
+    public function commit(Club $club, ClubImportPreview $preview, string $mode = self::MODE_ALL): ImportEntriesResult
     {
+        if (! in_array($mode, [self::MODE_ALL, self::MODE_VALID], true)) {
+            throw new InvalidArgumentException('Unknown import mode "'.$mode.'".');
+        }
+
+        if ($preview->fileErrors !== []) {
+            return new ImportEntriesResult(errors: $preview->fileErrors);
+        }
+
+        if ($mode === self::MODE_ALL && $preview->errorCount() > 0) {
+            return new ImportEntriesResult(entriesSkipped: $preview->existingEntryCount(), errors: $preview->errors());
+        }
+
+        return DB::transaction(function () use ($club, $preview): ImportEntriesResult {
+            $created = 0;
+            $skipped = $preview->existingEntryCount();
+            $competitorsCreated = 0;
+
+            foreach ($preview->rows as $row) {
+                if ($row->failed()) {
+                    continue;
+                }
+
+                foreach ($row->planned as $item) {
+                    if (! $row->competitor->exists) {
+                        $row->competitor->club_id = $club->id;
+                        $row->competitor->save();
+                        $competitorsCreated++;
+                    }
+
+                    $entry = Entry::firstOrCreate(
+                        ['category_id' => $item['category']->id, 'competitor_id' => $row->competitor->id],
+                        ['weight' => $item['weight']],
+                    );
+
+                    $entry->wasRecentlyCreated ? $created++ : $skipped++;
+                }
+            }
+
+            return new ImportEntriesResult($created, $skipped, $competitorsCreated, 0);
+        });
+    }
+
+    /**
+     * The club and competition a club template was prepared for, empty for a plain file.
+     *
+     * @return array{club_id: ?int, competition_id: ?int}
+     */
+    public function meta(string $path, string $extension): array
+    {
+        try {
+            $values = $this->sheet->keyValues($path, $extension, EntryTemplate::META_SHEET);
+        } catch (OpenSpoutException $exception) {
+            report($exception);
+
+            $values = [];
+        }
+
+        $id = fn (string $key): ?int => ctype_digit($values[$key] ?? '') ? (int) $values[$key] : null;
+
+        return ['club_id' => $id('club_id'), 'competition_id' => $id('competition_id')];
+    }
+
+    private function read(Competition $competition, Club $club, string $path, string $extension): ClubImportPreview
+    {
+        $meta = $this->meta($path, $extension);
+        $prepared = $meta['club_id'] !== null;
+
         $categories = $competition->categories()->get();
 
         $drawn = Bout::query()
@@ -88,13 +175,10 @@ class ImportClubEntries
 
         /** @var array<string, int>|null $columns */
         $columns = null;
-        /** @var array<int, string> $errors */
-        $errors = [];
         /** @var array<string, Competitor> $competitors */
         $competitors = [];
-        /** @var array<string, array{competitor: Competitor, category: Category, weight: ?string}> $planned */
-        $planned = [];
-        $skipped = 0;
+        /** @var array<int, array<string, mixed>> $parsed */
+        $parsed = [];
 
         foreach ($this->sheet->rows($path, $extension) as $number => $cells) {
             $values = $this->sheet->values($cells);
@@ -108,18 +192,36 @@ class ImportClubEntries
                 $missing = array_diff(self::REQUIRED, array_keys($columns));
 
                 if ($missing !== []) {
-                    return new ImportEntriesResult(errors: [
+                    return new ClubImportPreview(fileErrors: [
                         __('Missing required column(s): :columns.', ['columns' => implode(', ', array_map(fn (string $field) => self::LABELS[$field], $missing))]),
-                    ]);
+                    ], meta: $meta);
                 }
 
                 continue;
+            }
+
+            if (count($parsed) >= self::MAX_ROWS) {
+                return new ClubImportPreview(fileErrors: [__('The file has more than :max rows. Split it into smaller files.', ['max' => self::MAX_ROWS])], meta: $meta);
             }
 
             $row = [];
             foreach (self::HEADERS as $field => $aliases) {
                 $row[$field] = isset($columns[$field]) ? ($values[$columns[$field]] ?? '') : '';
             }
+
+            $item = [
+                'number' => $number,
+                'raw' => $row,
+                'name' => trim($row['first_name'].' '.$row['last_name']),
+                'gender' => null,
+                'year' => null,
+                'weight' => null,
+                'messages' => [],
+                'idle' => false,
+                'competitor' => null,
+                'key' => null,
+                'candidates' => [],
+            ];
 
             $problems = [];
 
@@ -162,25 +264,37 @@ class ImportClubEntries
                 }
             }
 
+            // A club template lists every known child, so a child with nothing marked is simply not entered.
             if ($disciplines === [] && ! $this->hasFlagProblem($row)) {
-                $problems[] = __('Neither Kata nor Kumite is marked.');
+                if ($prepared && $row['weight'] === '') {
+                    $item['idle'] = true;
+                } else {
+                    $problems[] = __('Neither Kata nor Kumite is marked.');
+                }
             }
 
             if (in_array(Discipline::Kumite, $disciplines, true) && $row['weight'] === '') {
                 $problems[] = __('Enter the weight for Kumite.');
             }
 
+            $item['gender'] = $gender;
+            $item['year'] = $birthDate?->year;
+            $item['weight'] = $weight;
+
             if ($problems !== []) {
-                $errors[] = $this->rowError($number, implode(' ', $problems));
+                $item['messages'] = [implode(' ', $problems)];
+                $parsed[] = $item;
 
                 continue;
             }
 
-            $competitorKey = implode('|', [$row['first_name'], $row['last_name'], $birthDate->format('Y-m-d')]);
-            $competitor = $competitors[$competitorKey] ??= $this->sheet->findOrBuildCompetitor($club, $row['first_name'], $row['last_name'], $gender, $birthDate);
+            $item['key'] = implode('|', [$row['first_name'], $row['last_name'], $birthDate->format('Y-m-d')]);
+            $competitor = $competitors[$item['key']] ??= $this->sheet->findOrBuildCompetitor($club, $row['first_name'], $row['last_name'], $gender, $birthDate);
+            $item['competitor'] = $competitor;
 
             if ($competitor->gender !== $gender) {
-                $errors[] = $this->rowError($number, __('Gender ":value" differs from the gender already recorded for this competitor.', ['value' => $row['gender']]));
+                $item['messages'] = [__('Gender ":value" differs from the gender already recorded for this competitor.', ['value' => $row['gender']])];
+                $parsed[] = $item;
 
                 continue;
             }
@@ -190,56 +304,94 @@ class ImportClubEntries
                 $category = $this->matcher->match($categories, $discipline, $gender, $birthDate->year, $entryWeight !== null ? (float) $entryWeight : null);
 
                 if ($category === null) {
-                    $errors[] = $this->rowError($number, $this->noCategory($discipline, $gender, $birthDate->year, $entryWeight));
+                    $item['messages'][] = $this->noCategory($discipline, $gender, $birthDate->year, $entryWeight);
 
                     continue;
                 }
 
                 if (isset($drawn[$category->id])) {
-                    $errors[] = $this->rowError($number, __('Category ":value" already has a draw.', ['value' => $category->name]));
+                    $item['messages'][] = __('Category ":value" already has a draw.', ['value' => $category->name]);
 
                     continue;
                 }
 
-                $entryKey = $category->id.'|'.$competitorKey;
-
-                if (isset($planned[$entryKey]) || ($competitor->exists && isset($existingEntries[$category->id.'|'.$competitor->id]))) {
-                    $skipped++;
-
-                    continue;
-                }
-
-                $planned[$entryKey] = ['competitor' => $competitor, 'category' => $category, 'weight' => $entryWeight];
+                $item['candidates'][] = ['discipline' => $discipline, 'category' => $category, 'weight' => $entryWeight];
             }
+
+            $parsed[] = $item;
         }
 
         if ($columns === null) {
-            return new ImportEntriesResult(errors: [__('The file is empty.')]);
+            return new ClubImportPreview(fileErrors: [__('The file is empty.')], meta: $meta);
         }
 
-        if ($errors !== []) {
-            return new ImportEntriesResult(entriesSkipped: $skipped, errors: $errors);
-        }
+        return new ClubImportPreview($this->buildRows($parsed, $existingEntries), meta: $meta);
+    }
 
-        return DB::transaction(function () use ($club, $planned, $skipped): ImportEntriesResult {
-            $competitorsCreated = 0;
+    /**
+     * Decide per row what is new and what is already entered. Rows with problems never take a spot, so
+     * leaving them out later does not change what the other rows do.
+     *
+     * @param  array<int, array<string, mixed>>  $parsed
+     * @param  Collection<string, bool>  $existingEntries
+     * @return array<int, ClubImportRow>
+     */
+    private function buildRows(array $parsed, Collection $existingEntries): array
+    {
+        $seen = [];
+        $rows = [];
 
-            foreach ($planned as $item) {
-                if (! $item['competitor']->exists) {
-                    $item['competitor']->club_id = $club->id;
-                    $item['competitor']->save();
-                    $competitorsCreated++;
+        foreach ($parsed as $item) {
+            $failed = $item['messages'] !== [];
+            $entries = [];
+            $planned = [];
+
+            foreach ($item['candidates'] as $candidate) {
+                /** @var Category $category */
+                $category = $candidate['category'];
+                $key = $category->id.'|'.$item['key'];
+                $existing = isset($seen[$key]) || ($item['competitor']->exists && isset($existingEntries[$category->id.'|'.$item['competitor']->id]));
+
+                $entries[] = [
+                    'category' => $category->name,
+                    'discipline' => $candidate['discipline']->value,
+                    'weight' => $candidate['weight'],
+                    'state' => $existing ? 'existing' : 'new',
+                ];
+
+                if (! $existing && ! $failed) {
+                    $seen[$key] = true;
+                    $planned[] = ['category' => $category, 'weight' => $candidate['weight']];
                 }
-
-                Entry::create([
-                    'category_id' => $item['category']->id,
-                    'competitor_id' => $item['competitor']->id,
-                    'weight' => $item['weight'],
-                ]);
             }
 
-            return new ImportEntriesResult(count($planned), $skipped, $competitorsCreated, 0);
-        });
+            $messages = $item['messages'];
+
+            if ($failed) {
+                $status = ClubImportRow::ERROR;
+            } elseif ($item['idle']) {
+                $status = ClubImportRow::SKIPPED;
+                $messages = [__('No discipline is marked, so the row is left out.')];
+            } else {
+                $status = $planned === [] ? ClubImportRow::SKIPPED : ClubImportRow::OK;
+            }
+
+            $rows[] = new ClubImportRow(
+                $item['number'],
+                $item['name'],
+                $item['gender'],
+                $item['year'],
+                $item['weight'],
+                $status,
+                $item['raw'],
+                $messages,
+                $entries,
+                $item['competitor'],
+                $planned,
+            );
+        }
+
+        return $rows;
     }
 
     /**
@@ -275,10 +427,5 @@ class ImportClubEntries
         return $weight === null
             ? __('No :discipline category fits: :gender, born :year.', $replace)
             : __('No :discipline category fits: :gender, born :year, :weight kg.', [...$replace, 'weight' => $weight]);
-    }
-
-    private function rowError(int $number, string $problems): string
-    {
-        return __('Row :row: :problems', ['row' => $number, 'problems' => $problems]);
     }
 }
