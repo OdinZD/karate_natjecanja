@@ -2,6 +2,7 @@
 
 namespace App\Actions\Entries;
 
+use App\Enums\CompetitionStatus;
 use App\Enums\Discipline;
 use App\Enums\Gender;
 use App\Models\Bout;
@@ -80,12 +81,32 @@ class ImportClubEntries
     public function analyze(Competition $competition, Club $club, string $path, string $extension): ClubImportPreview
     {
         try {
-            return $this->read($competition, $club, $path, $extension);
+            return $this->read($competition, $club, $path, $extension)->withWarnings($this->competitionWarnings($competition));
         } catch (OpenSpoutException $exception) {
             report($exception);
 
             return new ClubImportPreview(fileErrors: [__('The file could not be read. Is it a valid XLSX or CSV file?')]);
         }
+    }
+
+    /**
+     * What is odd about importing into this competition now, without being a reason to refuse.
+     *
+     * @return array<int, string>
+     */
+    private function competitionWarnings(Competition $competition): array
+    {
+        $warnings = [];
+
+        if ($competition->status !== CompetitionStatus::Registration) {
+            $warnings[] = __('The competition is not in the registration phase.');
+        }
+
+        if ($competition->registration_deadline !== null && $competition->registration_deadline->isPast()) {
+            $warnings[] = __('The registration deadline passed on :date.', ['date' => $competition->registration_deadline->format('d.m.Y. H:i')]);
+        }
+
+        return $warnings;
     }
 
     /**
@@ -117,6 +138,9 @@ class ImportClubEntries
             $skipped = $preview->existingEntryCount();
             $competitorsCreated = 0;
 
+            // The log goes in first so the entries and competitors it creates can point back to it.
+            $log?->fill(['club_id' => $club->id, 'mode' => $mode, 'status' => ClubImport::IMPORTED])->save();
+
             foreach ($preview->rows as $row) {
                 if ($row->failed()) {
                     continue;
@@ -141,13 +165,14 @@ class ImportClubEntries
 
                     if (! $row->competitor->exists) {
                         $row->competitor->club_id = $club->id;
+                        $row->competitor->created_by_import_id = $log?->id;
                         $row->competitor->save();
                         $competitorsCreated++;
                     }
 
                     $entry = Entry::firstOrCreate(
                         ['category_id' => $item['category']->id, 'competitor_id' => $row->competitor->id],
-                        ['weight' => $item['weight']],
+                        ['weight' => $item['weight'], 'club_import_id' => $log?->id],
                     );
 
                     $entry->wasRecentlyCreated ? $created++ : $skipped++;
@@ -269,6 +294,7 @@ class ImportClubEntries
                 'name' => trim($row['first_name'].' '.$row['last_name']),
                 'gender' => null,
                 'year' => null,
+                'date' => null,
                 'weight' => null,
                 'messages' => [],
                 'idle' => false,
@@ -333,6 +359,7 @@ class ImportClubEntries
 
             $item['gender'] = $gender;
             $item['year'] = $birthDate?->year;
+            $item['date'] = $birthDate?->format('Y-m-d');
             $item['weight'] = $weight;
 
             if ($problems !== []) {
@@ -342,7 +369,7 @@ class ImportClubEntries
                 continue;
             }
 
-            $item['key'] = implode('|', [$row['first_name'], $row['last_name'], $birthDate->format('Y-m-d')]);
+            $item['key'] = implode('|', [$this->sheet->normalizeName($row['first_name']), $this->sheet->normalizeName($row['last_name']), $birthDate->format('Y-m-d')]);
             $competitor = $competitors[$item['key']] ??= $this->sheet->findOrBuildCompetitor($club, $row['first_name'], $row['last_name'], $gender, $birthDate);
             $item['competitor'] = $competitor;
 
@@ -379,7 +406,39 @@ class ImportClubEntries
             return new ClubImportPreview(fileErrors: [__('The file is empty.')], meta: $meta);
         }
 
-        return new ClubImportPreview($this->buildRows($parsed, $existingEntries, $categories, $drawn), meta: $meta);
+        return new ClubImportPreview($this->buildRows($parsed, $existingEntries, $categories, $drawn, $this->namesInOtherClubs($club, $parsed)), meta: $meta);
+    }
+
+    /**
+     * Competitors of other clubs born on the same dates as the file's children, by normalised name and date,
+     * with the name of their club.
+     *
+     * @param  array<int, array<string, mixed>>  $parsed
+     * @return array<string, string>
+     */
+    private function namesInOtherClubs(Club $club, array $parsed): array
+    {
+        $dates = array_values(array_unique(array_filter(array_column($parsed, 'date'))));
+
+        $found = [];
+
+        foreach (array_chunk($dates, 200) as $chunk) {
+            Competitor::query()
+                ->with('club')
+                ->where(function ($query) use ($chunk): void {
+                    foreach ($chunk as $date) {
+                        $query->orWhereDate('birth_date', $date);
+                    }
+                })
+                ->when($club->exists, fn ($query) => $query->where('club_id', '!=', $club->id))
+                ->get()
+                ->each(function (Competitor $competitor) use (&$found): void {
+                    $key = implode('|', [$this->sheet->normalizeName($competitor->first_name), $this->sheet->normalizeName($competitor->last_name), $competitor->birth_date->format('Y-m-d')]);
+                    $found[$key] ??= $competitor->club->name;
+                });
+        }
+
+        return $found;
     }
 
     /**
@@ -394,9 +453,10 @@ class ImportClubEntries
      * @param  Collection<int, Entry>  $existingEntries
      * @param  Collection<int, Category>  $categories
      * @param  Collection<int, int>  $drawn  Category ids with a draw, as keys.
+     * @param  array<string, string>  $elsewhere  Club names of competitors with the same name and birth date in other clubs.
      * @return array<int, ClubImportRow>
      */
-    private function buildRows(array $parsed, Collection $existingEntries, Collection $categories, Collection $drawn): array
+    private function buildRows(array $parsed, Collection $existingEntries, Collection $categories, Collection $drawn, array $elsewhere): array
     {
         $categories = $categories->keyBy('id');
         $byKey = $existingEntries->keyBy(fn (Entry $entry) => $entry->category_id.'|'.$entry->competitor_id);
@@ -446,6 +506,10 @@ class ImportClubEntries
                 }
 
                 $resolved[] = ['candidate' => $candidate, 'key' => $key, 'state' => $state, 'target' => $target];
+            }
+
+            if ($item['competitor'] !== null && ! $item['competitor']->exists && isset($elsewhere[$item['key']])) {
+                $notes[] = __('A competitor with this name and date of birth already exists in :club. Has the child changed clubs?', ['club' => $elsewhere[$item['key']]]);
             }
 
             $failed = $problems !== [];

@@ -18,10 +18,11 @@ use Illuminate\Support\Carbon;
  * @property string $last_name
  * @property Gender $gender
  * @property Carbon $birth_date
+ * @property int|null $created_by_import_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['club_id', 'first_name', 'last_name', 'gender', 'birth_date'])]
+#[Fillable(['club_id', 'first_name', 'last_name', 'gender', 'birth_date', 'created_by_import_id'])]
 class Competitor extends Model
 {
     /** @use HasFactory<CompetitorFactory> */

@@ -211,14 +211,26 @@ class EntrySheet
         return preg_match('/^\d{1,3}(\.\d{1,2})?$/', $weight) === 1 ? $weight : null;
     }
 
+    /**
+     * A name as compared between files and the database: no case, diacritics or extra spaces.
+     */
+    public function normalizeName(string $name): string
+    {
+        return preg_replace('/\s+/u', ' ', trim(Str::lower(Str::ascii($name)))) ?? '';
+    }
+
     public function findOrBuildCompetitor(Club $club, string $firstName, string $lastName, Gender $gender, CarbonImmutable $birthDate): Competitor
     {
         if ($club->exists) {
+            $first = $this->normalizeName($firstName);
+            $last = $this->normalizeName($lastName);
+
             $existing = Competitor::where('club_id', $club->id)
-                ->where('first_name', $firstName)
-                ->where('last_name', $lastName)
                 ->whereDate('birth_date', $birthDate)
-                ->first();
+                ->orderBy('id')
+                ->get()
+                ->first(fn (Competitor $competitor) => $this->normalizeName($competitor->first_name) === $first
+                    && $this->normalizeName($competitor->last_name) === $last);
 
             if ($existing !== null) {
                 return $existing;

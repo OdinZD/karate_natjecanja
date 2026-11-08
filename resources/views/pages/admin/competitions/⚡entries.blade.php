@@ -4,6 +4,7 @@ use App\Actions\Entries\ClubImportErrorSheet;
 use App\Actions\Entries\EntryEligibility;
 use App\Actions\Entries\ImportClubEntries;
 use App\Actions\Entries\ImportEntries;
+use App\Actions\Entries\UndoClubImport;
 use App\Models\Category;
 use App\Models\Club;
 use App\Models\ClubImport;
@@ -94,7 +95,7 @@ new #[Title('Entries')] class extends Component {
      * The clubs of this competition with what they have sent: clubs added to it, clubs that have entries
      * and clubs that sent a file.
      *
-     * @return array<int, array{club: Club, entries: int, last: ClubImport|null, lastSaved: ClubImport|null, state: string}>
+     * @return array<int, array{club: Club, entries: int, last: ClubImport|null, lastSaved: ClubImport|null, undoable: int, state: string}>
      */
     #[Computed]
     public function clubOverview(): array
@@ -109,12 +110,13 @@ new #[Title('Entries')] class extends Component {
 
         $imports = $this->competition->clubImports()->latest('id')->get()->groupBy('club_id');
         $lastImports = $imports->map->first();
-        $lastSaved = $imports->map(fn ($group) => $group->firstWhere('status', ClubImport::IMPORTED))->filter();
+        $lastSaved = $imports->map(fn ($group) => $group->first(fn (ClubImport $import) => $import->isActive()))->filter();
+        $created = Entry::query()->whereIn('club_import_id', $lastSaved->pluck('id'))->groupBy('club_import_id')->selectRaw('club_import_id, count(*) as total')->pluck('total', 'club_import_id');
 
         $ids = $this->competition->clubs()->pluck('clubs.id')->merge($entryCounts->keys())->merge($lastImports->keys())->unique();
 
         return Club::query()->whereIn('id', $ids)->orderBy('name')->orderBy('city')->get()
-            ->map(function (Club $club) use ($entryCounts, $lastImports, $lastSaved): array {
+            ->map(function (Club $club) use ($entryCounts, $lastImports, $lastSaved, $created): array {
                 $entries = (int) ($entryCounts[$club->id] ?? 0);
                 $last = $lastImports[$club->id] ?? null;
 
@@ -123,6 +125,7 @@ new #[Title('Entries')] class extends Component {
                     'entries' => $entries,
                     'last' => $last,
                     'lastSaved' => $lastSaved[$club->id] ?? null,
+                    'undoable' => isset($lastSaved[$club->id]) ? (int) ($created[$lastSaved[$club->id]->id] ?? 0) : 0,
                     'state' => match (true) {
                         $entries > 0 => 'sent',
                         $last?->status === ClubImport::REJECTED => 'problem',
@@ -359,6 +362,8 @@ new #[Title('Entries')] class extends Component {
             'existing' => $preview->existingEntryCount(),
         ];
 
+        $this->clubFileWarnings = $preview->warnings;
+
         $named = $preview->meta['club_id'] !== null ? Club::find($preview->meta['club_id']) : null;
 
         if ($named !== null && $named->id !== $club->id) {
@@ -423,6 +428,35 @@ new #[Title('Entries')] class extends Component {
                 'skipped' => $result->entriesSkipped,
             ]).($result->entriesReplaced > 0 ? ' '.__(':count entries changed.', ['count' => $result->entriesReplaced]) : '').($preview->errorCount() > 0 ? ' '.__(':rows rows with problems were left out.', ['rows' => $preview->errorCount()]) : ''),
         );
+    }
+
+    public function undoClubImport(int $import, UndoClubImport $undo): void
+    {
+        $clubImport = $this->competition->clubImports()->findOrFail($import);
+
+        $latest = $this->competition->clubImports()->where('club_id', $clubImport->club_id)->latest('id')->get()->first(fn (ClubImport $row) => $row->isActive());
+
+        if ($latest?->id !== $clubImport->id) {
+            Flux::toast(variant: 'danger', text: __('This import cannot be undone.'));
+            unset($this->clubOverview);
+
+            return;
+        }
+
+        $result = $undo->handle($clubImport);
+
+        unset($this->entries, $this->categories, $this->clubOverview);
+
+        if ($result->failed()) {
+            Flux::toast(variant: 'danger', text: $result->error);
+
+            return;
+        }
+
+        Flux::toast(variant: 'success', text: __('Import undone: :entries entries and :competitors new competitors removed.', [
+            'entries' => $result->entriesRemoved,
+            'competitors' => $result->competitorsRemoved,
+        ]));
     }
 
     public function openAddClub(): void
@@ -540,6 +574,9 @@ new #[Title('Entries')] class extends Component {
 
                         <div class="flex gap-1">
                             <x-arena.button variant="ghost" icon="arrow-down-tray" :href="route('admin.competitions.entries.template', [$competition, 'club' => $row['club']->id])" :aria-label="__('Template for :club', ['club' => $row['club']->name])" data-test="club-overview-template">{{ __('Template') }}</x-arena.button>
+                            @if ($row['undoable'] > 0)
+                                <x-arena.button variant="ghost" icon="arrow-uturn-left" wire:click="undoClubImport({{ $row['lastSaved']->id }})" wire:confirm="{{ __('Undo the last import of :club? :count entries it created will be deleted. Changes it made to existing entries are not restored.', ['club' => $row['club']->name, 'count' => $row['undoable']]) }}" :aria-label="__('Undo the last import of :club', ['club' => $row['club']->name])" data-test="club-overview-undo">{{ __('Undo') }}</x-arena.button>
+                            @endif
                             <x-arena.button variant="ghost" icon="arrow-up-tray" wire:click="openClubImport({{ $row['club']->id }})" :aria-label="__('Import entries for :club', ['club' => $row['club']->name])" data-test="club-overview-import">{{ __('Import') }}</x-arena.button>
                         </div>
                     </li>

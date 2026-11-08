@@ -11,12 +11,22 @@ final readonly class ClubImportPreview
      * @param  array<int, ClubImportRow>  $rows
      * @param  array<int, string>  $fileErrors  Problems that stop the whole file, e.g. a missing column.
      * @param  array{club_id: ?int, competition_id: ?int}  $meta  Who the file was prepared for, when the template says so.
+     * @param  array<int, string>  $warnings  Things to check about the competition that do not stop the import.
      */
     public function __construct(
         public array $rows = [],
         public array $fileErrors = [],
         public array $meta = ['club_id' => null, 'competition_id' => null],
+        public array $warnings = [],
     ) {}
+
+    /**
+     * @param  array<int, string>  $warnings
+     */
+    public function withWarnings(array $warnings): self
+    {
+        return new self($this->rows, $this->fileErrors, $this->meta, $warnings);
+    }
 
     public function failed(): bool
     {

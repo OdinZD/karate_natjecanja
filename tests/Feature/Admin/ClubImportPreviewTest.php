@@ -9,6 +9,7 @@ use App\Actions\Entries\ClubImportRow;
 use App\Actions\Entries\EntryTemplate;
 use App\Actions\Entries\ImportClubEntries;
 use App\Enums\CategorySet;
+use App\Enums\CompetitionStatus;
 use App\Enums\Gender;
 use App\Models\Category;
 use App\Models\Club;
@@ -44,7 +45,7 @@ class ClubImportPreviewTest extends TestCase
 
         app()->setLocale('en');
 
-        $this->competition = Competition::factory()->create(['name' => 'Ivanec Open', 'slug' => 'ivanec-open-2026', 'date' => '2026-05-10']);
+        $this->competition = Competition::factory()->create(['name' => 'Ivanec Open', 'slug' => 'ivanec-open-2026', 'date' => '2026-05-10', 'status' => CompetitionStatus::Registration, 'registration_deadline' => null]);
         $this->club = Club::factory()->create(['name' => 'KK Sokol', 'city' => 'Ivanec']);
 
         app(ImportOfficialCategories::class)->handle($this->competition, CategorySet::Tournament);

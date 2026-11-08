@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -28,12 +29,13 @@ use Illuminate\Support\Carbon;
  * @property int $competitors_created
  * @property int $error_count
  * @property array<int, string>|null $errors
+ * @property Carbon|null $undone_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable([
     'competition_id', 'club_id', 'user_id', 'file_name', 'mode', 'status', 'rows_total', 'rows_valid', 'rows_failed',
-    'entries_created', 'entries_replaced', 'entries_skipped', 'competitors_created', 'error_count', 'errors',
+    'entries_created', 'entries_replaced', 'entries_skipped', 'competitors_created', 'error_count', 'errors', 'undone_at',
 ])]
 class ClubImport extends Model
 {
@@ -53,7 +55,24 @@ class ClubImport extends Model
     {
         return [
             'errors' => 'array',
+            'undone_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @return HasMany<Entry, $this>
+     */
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
+    }
+
+    /**
+     * Whether the import saved something and has not been undone.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === self::IMPORTED && $this->undone_at === null;
     }
 
     /**

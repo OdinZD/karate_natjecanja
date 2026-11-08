@@ -500,5 +500,13 @@
     "replaces :category": "zamjenjuje prijavu u kategoriji :category",
     "weight :old to :new kg": "težina :old u :new kg",
     "weight set to :new kg": "težina postavljena na :new kg",
-    "Update changed weights and categories (:count)": "Ažuriraj promijenjene težine i kategorije (:count)"
+    "Update changed weights and categories (:count)": "Ažuriraj promijenjene težine i kategorije (:count)",
+    "The competition is not in the registration phase.": "Natjecanje nije u fazi prijava.",
+    "The registration deadline passed on :date.": "Rok za prijave istekao je :date.",
+    "This import cannot be undone.": "Ovaj uvoz nije moguće poništiti.",
+    "Some of its entries are in categories with a draw (:names), so the import cannot be undone.": "Neke njegove prijave su u kategorijama sa ždrijebom (:names), pa se uvoz ne može poništiti.",
+    "Import undone: :entries entries and :competitors new competitors removed.": "Uvoz je poništen: uklonjeno prijava: :entries, novih natjecatelja: :competitors.",
+    "Undo the last import of :club? :count entries it created will be deleted. Changes it made to existing entries are not restored.": "Poništiti zadnji uvoz kluba :club? Obrisat će se prijave koje je stvorio (:count). Izmjene postojećih prijava se ne vraćaju.",
+    "Undo the last import of :club": "Poništi zadnji uvoz kluba :club",
+    "A competitor with this name and date of birth already exists in :club. Has the child changed clubs?": "Natjecatelj s istim imenom i datumom rođenja već postoji u klubu :club. Je li dijete promijenilo klub?"
 }
